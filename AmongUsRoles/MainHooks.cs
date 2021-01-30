@@ -242,7 +242,7 @@ namespace ExtraRolesMod
         [HarmonyPatch(typeof(BOCOFLHKCOJ), "Start")]
         public static void Postfix(BOCOFLHKCOJ __instance)
         {
-            __instance.text.Text = __instance.text.Text + "   Extra Roles V0.5 Loaded. (https://github.com/NotHunter101/ExtraRoles/)";
+            __instance.text.Text = __instance.text.Text + "   Extra Roles V0.8 Loaded. (https://github.com/NotHunter101/ExtraRolesAmongUs/)";
         }
 
         //function called when the game starts and impostors are chosen. this is where we choose all the roles and send the packets
@@ -371,11 +371,7 @@ namespace ExtraRolesMod
                         }
                     case (byte)CustomRPC.MedicDead:
                         {
-                            if (MedicSettings.Protected != null)
-                            {
-                                MedicSettings.shieldUsed = false;
-                                MedicSettings.Protected = null;
-                            }
+                            MedicSettings.Protected = null;
                             break;
                         }
                     case (byte)CustomRPC.SetOfficer:
@@ -647,6 +643,17 @@ namespace ExtraRolesMod
         [HarmonyPatch(typeof(FFGALNAPKCD), "MurderPlayer")]
         public static void Postfix(FFGALNAPKCD __instance, FFGALNAPKCD CAKODNGLPDF)
         {
+            if (MedicSettings.Medic != null)
+            {
+                if (CAKODNGLPDF.PlayerId == MedicSettings.Medic.PlayerId)
+                {
+                    //medic was just killed for sure.
+                    MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.MedicDead, Hazel.SendOption.None, -1);
+                    FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                    //simply set the protected player to null to break the shield
+                    MedicSettings.Protected = null;
+                }
+            }
             if (OfficerSettings.Officer != null)
             {
                 //check if killer is officer
@@ -676,32 +683,50 @@ namespace ExtraRolesMod
                         JokerSettings.Joker.RemoveTask(JokerSettings.Joker.myTasks[0]);
                     }
                 }
+                
+                foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                {
+                    player.nameText.Color = Color.white;
+                }
 
-                FFGALNAPKCD.LocalPlayer.nameText.Color = Color.white;
-
-                if ((FFGALNAPKCD.LocalPlayer.NDGFFHMFGIG.DAPKNDBLKIA))
+                if (FFGALNAPKCD.LocalPlayer.NDGFFHMFGIG.DAPKNDBLKIA)
                 {
                     FFGALNAPKCD.LocalPlayer.nameText.Color = Color.red;
                 }
-                if ((MedicSettings.Medic != null) && (MedicSettings.Medic == FFGALNAPKCD.LocalPlayer || MedicSettings.showMedic))
+                if (MedicSettings.Protected != null)
                 {
-                    MedicSettings.Medic.nameText.Color = MedicSettings.medicColor;
+                    if (MedicSettings.Protected == FFGALNAPKCD.LocalPlayer || MedicSettings.showProtected)
+                    {
+                        MedicSettings.Protected.nameText.Color = MedicSettings.protectedColor;
+                    }
                 }
-                if ((MedicSettings.Protected != null) && (MedicSettings.Protected == FFGALNAPKCD.LocalPlayer || MedicSettings.showProtected))
+                if (MedicSettings.Medic != null)
                 {
-                    MedicSettings.Protected.nameText.Color = MedicSettings.protectedColor;
+                    if (MedicSettings.Medic == FFGALNAPKCD.LocalPlayer || MedicSettings.showMedic)
+                    {
+                        MedicSettings.Medic.nameText.Color = MedicSettings.medicColor;
+                    }
                 }
-                if ((OfficerSettings.Officer != null) && (OfficerSettings.Officer == FFGALNAPKCD.LocalPlayer || OfficerSettings.showOfficer))
+                if (OfficerSettings.Officer != null)
                 {
-                    OfficerSettings.Officer.nameText.Color = OfficerSettings.officerColor;
+                    if (OfficerSettings.Officer == FFGALNAPKCD.LocalPlayer || OfficerSettings.showOfficer)
+                    {
+                        OfficerSettings.Officer.nameText.Color = OfficerSettings.officerColor;
+                    }
                 }
-                if ((EngineerSettings.Engineer != null) && (EngineerSettings.Engineer == FFGALNAPKCD.LocalPlayer || EngineerSettings.showEngineer))
+                if (EngineerSettings.Engineer != null)
                 {
-                    EngineerSettings.Engineer.nameText.Color = EngineerSettings.engineerColor;
+                    if (EngineerSettings.Engineer == FFGALNAPKCD.LocalPlayer || EngineerSettings.showEngineer)
+                    {
+                        EngineerSettings.Engineer.nameText.Color = EngineerSettings.engineerColor;
+                    }
                 }
-                if ((JokerSettings.Joker != null) && (JokerSettings.Joker == FFGALNAPKCD.LocalPlayer || JokerSettings.showJoker))
+                if (JokerSettings.Joker != null)
                 {
-                    JokerSettings.Joker.nameText.Color = JokerSettings.jokerColor;
+                    if (JokerSettings.Joker == FFGALNAPKCD.LocalPlayer || JokerSettings.showJoker)
+                    {
+                        JokerSettings.Joker.nameText.Color = JokerSettings.jokerColor;
+                    }
                 }
 
                 if (FFGALNAPKCD.LocalPlayer.NDGFFHMFGIG.DLPCKPBIJOE)
@@ -709,7 +734,7 @@ namespace ExtraRolesMod
                     KillButton.gameObject.SetActive(false);
                     KillButton.isActive = false;
                 }
-                else if (FFGALNAPKCD.LocalPlayer == MedicSettings.Medic)
+                if (FFGALNAPKCD.LocalPlayer == MedicSettings.Medic)
                 {
                     Texture2D tex = rotateTexture(CustomSpriteArr.shieldImgArr.Reverse().ToArray(), false, 106, 106);
                     tex.Apply(false, false);
@@ -726,7 +751,7 @@ namespace ExtraRolesMod
                         KBTarget = PlayerTools.closestPlayer.PlayerId;
                     }
                 }
-                else if (FFGALNAPKCD.LocalPlayer == OfficerSettings.Officer)
+                if (FFGALNAPKCD.LocalPlayer == OfficerSettings.Officer)
                 {
                     KillButton.gameObject.SetActive(true);
                     KillButton.isActive = true;
@@ -738,21 +763,12 @@ namespace ExtraRolesMod
                         KBTarget = PlayerTools.closestPlayer.PlayerId;
                     }
                 }
-                else if (FFGALNAPKCD.LocalPlayer == MedicSettings.Protected)
+                if (FFGALNAPKCD.LocalPlayer == MedicSettings.Protected)
                 {
-                    if (shieldIndicator == null)
-                    {
-                        shieldIndicator = new GameObject("New Sprite");
-                        shieldRenderer = shieldIndicator.AddComponent<SpriteRenderer>();
-                        shieldRenderer.sprite = __instance.UseButton.VentImage;
-                        shieldRenderer.transform.position = __instance.UseButton.transform.position;
-                    }
-                    Console.WriteLine("X: " + __instance.UseButton.transform.position.x);
-                    Console.WriteLine("Y: " + __instance.UseButton.transform.position.y);
-                    Console.WriteLine("Z: " + __instance.UseButton.transform.position.z);
-                    shieldRenderer.transform.position = new Vector3(__instance.UseButton.transform.position.x - 0.3f, __instance.UseButton.transform.position.y - 0.1f, __instance.UseButton.transform.position.z);
+                    //shield indicator
+                    //TODO
                 }
-                else if (FFGALNAPKCD.LocalPlayer == EngineerSettings.Engineer)
+                if (FFGALNAPKCD.LocalPlayer == EngineerSettings.Engineer)
                 {
                     Texture2D tex = rotateTexture(CustomSpriteArr.repairImgArr.Reverse().ToArray(), false, 106, 106);
                     tex.Apply(false, false);

@@ -23,7 +23,7 @@ using System.IO;
 
 namespace ExtraRolesMod
 {
-    [BepInPlugin("org.bepinex.plugins.SheriffMod", "Extra Roles Mod", "1.0.0.0")]
+    [BepInPlugin("org.bepinex.plugins.ExtraRoles", "Extra Roles Mod", "0.8")]
     public class ExtraRolesMod : BasePlugin
     {
         private readonly Harmony harmony;
