@@ -102,7 +102,10 @@ namespace ExtraRolesMod
         public static float GetOfficerKD()
         {
             if (MainHooks.OfficerSettings.lastKilled == null)
-                return 0;
+            {
+                MainHooks.OfficerSettings.lastKilled = DateTime.UtcNow;
+                return MainHooks.OfficerSettings.OfficerCD;
+            }
             DateTime now = DateTime.UtcNow;
             TimeSpan diff = (TimeSpan)(now - MainHooks.OfficerSettings.lastKilled);
 

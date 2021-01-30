@@ -183,6 +183,7 @@ namespace ExtraRolesMod
             public static bool showOfficer = false;
             public static Color officerColor = new Color(0, 40f / 255f, 198f / 255f, 1);
             public static DateTime? lastKilled = null;
+            public static bool firstKill = true;
             public static void ClearSettings()
             {
                 Officer = null;
@@ -419,7 +420,6 @@ namespace ExtraRolesMod
                                 if (player.PlayerId == JokerId)
                                 {
                                     JokerSettings.Joker = player;
-                                    JokerSettings.Joker.myTasks.Clear();
                                 }
                             }
                             break;
@@ -532,44 +532,48 @@ namespace ExtraRolesMod
                     var target = PlayerTools.getPlayerById((byte)KBTarget);
                     if (KBTarget != -1 && KBTarget != -2)
                     {
-                        Console.WriteLine("KillButton has defined Target.");
-                        //check if they're shielded by medic
-                        if (MedicSettings.Protected != null && target.PlayerId == MedicSettings.Protected.PlayerId)
+                        if (PlayerTools.GetOfficerKD() == 0)
                         {
-                            Console.WriteLine("The target is Protected.");
-                            //officer suicide packet
-                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
-                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
-                            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                            FFGALNAPKCD.LocalPlayer.MurderPlayer(FFGALNAPKCD.LocalPlayer);
-                            OfficerSettings.lastKilled = DateTime.UtcNow;
-                            return false;
-                        }
-                        //check if they're an impostor
-                        else if (target.NDGFFHMFGIG.DAPKNDBLKIA)
-                        {
-                            Console.WriteLine("The target is an Impostor.");
-                            //officer impostor murder packet
-                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
-                            writer.Write(target.PlayerId);
-                            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                            FFGALNAPKCD.LocalPlayer.MurderPlayer(target);
-                            OfficerSettings.lastKilled = DateTime.UtcNow;
-                            return false;
-                        }
-                        //else, they're innocent and not shielded
-                        else
-                        {
-                            Console.WriteLine("The target is Innocent.");
-                            //officer suicide packet
-                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
-                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
-                            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                            FFGALNAPKCD.LocalPlayer.MurderPlayer(FFGALNAPKCD.LocalPlayer);
-                            OfficerSettings.lastKilled = DateTime.UtcNow;
+                            Console.WriteLine("KillButton has defined Target.");
+                            //check if they're shielded by medic
+                            if (MedicSettings.Protected != null && target.PlayerId == MedicSettings.Protected.PlayerId)
+                            {
+                                Console.WriteLine("The target is Protected.");
+                                //officer suicide packet
+                                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                                writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                                writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                                FFGALNAPKCD.LocalPlayer.MurderPlayer(FFGALNAPKCD.LocalPlayer);
+                                OfficerSettings.lastKilled = DateTime.UtcNow;
+                                return false;
+                            }
+                            //check if they're an impostor
+                            else if (target.NDGFFHMFGIG.DAPKNDBLKIA)
+                            {
+                                Console.WriteLine("The target is an Impostor.");
+                                //officer impostor murder packet
+                                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                                writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                                writer.Write(target.PlayerId);
+                                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                                FFGALNAPKCD.LocalPlayer.MurderPlayer(target);
+                                OfficerSettings.lastKilled = DateTime.UtcNow;
+                                return false;
+                            }
+                            //else, they're innocent and not shielded
+                            else
+                            {
+                                Console.WriteLine("The target is Innocent.");
+                                //officer suicide packet
+                                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                                writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                                writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                                FFGALNAPKCD.LocalPlayer.MurderPlayer(FFGALNAPKCD.LocalPlayer);
+                                OfficerSettings.lastKilled = DateTime.UtcNow;
+                                return false;
+                            }
                             return false;
                         }
                         return false;
@@ -598,6 +602,13 @@ namespace ExtraRolesMod
                 {
                     //INFO
                     //this code is finished, but not implemented yet. It was working in a previous version, but I rewrote this whole section because of bugs
+                    if (KBTarget == -2 && EngineerSettings.repairUsed == false)
+                    {
+                        MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.RepairAllEmergencies, Hazel.SendOption.None, -1);
+                        FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                        EngineerSettings.repairUsed = true;
+                        return false;
+                    }
                     return false;
                 }
                 //finally, check if the target is protected.
@@ -621,6 +632,7 @@ namespace ExtraRolesMod
                 //check if the player is an officer
                 if (__instance == OfficerSettings.Officer)
                 {
+                    OfficerSettings.firstKill = false;
                     //if so, set them to impostor for one frame so they aren't banned for anti-cheat
                     __instance.NDGFFHMFGIG.DAPKNDBLKIA = true;
                 }
@@ -653,6 +665,14 @@ namespace ExtraRolesMod
                 PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(FFGALNAPKCD.LocalPlayer);
                 DistLocalClosest = PlayerTools.getDistBetweenPlayers(FFGALNAPKCD.LocalPlayer, PlayerTools.closestPlayer);
                 KBTarget = -1;
+
+                if (JokerSettings.Joker != null && JokerSettings.Joker.myTasks.Count > 0)
+                {
+                    while (JokerSettings.Joker.myTasks.Count > 0)
+                    {
+                        JokerSettings.Joker.RemoveTask(JokerSettings.Joker.myTasks[0]);
+                    }
+                }
 
                 FFGALNAPKCD.LocalPlayer.nameText.Color = Color.white;
 
@@ -696,7 +716,7 @@ namespace ExtraRolesMod
                     }
                     KillButton.gameObject.SetActive(true);
                     KillButton.isActive = true;
-                    KillButton.SetCoolDown(PlayerTools.GetOfficerKD(), FFGALNAPKCD.GameOptions.IGHCIKIDAMO + 15.0f);
+                    KillButton.SetCoolDown(0f, FFGALNAPKCD.GameOptions.IGHCIKIDAMO + 15.0f);
                     if (DistLocalClosest < KMOGFLPJLLK.JMLGACIOLIK[FFGALNAPKCD.GameOptions.DLIBONBKPKL] && MedicSettings.shieldUsed == false)
                     {
                         KillButton.SetTarget(PlayerTools.closestPlayer);
