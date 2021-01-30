@@ -80,11 +80,24 @@ namespace ExtraRolesMod
             else
             {
                 //TODO (make the type of color be written to chat
-                var colors = new Dictionary<string, byte>()
+                var colors = new Dictionary<byte, string>()
                 {
-
+                    {0, "darker"},
+                    {1, "darker"},
+                    {2, "darker"},
+                    {3, "lighter"},
+                    {4, "lighter"},
+                    {5, "lighter"},
+                    {6, "darker"},
+                    {7, "lighter"},
+                    {8, "darker"},
+                    {9, "darker"},
+                    {10, "lighter"},
+                    {11, "lighter"},
                 };
-                var typeOfColor = "darker";
+                var typeOfColor = "unknown";
+                if (MainHooks.playerColors.ContainsKey(br.Killer.PlayerId))
+                    typeOfColor = colors[MainHooks.playerColors[br.Killer.PlayerId]];
                 return $"Body Report: The murder appears to be a {typeOfColor} color. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
         }
