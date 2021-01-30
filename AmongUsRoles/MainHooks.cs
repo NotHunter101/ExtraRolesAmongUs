@@ -507,9 +507,6 @@ namespace ExtraRolesMod
             }
             if (FFGALNAPKCD.LocalPlayer == JokerSettings.Joker)
             {
-                var playersOnScreen = new Il2CppSystem.Collections.Generic.List<FFGALNAPKCD>();
-                playersOnScreen.Add(JokerSettings.Joker);
-                __instance.field_Public_PENEIDJGGAF_0.ACDLBDOBGPC(playersOnScreen);
                 __instance.field_Public_PENEIDJGGAF_0.Title.Text = "Joker";
                 __instance.field_Public_PENEIDJGGAF_0.Title.Color = JokerSettings.jokerColor;
                 __instance.field_Public_PENEIDJGGAF_0.ImpostorText.Text = "Get voted off of the ship to win";
@@ -521,6 +518,8 @@ namespace ExtraRolesMod
         [HarmonyPatch(typeof(MLPJGKEACMM), "PerformKill")]
         static bool Prefix(MethodBase __originalMethod)
         {
+            if (FFGALNAPKCD.LocalPlayer.NDGFFHMFGIG.DLPCKPBIJOE)
+                return false; 
             //code that handles the ability button presses
             if (KBTarget != null)
             {
@@ -687,6 +686,8 @@ namespace ExtraRolesMod
                 foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
                 {
                     player.nameText.Color = Color.white;
+                    //player.SetColor(originalcolor);
+                    player.MKIDFJAEBGH.color = Color.white;
                 }
 
                 if (FFGALNAPKCD.LocalPlayer.NDGFFHMFGIG.DAPKNDBLKIA)
@@ -697,7 +698,8 @@ namespace ExtraRolesMod
                 {
                     if (MedicSettings.Protected == FFGALNAPKCD.LocalPlayer || MedicSettings.showProtected)
                     {
-                        MedicSettings.Protected.nameText.Color = MedicSettings.protectedColor;
+                        //MedicSettings.Protected.SetColor(7);
+                        //MedicSettings.Protected.MKIDFJAEBGH.color = MedicSettings.protectedColor;
                     }
                 }
                 if (MedicSettings.Medic != null)
@@ -729,11 +731,6 @@ namespace ExtraRolesMod
                     }
                 }
 
-                if (FFGALNAPKCD.LocalPlayer.NDGFFHMFGIG.DLPCKPBIJOE)
-                {
-                    KillButton.gameObject.SetActive(false);
-                    KillButton.isActive = false;
-                }
                 if (FFGALNAPKCD.LocalPlayer == MedicSettings.Medic)
                 {
                     Texture2D tex = rotateTexture(CustomSpriteArr.shieldImgArr.Reverse().ToArray(), false, 106, 106);
@@ -794,6 +791,11 @@ namespace ExtraRolesMod
                             KBTarget = -2;
                         }
                     }
+                }
+                if (FFGALNAPKCD.LocalPlayer.NDGFFHMFGIG.DLPCKPBIJOE)
+                {
+                    KillButton.gameObject.SetActive(false);
+                    KillButton.isActive = false;
                 }
                 KillButton = __instance.KillButton;
             }
