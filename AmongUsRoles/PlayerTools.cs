@@ -24,7 +24,9 @@ namespace ExtraRolesMod
         MedicReport = 52,
         JokerWin = 53,
         SendMeAMessage = 54,
-        MeetingEnded = 55
+        MeetingEnded = 55,
+        PlayerColors = 56,
+        PlayerColorsAndIds = 57
     }
     enum RPC
     {

@@ -122,6 +122,7 @@ namespace ExtraRolesMod
             { "Duration In Which Medic Report Will Contain The Killers Name", 0 },
             { "Duration In Which Medic Report Will Contain The Killers Color Type", 0 }
         };
+        public static IDictionary<byte, byte> playerColors = new Dictionary<byte, byte>() { };
         //rudimentary array to convert a byte setting from config into true/false
         public static bool[] byteBool =
         {
@@ -253,7 +254,10 @@ namespace ExtraRolesMod
             OfficerSettings.SetConfigSettings();
             EngineerSettings.SetConfigSettings();
             JokerSettings.SetConfigSettings();
-            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.None, -1);
+            playerColors.Clear();
+            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.PlayerColors, Hazel.SendOption.None, -1);
+            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+            writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.None, -1);
             Console.WriteLine(String.Join(",", configSettings.Values));
             writer.WriteBytesAndSize(configSettings.Values.ToArray<byte>());
             FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
@@ -317,166 +321,179 @@ namespace ExtraRolesMod
         [HarmonyPatch(typeof(FFGALNAPKCD), "HandleRpc")]
         public static void Postfix(byte HKHMBLJFLMC, MessageReader ALMCIJKELCP)
         {
-            try
+            switch (HKHMBLJFLMC)
             {
-                switch (HKHMBLJFLMC)
-                {
-                    case (byte)CustomRPC.ResetVaribles:
+                case (byte)CustomRPC.ResetVaribles:
+                    {
+                        var configSettingsValues = ALMCIJKELCP.ReadBytesAndSize().ToArray();
+                        for (var i = 0; i < configSettingsValues.Length; i++)
                         {
-                            var configSettingsValues = ALMCIJKELCP.ReadBytesAndSize().ToArray();
-                            for (var i = 0; i < configSettingsValues.Length; i++)
+                            configSettings[configSettingsKeys[i]] = configSettingsValues[i];
+                        }
+                        Console.WriteLine(String.Join(",", configSettings));
+                        MedicSettings.ClearSettings();
+                        OfficerSettings.ClearSettings();
+                        EngineerSettings.ClearSettings();
+                        JokerSettings.ClearSettings();
+                        MedicSettings.SetConfigSettings();
+                        OfficerSettings.SetConfigSettings();
+                        EngineerSettings.SetConfigSettings();
+                        JokerSettings.SetConfigSettings();
+                        playerColors.Clear();
+                        break;
+                    }
+                case (byte)CustomRPC.SetMedic:
+                    {
+                        ConsoleTools.Info("Medic Set Through RPC!");
+                        byte MedicId = ALMCIJKELCP.ReadByte();
+                        foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                        {
+                            if (player.PlayerId == MedicId)
                             {
-                                configSettings[configSettingsKeys[i]] = configSettingsValues[i];
+                                MedicSettings.Medic = player;
                             }
-                            Console.WriteLine(String.Join(",", configSettings));
-                            MedicSettings.ClearSettings();
-                            OfficerSettings.ClearSettings();
-                            EngineerSettings.ClearSettings();
-                            JokerSettings.ClearSettings();
-                            MedicSettings.SetConfigSettings();
-                            OfficerSettings.SetConfigSettings();
-                            EngineerSettings.SetConfigSettings();
-                            JokerSettings.SetConfigSettings();
-                            break;
                         }
-                    case (byte)CustomRPC.SetMedic:
+                        break;
+                    }
+                case (byte)CustomRPC.SetProtected:
+                    {
+                        byte ProtectedId = ALMCIJKELCP.ReadByte();
+                        foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
                         {
-                            ConsoleTools.Info("Medic Set Through RPC!");
-                            byte MedicId = ALMCIJKELCP.ReadByte();
-                            foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                            if (player.PlayerId == ProtectedId)
                             {
-                                if (player.PlayerId == MedicId)
-                                {
-                                    MedicSettings.Medic = player;
-                                }
+                                MedicSettings.Protected = player;
                             }
-                            break;
                         }
-                    case (byte)CustomRPC.SetProtected:
+                        break;
+                    }
+                case (byte)CustomRPC.MedicDead:
+                    {
+                        MedicSettings.Protected = null;
+                        break;
+                    }
+                case (byte)CustomRPC.SetOfficer:
+                    {
+                        ConsoleTools.Info("Officer Set Through RPC!");
+                        byte OfficerId = ALMCIJKELCP.ReadByte();
+                        foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
                         {
-                            byte ProtectedId = ALMCIJKELCP.ReadByte();
-                            foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                            if (player.PlayerId == OfficerId)
                             {
-                                if (player.PlayerId == ProtectedId)
-                                {
-                                    MedicSettings.Protected = player;
-                                }
+                                OfficerSettings.Officer = player;
                             }
-                            break;
                         }
-                    case (byte)CustomRPC.MedicDead:
+                        break;
+                    }
+                case (byte)CustomRPC.OfficerKill:
+                    {
+                        FFGALNAPKCD killer = PlayerTools.getPlayerById(ALMCIJKELCP.ReadByte());
+                        FFGALNAPKCD target = PlayerTools.getPlayerById(ALMCIJKELCP.ReadByte());
+                        killer.MurderPlayer(target);
+                        break;
+                    }
+                case (byte)CustomRPC.SetEngineer:
+                    {
+                        ConsoleTools.Info("Engineer Set Through RPC!");
+                        byte EngineerId = ALMCIJKELCP.ReadByte();
+                        foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
                         {
-                            MedicSettings.Protected = null;
-                            break;
-                        }
-                    case (byte)CustomRPC.SetOfficer:
-                        {
-                            ConsoleTools.Info("Officer Set Through RPC!");
-                            byte OfficerId = ALMCIJKELCP.ReadByte();
-                            foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                            if (player.PlayerId == EngineerId)
                             {
-                                if (player.PlayerId == OfficerId)
-                                {
-                                    OfficerSettings.Officer = player;
-                                }
+                                EngineerSettings.Engineer = player;
                             }
-                            break;
                         }
-                    case (byte)CustomRPC.OfficerKill:
+                        break;
+                    }
+                case (byte)CustomRPC.SetJoker:
+                    {
+                        ConsoleTools.Info("Joker Set Through RPC!");
+                        byte JokerId = ALMCIJKELCP.ReadByte();
+                        foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
                         {
-                            FFGALNAPKCD killer = PlayerTools.getPlayerById(ALMCIJKELCP.ReadByte());
-                            FFGALNAPKCD target = PlayerTools.getPlayerById(ALMCIJKELCP.ReadByte());
-                            killer.MurderPlayer(target);
-                            break;
-                        }
-                    case (byte)CustomRPC.SetEngineer:
-                        {
-                            ConsoleTools.Info("Engineer Set Through RPC!");
-                            byte EngineerId = ALMCIJKELCP.ReadByte();
-                            foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                            if (player.PlayerId == JokerId)
                             {
-                                if (player.PlayerId == EngineerId)
-                                {
-                                    EngineerSettings.Engineer = player;
-                                }
+                                JokerSettings.Joker = player;
                             }
-                            break;
                         }
-                    case (byte)CustomRPC.SetJoker:
+                        break;
+                    }
+                case (byte)CustomRPC.MedicReport:
+                    {
+                        Console.WriteLine("Body Reported RPC!");
+                        byte reporterId = ALMCIJKELCP.ReadByte();
+                        byte killerId = ALMCIJKELCP.ReadByte();
+                        byte deathReason = ALMCIJKELCP.ReadByte();
+                        float killAge = ALMCIJKELCP.ReadSingle();
+                        if (reporterId == MedicSettings.Medic.PlayerId)
                         {
-                            ConsoleTools.Info("Joker Set Through RPC!");
-                            byte JokerId = ALMCIJKELCP.ReadByte();
-                            foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                            if (MedicSettings.Medic.PlayerId == FFGALNAPKCD.LocalPlayer.PlayerId)
                             {
-                                if (player.PlayerId == JokerId)
-                                {
-                                    JokerSettings.Joker = player;
-                                }
-                            }
-                            break;
-                        }
-                    case (byte)CustomRPC.MedicReport:
-                        {
-                            Console.WriteLine("Body Reported RPC!");
-                            byte reporterId = ALMCIJKELCP.ReadByte();
-                            byte killerId = ALMCIJKELCP.ReadByte();
-                            byte deathReason = ALMCIJKELCP.ReadByte();
-                            float killAge = ALMCIJKELCP.ReadSingle();
-                            if (reporterId == MedicSettings.Medic.PlayerId)
-                            {
-                                if (MedicSettings.Medic.PlayerId == FFGALNAPKCD.LocalPlayer.PlayerId)
-                                {
-                                    BodyReport br = new BodyReport();
-                                    br.Killer = PlayerTools.getPlayerById(killerId);
-                                    br.Reporter = br.Killer = PlayerTools.getPlayerById(killerId);
-                                    br.KillAge = killAge;
-                                    br.DeathReason = deathReason;
-                                    var reportMsg = BodyReport.ParseBodyReport(br);
+                                BodyReport br = new BodyReport();
+                                br.Killer = PlayerTools.getPlayerById(killerId);
+                                br.Reporter = br.Killer = PlayerTools.getPlayerById(killerId);
+                                br.KillAge = killAge;
+                                br.DeathReason = deathReason;
+                                var reportMsg = BodyReport.ParseBodyReport(br);
 
-                                    MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.SendMeAMessage, Hazel.SendOption.None, -1);
-                                    writer.Write(reportMsg);
-                                    FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                                }
+                                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.SendMeAMessage, Hazel.SendOption.None, -1);
+                                writer.Write(reportMsg);
+                                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
                             }
-                            break;
                         }
-                    //player exiled
-                    case (byte)CustomRPC.JokerWin:
+                        break;
+                    }
+                //player exiled
+                case (byte)CustomRPC.JokerWin:
+                    {
+                        //Console.WriteLine("Joker won!");
+                        var exiledId = ALMCIJKELCP.ReadByte();
+                        if (JokerSettings.Joker != null)
                         {
-                            //Console.WriteLine("Joker won!");
-                            var exiledId = ALMCIJKELCP.ReadByte();
-                            if (JokerSettings.Joker != null)
+                            if (exiledId == JokerSettings.Joker.PlayerId)
                             {
-                                if (exiledId == JokerSettings.Joker.PlayerId)
+                                foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
                                 {
-                                    foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                                    if (player != JokerSettings.Joker)
                                     {
-                                        if (player != JokerSettings.Joker)
-                                        {
-                                            player.RemoveInfected();
-                                            player.Die(DBLJKMDLJIF.Exile);
-                                            player.NDGFFHMFGIG.DLPCKPBIJOE = true;
-                                        }
-                                        else
-                                        {
-                                            player.Revive();
-                                            player.NDGFFHMFGIG.DAPKNDBLKIA = true;
-                                        }
+                                        player.RemoveInfected();
+                                        player.Die(DBLJKMDLJIF.Exile);
+                                        player.NDGFFHMFGIG.DLPCKPBIJOE = true;
+                                    }
+                                    else
+                                    {
+                                        player.Revive();
+                                        player.NDGFFHMFGIG.DAPKNDBLKIA = true;
                                     }
                                 }
                             }
-                            break;
                         }
-                    case (byte)CustomRPC.MeetingEnded:
+                        break;
+                    }
+                case (byte)CustomRPC.MeetingEnded:
+                    {
+                        OfficerSettings.lastKilled = DateTime.UtcNow;
+                        break;
+                    }
+                case (byte)CustomRPC.PlayerColorsAndIds:
+                    {
+                        foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
                         {
-                            OfficerSettings.lastKilled = DateTime.UtcNow;
-                            break;
+                            var playerId = ALMCIJKELCP.ReadByte();
+                            var colorId = ALMCIJKELCP.ReadByte();
+                            if (playerId != null)
+                            {
+                                var playerControl = PlayerTools.getPlayerById(playerId);
+                                if (playerControl != null)
+                                {
+                                    Console.WriteLine(playerId);
+                                    if (!playerColors.ContainsKey(playerId))
+                                        playerColors.Add(playerId, colorId);
+                                }
+                            }
                         }
-                }
-            }
-            catch (Exception e)
-            {
-                ConsoleTools.Error("Error during handling of RPC packets.");
+                        break;
+                    }
             }
         }
 
@@ -677,13 +694,22 @@ namespace ExtraRolesMod
         [HarmonyPatch(typeof(PIEFJFEOGOL), "Update")]
         public static void Postfix(PIEFJFEOGOL __instance)
         {
-            if (FFGALNAPKCD.AllPlayerControls.Count > 3)
+            //yuck. this is the only way I could reliable figure out if the game was started or just in the lobby.
+            var gameStarted = true;
+            try {
+                //this function throws an error in the lobby, so it gets caught and the main update code has it's condition set to false.
+                PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(FFGALNAPKCD.LocalPlayer);
+                DistLocalClosest = PlayerTools.getDistBetweenPlayers(FFGALNAPKCD.LocalPlayer, PlayerTools.closestPlayer);
+            }
+            catch {
+                //set the main update code's condition to false
+                gameStarted = false; }
+            if (gameStarted)
             {
                 KillButton = __instance.KillButton;
                 PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(FFGALNAPKCD.LocalPlayer);
                 DistLocalClosest = PlayerTools.getDistBetweenPlayers(FFGALNAPKCD.LocalPlayer, PlayerTools.closestPlayer);
                 KBTarget = -1;
-
                 if (JokerSettings.Joker != null && JokerSettings.Joker.myTasks.Count > 0)
                 {
                     while (JokerSettings.Joker.myTasks.Count > 0)
@@ -691,14 +717,15 @@ namespace ExtraRolesMod
                         JokerSettings.Joker.RemoveTask(JokerSettings.Joker.myTasks[0]);
                     }
                 }
-                
+
                 foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
                 {
                     player.nameText.Color = Color.white;
                     player.MKIDFJAEBGH.color = Color.white;
-                    //once I find the color id object in PlayerControl, i'll set some sort of dictionary and update it with color id's for all players at the beginning of the game.
-                    //then, i'll set it back to default here so I can modify it for the shielded player.
-                    //player.SetColor(originalcolor);
+                    if (playerColors.ContainsKey(player.PlayerId))
+                    {
+                        player.SetColor(playerColors[player.PlayerId]);
+                    }
                 }
 
                 if (FFGALNAPKCD.LocalPlayer.NDGFFHMFGIG.DAPKNDBLKIA)
@@ -709,11 +736,10 @@ namespace ExtraRolesMod
                 {
                     if (MedicSettings.Protected == FFGALNAPKCD.LocalPlayer || MedicSettings.showProtected)
                     {
-                        MedicSettings.Protected.nameText.Color = MedicSettings.protectedColor;
+                        //MedicSettings.Protected.nameText.Color = MedicSettings.protectedColor;
                         //this changes the player color and visor color. it's a cool effect to make it obvious a player is shielded.
-                        //once again, I have to save the original color id and set it back once the shield is broken, though.
-                        //MedicSettings.Protected.SetColor(7);
-                        //MedicSettings.Protected.MKIDFJAEBGH.color = MedicSettings.protectedColor;
+                        MedicSettings.Protected.SetColor(7);
+                        MedicSettings.Protected.MKIDFJAEBGH.color = MedicSettings.protectedColor;
                     }
                 }
                 if (MedicSettings.Medic != null)
@@ -811,7 +837,6 @@ namespace ExtraRolesMod
                     KillButton.gameObject.SetActive(false);
                     KillButton.isActive = false;
                 }
-                KillButton = __instance.KillButton;
             }
 
             //function to rotate textures
