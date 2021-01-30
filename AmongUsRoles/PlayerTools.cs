@@ -23,7 +23,8 @@ namespace ExtraRolesMod
         ResetVaribles = 51,
         MedicReport = 52,
         JokerWin = 53,
-        SendMeAMessage = 54
+        SendMeAMessage = 54,
+        MeetingEnded = 55
     }
     enum RPC
     {

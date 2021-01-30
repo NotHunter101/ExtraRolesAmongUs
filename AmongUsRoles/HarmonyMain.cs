@@ -20,6 +20,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Runtime.InteropServices;
 using System.IO;
+using static ExtraRolesMod.MainHooks;
 
 namespace ExtraRolesMod
 {
@@ -42,6 +43,28 @@ namespace ExtraRolesMod
             Ip = Config.Bind("Custom", "Ipv4 or Hostname", "127.0.0.1");
             Port = Config.Bind("Custom", "Port", (ushort)22023);
 
+            /* "Show Medic",
+            "Show Shielded Player",
+            "Murder Attempt Indicator For Shielded Player",
+            "Show Officer",
+            "Officer Kill Cooldown",
+            "Show Engineer",
+            "Engineer Repair Cooldown",
+            "Show Joker",
+            "Joker Can Die To Officer",
+            "Duration In Which Medic Report Will Contain The Killer's Name",
+            "Duration In Which Medic Report Will Contain The Killer's Color Type" */
+
+            configSettings["Show Medic"] = (byte)Config.Bind("Custom", "Show Medic", 0).Value;
+            configSettings["Show Shielded Player"] = (byte)Config.Bind("Custom", "Show Shielded Player", 1).Value; 
+            configSettings["Murder Attempt Indicator For Shielded Player"] = (byte)Config.Bind("Custom", "Murder Attempt Indicator For Shielded Player", 0).Value;
+            configSettings["Show Officer"] = (byte)Config.Bind("Custom", "Show Officer", 0).Value;
+            configSettings["Officer Kill Cooldown"] = (byte)Config.Bind("Custom", "Officer Kill Cooldown", 35).Value;
+            configSettings["Show Engineer"] = (byte)Config.Bind("Custom", "Show Engineer", 0).Value;
+            configSettings["Show Joker"] = (byte)Config.Bind("Custom", "Show Joker", 0).Value;
+            configSettings["Joker Can Die To Officer"] = (byte)Config.Bind("Custom", "Joker Can Die To Officer", 1).Value;
+            configSettings["Duration In Which Medic Report Will Contain The Killers Name"] = (byte)Config.Bind("Custom", "Duration In Which Medic Report Will Contain The Killers Name", 5).Value;
+            configSettings["Duration In Which Medic Report Will Contain The Killers Name"] = (byte)Config.Bind("Custom", "Duration In Which Medic Report Will Contain The Killers Color Type", 20).Value;
             var defaultRegions = AOBNFCIHAJL.DefaultRegions.ToList();
             var ip = Ip.Value;
             if (Uri.CheckHostName(Ip.Value).ToString() == "Dns")

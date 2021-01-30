@@ -12,7 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using UnhollowerBaseLib;
 using UnityEngine;
-using System;
 
 /*
 Hex colors for extra roles
@@ -104,26 +103,24 @@ namespace ExtraRolesMod
             "Show Officer",
             "Officer Kill Cooldown",
             "Show Engineer",
-            "Engineer Repair Cooldown",
             "Show Joker",
             "Joker Can Die To Officer",
-            "Duration In Which Medic Report Will Contain The Killer's Name",
-            "Duration In Which Medic Report Will Contain The Killer's Color Type"
+            "Duration In Which Medic Report Will Contain The Killers Name",
+            "Duration In Which Medic Report Will Contain The Killers Color Type"
         };
         //array of all config settings and their values. these will be loaded by a config and sent to all clients
         public static IDictionary<string, byte> configSettings = new Dictionary<string, byte>()
         {
             { "Show Medic", 0 },
-            { "Show Shielded Player", 1 },
-            { "Murder Attempt Indicator For Shielded Player", 0 },
+            { "Show Shielded Player", 0 },
+            { "Murder Attempt Indicator For Shielded Player", 0 }, //TODO
             { "Show Officer", 0 },
-            { "Officer Kill Cooldown", 35 },
+            { "Officer Kill Cooldown", 0 },
             { "Show Engineer", 0 },
-            { "Engineer Repair Cooldown", 0 },
             { "Show Joker", 0 },
             { "Joker Can Die To Officer", 0 },
-            { "Duration In Which Medic Report Will Contain The Killer's Name", 5 },
-            { "Duration In Which Medic Report Will Contain The Killer's Color Type", 25 }
+            { "Duration In Which Medic Report Will Contain The Killers Name", 0 },
+            { "Duration In Which Medic Report Will Contain The Killers Color Type", 0 }
         };
         //rudimentary array to convert a byte setting from config into true/false
         public static bool[] byteBool =
@@ -170,8 +167,8 @@ namespace ExtraRolesMod
                 showMedic = byteBool[configSettings["Show Medic"]];
                 showProtected = byteBool[configSettings["Show Shielded Player"]];
                 shieldKillAttemptIndicator = byteBool[configSettings["Murder Attempt Indicator For Shielded Player"]];
-                medicKillerNameDuration = configSettings["Duration In Which Medic Report Will Contain The Killer's Name"];
-                medicKillerColorDuration = configSettings["Duration In Which Medic Report Will Contain The Killer's Color Type"];
+                medicKillerNameDuration = configSettings["Duration In Which Medic Report Will Contain The Killers Name"];
+                medicKillerColorDuration = configSettings["Duration In Which Medic Report Will Contain The Killers Color Type"];
             }
         }
         //officer settings and values
@@ -202,7 +199,6 @@ namespace ExtraRolesMod
             public static FFGALNAPKCD Engineer;
             public static bool repairUsed = false;
 
-            public static float EngineerCD = 10f;
             public static bool showEngineer = false;
             public static Color engineerColor = new Color(151f / 255f, 46f / 255f, 0, 1);
 
@@ -215,7 +211,6 @@ namespace ExtraRolesMod
             public static void SetConfigSettings()
             {
                 showEngineer = byteBool[configSettings["Show Engineer"]];
-                EngineerCD = configSettings["Engineer Repair Cooldown"];
             }
         }
 
@@ -445,9 +440,10 @@ namespace ExtraRolesMod
                             }
                             break;
                         }
+                    //player exiled
                     case (byte)CustomRPC.JokerWin:
                         {
-                            Console.WriteLine("Joker won!");
+                            //Console.WriteLine("Joker won!");
                             var exiledId = ALMCIJKELCP.ReadByte();
                             if (JokerSettings.Joker != null)
                             {
@@ -469,6 +465,11 @@ namespace ExtraRolesMod
                                     }
                                 }
                             }
+                            break;
+                        }
+                    case (byte)CustomRPC.MeetingEnded:
+                        {
+                            OfficerSettings.lastKilled = DateTime.UtcNow;
                             break;
                         }
                 }
@@ -521,103 +522,111 @@ namespace ExtraRolesMod
             if (FFGALNAPKCD.LocalPlayer.NDGFFHMFGIG.DLPCKPBIJOE)
                 return false; 
             //code that handles the ability button presses
-            if (KBTarget != null)
+            if (FFGALNAPKCD.LocalPlayer == OfficerSettings.Officer)
             {
-                if (FFGALNAPKCD.LocalPlayer == OfficerSettings.Officer)
+                Console.WriteLine("Player is Officer.");
+                Console.WriteLine(KBTarget);
+                var target = PlayerTools.getPlayerById((byte)KBTarget);
+                if (KBTarget != -1 && KBTarget != -2)
                 {
-                    Console.WriteLine("Player is Officer.");
-                    Console.WriteLine(KBTarget);
-                    var target = PlayerTools.getPlayerById((byte)KBTarget);
-                    if (KBTarget != -1 && KBTarget != -2)
+                    if (PlayerTools.GetOfficerKD() == 0)
                     {
-                        if (PlayerTools.GetOfficerKD() == 0)
+                        Console.WriteLine("KillButton has defined Target.");
+                        //check if they're shielded by medic
+                        if (MedicSettings.Protected != null && target.PlayerId == MedicSettings.Protected.PlayerId)
                         {
-                            Console.WriteLine("KillButton has defined Target.");
-                            //check if they're shielded by medic
-                            if (MedicSettings.Protected != null && target.PlayerId == MedicSettings.Protected.PlayerId)
-                            {
-                                Console.WriteLine("The target is Protected.");
-                                //officer suicide packet
-                                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                                writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
-                                writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
-                                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                                FFGALNAPKCD.LocalPlayer.MurderPlayer(FFGALNAPKCD.LocalPlayer);
-                                OfficerSettings.lastKilled = DateTime.UtcNow;
-                                return false;
-                            }
-                            //check if they're an impostor
-                            else if (target.NDGFFHMFGIG.DAPKNDBLKIA)
-                            {
-                                Console.WriteLine("The target is an Impostor.");
-                                //officer impostor murder packet
-                                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                                writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
-                                writer.Write(target.PlayerId);
-                                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                                FFGALNAPKCD.LocalPlayer.MurderPlayer(target);
-                                OfficerSettings.lastKilled = DateTime.UtcNow;
-                                return false;
-                            }
-                            //else, they're innocent and not shielded
-                            else
-                            {
-                                Console.WriteLine("The target is Innocent.");
-                                //officer suicide packet
-                                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                                writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
-                                writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
-                                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                                FFGALNAPKCD.LocalPlayer.MurderPlayer(FFGALNAPKCD.LocalPlayer);
-                                OfficerSettings.lastKilled = DateTime.UtcNow;
-                                return false;
-                            }
+                            Console.WriteLine("The target is Protected.");
+                            //officer suicide packet
+                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                            FFGALNAPKCD.LocalPlayer.MurderPlayer(FFGALNAPKCD.LocalPlayer);
+                            OfficerSettings.lastKilled = DateTime.UtcNow;
+                            return false;
+                        }
+                        //check if they're joker and the setting is configured
+                        else if (JokerSettings.jokerCanDieToOfficer && (JokerSettings.Joker != null && target.PlayerId == JokerSettings.Joker.PlayerId))
+                        {
+                            Console.WriteLine("The target is an Joker. (jokerCanDieToOfficer = 1)");
+                            //officer joker murder packet
+                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                            writer.Write(target.PlayerId);
+                            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                            FFGALNAPKCD.LocalPlayer.MurderPlayer(target);
+                            OfficerSettings.lastKilled = DateTime.UtcNow;
+                        }
+                        //check if they're an impostor
+                        else if (target.NDGFFHMFGIG.DAPKNDBLKIA)
+                        {
+                            Console.WriteLine("The target is an Impostor.");
+                            //officer impostor murder packet
+                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                            writer.Write(target.PlayerId);
+                            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                            FFGALNAPKCD.LocalPlayer.MurderPlayer(target);
+                            OfficerSettings.lastKilled = DateTime.UtcNow;
+                            return false;
+                        }
+                        //else, they're innocent and not shielded
+                        else
+                        {
+                            Console.WriteLine("The target is Innocent.");
+                            //officer suicide packet
+                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                            FFGALNAPKCD.LocalPlayer.MurderPlayer(FFGALNAPKCD.LocalPlayer);
+                            OfficerSettings.lastKilled = DateTime.UtcNow;
                             return false;
                         }
                         return false;
                     }
-                }
-                //check if they're medic
-                else if (FFGALNAPKCD.LocalPlayer == MedicSettings.Medic)
-                {
-                    //if the target is defined
-                    if (KBTarget != -1 && KBTarget != -2)
-                    {
-                        ConsoleTools.Info("Medic Creating Shield");
-                        //create a shield for the targeted player
-                        MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.SetProtected, Hazel.SendOption.None, -1);
-                        MedicSettings.Protected = PlayerTools.closestPlayer;
-                        MedicSettings.shieldUsed = true;
-                        byte ProtectedId = MedicSettings.Protected.PlayerId;
-                        writer.Write(ProtectedId);
-                        FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                        return false;
-                    }
                     return false;
                 }
-                //check if they're engineer
-                else if (FFGALNAPKCD.LocalPlayer == EngineerSettings.Engineer)
-                {
-                    //INFO
-                    //this code is finished, but not implemented yet. It was working in a previous version, but I rewrote this whole section because of bugs
-                    if (KBTarget == -2 && EngineerSettings.repairUsed == false)
-                    {
-                        MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.RepairAllEmergencies, Hazel.SendOption.None, -1);
-                        FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                        EngineerSettings.repairUsed = true;
-                        return false;
-                    }
-                    return false;
-                }
-                //finally, check if the target is protected.
-                if (MedicSettings.Protected != null && PlayerTools.closestPlayer.PlayerId == MedicSettings.Protected.PlayerId)
-                {
-                    //cancel the kill
-                    return false;
-                }
-                //otherwise, continue the murder as normal
-                return true;
             }
+            //check if they're medic
+            else if (FFGALNAPKCD.LocalPlayer == MedicSettings.Medic)
+            {
+                //if the target is defined
+                if (KBTarget != -1 && KBTarget != -2)
+                {
+                    ConsoleTools.Info("Medic Creating Shield");
+                    //create a shield for the targeted player
+                    MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.SetProtected, Hazel.SendOption.None, -1);
+                    MedicSettings.Protected = PlayerTools.closestPlayer;
+                    MedicSettings.shieldUsed = true;
+                    byte ProtectedId = MedicSettings.Protected.PlayerId;
+                    writer.Write(ProtectedId);
+                    FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                    return false;
+                }
+                return false;
+            }
+            //check if they're engineer
+            else if (FFGALNAPKCD.LocalPlayer == EngineerSettings.Engineer)
+            {
+                //INFO
+                //this code is finished, but not implemented yet. It was working in a previous version, but I rewrote this whole section because of bugs
+                if (KBTarget == -2 && EngineerSettings.repairUsed == false)
+                {
+                    MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.RepairAllEmergencies, Hazel.SendOption.None, -1);
+                    FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                    EngineerSettings.repairUsed = true;
+                    return false;
+                }
+                return false;
+            }
+            //finally, check if the target is protected.
+            if (MedicSettings.Protected != null && PlayerTools.closestPlayer.PlayerId == MedicSettings.Protected.PlayerId)
+            {
+                //cancel the kill
+                return false;
+            }
+            //otherwise, continue the murder as normal
             return true;
         }
 
@@ -686,8 +695,10 @@ namespace ExtraRolesMod
                 foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
                 {
                     player.nameText.Color = Color.white;
-                    //player.SetColor(originalcolor);
                     player.MKIDFJAEBGH.color = Color.white;
+                    //once I find the color id object in PlayerControl, i'll set some sort of dictionary and update it with color id's for all players at the beginning of the game.
+                    //then, i'll set it back to default here so I can modify it for the shielded player.
+                    //player.SetColor(originalcolor);
                 }
 
                 if (FFGALNAPKCD.LocalPlayer.NDGFFHMFGIG.DAPKNDBLKIA)
@@ -698,6 +709,9 @@ namespace ExtraRolesMod
                 {
                     if (MedicSettings.Protected == FFGALNAPKCD.LocalPlayer || MedicSettings.showProtected)
                     {
+                        MedicSettings.Protected.nameText.Color = MedicSettings.protectedColor;
+                        //this changes the player color and visor color. it's a cool effect to make it obvious a player is shielded.
+                        //once again, I have to save the original color id and set it back once the shield is broken, though.
                         //MedicSettings.Protected.SetColor(7);
                         //MedicSettings.Protected.MKIDFJAEBGH.color = MedicSettings.protectedColor;
                     }
