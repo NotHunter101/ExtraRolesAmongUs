@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\teamt\\source\\repos\\AmongUsRoles\\AmongUsRoles\\AmongUsRoles.csproj": {}
+    "C:\\Users\\teamt\\Documents\\GitHub\\Extra-Among-Us-Roles-Mod\\AmongUsRoles.csproj": {}
   },
   "projects": {
-    "C:\\Users\\teamt\\source\\repos\\AmongUsRoles\\AmongUsRoles\\AmongUsRoles.csproj": {
+    "C:\\Users\\teamt\\Documents\\GitHub\\Extra-Among-Us-Roles-Mod\\AmongUsRoles.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\teamt\\source\\repos\\AmongUsRoles\\AmongUsRoles\\AmongUsRoles.csproj",
+        "projectUniqueName": "C:\\Users\\teamt\\Documents\\GitHub\\Extra-Among-Us-Roles-Mod\\AmongUsRoles.csproj",
         "projectName": "AmongUsRoles",
-        "projectPath": "C:\\Users\\teamt\\source\\repos\\AmongUsRoles\\AmongUsRoles\\AmongUsRoles.csproj",
+        "projectPath": "C:\\Users\\teamt\\Documents\\GitHub\\Extra-Among-Us-Roles-Mod\\AmongUsRoles.csproj",
         "packagesPath": "C:\\Users\\teamt\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\teamt\\source\\repos\\AmongUsRoles\\AmongUsRoles\\obj\\",
+        "outputPath": "C:\\Users\\teamt\\Documents\\GitHub\\Extra-Among-Us-Roles-Mod\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\teamt\\AppData\\Roaming\\NuGet\\NuGet.Config",
