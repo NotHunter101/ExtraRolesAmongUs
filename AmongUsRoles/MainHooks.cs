@@ -453,20 +453,23 @@ namespace ExtraRolesMod
                         {
                             Console.WriteLine("Joker won!");
                             var exiledId = ALMCIJKELCP.ReadByte();
-                            if (exiledId == JokerSettings.Joker.PlayerId)
+                            if (JokerSettings.Joker != null)
                             {
-                                foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                                if (exiledId == JokerSettings.Joker.PlayerId)
                                 {
-                                    if (player != JokerSettings.Joker)
+                                    foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
                                     {
-                                        player.RemoveInfected();
-                                        player.Die(DBLJKMDLJIF.Exile);
-                                        player.NDGFFHMFGIG.DLPCKPBIJOE = true;
-                                    }
-                                    else
-                                    {
-                                        player.Revive();
-                                        player.NDGFFHMFGIG.DAPKNDBLKIA = true;
+                                        if (player != JokerSettings.Joker)
+                                        {
+                                            player.RemoveInfected();
+                                            player.Die(DBLJKMDLJIF.Exile);
+                                            player.NDGFFHMFGIG.DLPCKPBIJOE = true;
+                                        }
+                                        else
+                                        {
+                                            player.Revive();
+                                            player.NDGFFHMFGIG.DAPKNDBLKIA = true;
+                                        }
                                     }
                                 }
                             }
