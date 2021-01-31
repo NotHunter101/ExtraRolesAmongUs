@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Version>1.0.0</Version>
+        <GameVersion>2020.12.9s</GameVersion>
+        <Mappings>NuclearPowered/Mappings:0.1.0-alpha.2</Mappings>
+
+        <Description>A Reactor mod that adds four new roles to the game.</Description>
+        <Authors>js6pak</Authors>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Deobfuscate Include="$(AmongUs)\BepInEx\plugins\Reactor-$(GameVersion).dll" />
+
+        <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.2.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Assembly-CSharp">
+        <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Among Us\BepInEx\unhollowed\Assembly-CSharp.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <Target Name="Copy" AfterTargets="Reobfuscate">
+        <Copy SourceFiles="$(OutputPath)reobfuscated/$(AssemblyName)-$(GameVersion).dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" Condition="'$(Configuration)' == 'Debug'" />
+    </Target>
+</Project>
