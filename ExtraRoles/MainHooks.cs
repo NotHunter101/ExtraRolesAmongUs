@@ -117,6 +117,29 @@ namespace ExtraRolesMod
     [HarmonyPatch]
     public static class MainHooks
     {
+        public static Texture2D rotateTexture(Color[] originalTexture, bool clockwise, int w, int h)
+        {
+            Color[] original = originalTexture;
+            Color[] rotated = new Color[original.Length];
+
+            int iRotated, iOriginal;
+
+            for (int j = 0; j < h; ++j)
+            {
+                for (int i = 0; i < w; ++i)
+                {
+                    iRotated = (i + 1) * h - j - 1;
+                    iOriginal = clockwise ? original.Length - 1 - (j * w + i) : j * w + i;
+                    rotated[iRotated] = original[iOriginal];
+                }
+            }
+
+            Texture2D rotatedTexture = new Texture2D(h, w, TextureFormat.ARGB32, true);
+            rotatedTexture.SetPixels(rotated);
+            rotatedTexture.Apply();
+            return rotatedTexture;
+        }
+
         public static SpriteRenderer indicatorRenderer;
         //list of all entries/exits of vents for each player and their times (used by VentPlayerExtension)
         public static IDictionary<byte, DateTime> allVentTimes = new Dictionary<byte, DateTime>() { };
@@ -371,49 +394,6 @@ namespace ExtraRolesMod
                 return false;
             }
             return true;
-        }
-
-        //catch the murder before it is ran
-        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
-        public static bool Prefix(PlayerControl __instance, PlayerControl CAKODNGLPDF)
-        {
-            if (MainHooks.OfficerSettings.Officer != null)
-            {
-                //check if the player is an officer
-                if (PlayerControl.LocalPlayer == MainHooks.OfficerSettings.Officer)
-                {
-                    MainHooks.OfficerSettings.firstKill = false;
-                    //if so, set them to impostor for one frame so they aren't banned for anti-cheat
-                    PlayerControl.LocalPlayer.Data.IsImpostor = true;
-                }
-            }
-            return true;
-        }
-
-        //handle the murder after it's ran
-        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
-        public static void Postfix(PlayerControl __instance, PlayerControl CAKODNGLPDF)
-        {
-            if (MainHooks.MedicSettings.Medic != null)
-            {
-                if (CAKODNGLPDF.PlayerId == MainHooks.MedicSettings.Medic.PlayerId)
-                {
-                    //medic was just killed for sure.
-                    MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MedicDead, Hazel.SendOption.None, -1);
-                    FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                    //simply set the protected player to null to break the shield
-                    MainHooks.MedicSettings.Protected = null;
-                }
-            }
-            if (MainHooks.OfficerSettings.Officer != null)
-            {
-                //check if killer is officer
-                if (PlayerControl.LocalPlayer == MainHooks.OfficerSettings.Officer)
-                {
-                    //finally, set them back to normal
-                    PlayerControl.LocalPlayer.Data.IsImpostor = false;
-                }
-            }
         }
 
         //function that handles all packets from other clients and server. if you need comments to understand this just ask and i'll write them
@@ -746,183 +726,10 @@ namespace ExtraRolesMod
             return true;
         }
 
-        //handle update. this will activate the buttons for the other roles. I can give you comments for this if it's required
-        [HarmonyPatch(typeof(HudManager), "Update")]
-        public static void Postfix(HudManager __instance)
-        {
-            //this is the only way I could reliably figure out if the game was started or just in the lobby.
-            var gameStarted = true;
-            try {
-                //this function throws an error in the lobby, so it gets caught and the main update code has it's condition set to false.
-                PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
-                DistLocalClosest = PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
-            }
-            catch {
-            //set the main update code's condition to false
-            gameStarted = false; }
-            if (gameStarted)
-            {
-                KillButton = __instance.KillButton;
-                PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
-                DistLocalClosest = PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
-                KBTarget = -1;
-                if (JokerSettings.Joker != null && JokerSettings.Joker.myTasks.Count > 0)
-                {
-                    while (JokerSettings.Joker.myTasks.Count > 0)
-                    {
-                        JokerSettings.Joker.RemoveTask(JokerSettings.Joker.myTasks[0]);
-                    }
-                }
-
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                {
-                    player.nameText.Color = Color.white;
-                }
-
-                if (PlayerControl.LocalPlayer.Data.IsImpostor)
-                {
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                    {
-                        if (player.Data.IsImpostor)
-                            player.nameText.Color = Color.red;
-                    }
-                }
-                if (MedicSettings.Medic != null)
-                {
-                    if (MedicSettings.Medic == PlayerControl.LocalPlayer || MedicSettings.showMedic)
-                    {
-                        MedicSettings.Medic.nameText.Color = MedicSettings.medicColor;
-                    }
-                }
-                if (OfficerSettings.Officer != null)
-                {
-                    if (OfficerSettings.Officer == PlayerControl.LocalPlayer || OfficerSettings.showOfficer)
-                    {
-                        OfficerSettings.Officer.nameText.Color = OfficerSettings.officerColor;
-                    }
-                }
-                if (EngineerSettings.Engineer != null)
-                {
-                    if (EngineerSettings.Engineer == PlayerControl.LocalPlayer || EngineerSettings.showEngineer)
-                    {
-                        EngineerSettings.Engineer.nameText.Color = EngineerSettings.engineerColor;
-                    }
-                }
-                if (JokerSettings.Joker != null)
-                {
-                    if (JokerSettings.Joker == PlayerControl.LocalPlayer || JokerSettings.showJoker)
-                    {
-                        JokerSettings.Joker.nameText.Color = JokerSettings.jokerColor;
-                    }
-                }
-                if (MedicSettings.Protected != null)
-                {
-                    if (MedicSettings.Protected == PlayerControl.LocalPlayer || MedicSettings.showProtected)
-                    {
-                        MedicSettings.Protected.nameText.Color = MedicSettings.protectedColor;
-                        //broken; doesn't set the colors properly
-                        //this changes the player color and visor color. it's a cool effect to make it obvious a player is shielded.
-                        //MedicSettings.Protected.SetColor(7);
-
-                        //SKINID: EGLJNOMOGNP.Instance.GetPlayerById(MedicSettings.Medic.PlayerId).AFEJLMBMKCJ
-                        //HATID: EGLJNOMOGNP.Instance.GetPlayerById(MedicSettings.Medic.PlayerId).AJIBCNMKNPM
-                        //TASKS: EGLJNOMOGNP.Instance.GetPlayerById(MedicSettings.Medic.PlayerId).CJOBIPKGGHC
-                    }
-                }
-
-                if (PlayerControl.LocalPlayer == MedicSettings.Medic)
-                {
-                    Texture2D tex = rotateTexture(CustomSpriteArr.shieldImgArr.Reverse().ToArray(), false, 106, 106);
-                    tex.Apply(false, false);
-                    if (tex != KillButton.renderer.sprite.texture)
-                    {
-                        KillButton.renderer.sprite = Sprite.Create(tex, new Rect(0, 0, 106, 106), Vector2.one / 2f);
-                    }
-                    KillButton.gameObject.SetActive(true);
-                    KillButton.isActive = true;
-                    KillButton.SetCoolDown(0f, PlayerControl.GameOptions.KillCooldown + 15.0f);
-                    if (DistLocalClosest < KMOGFLPJLLK.JMLGACIOLIK[PlayerControl.GameOptions.KillDistance] && MedicSettings.shieldUsed == false)
-                    {
-                        KillButton.SetTarget(PlayerTools.closestPlayer);
-                        KBTarget = PlayerTools.closestPlayer.PlayerId;
-                    }
-                }
-                if (PlayerControl.LocalPlayer == OfficerSettings.Officer)
-                {
-                    KillButton.gameObject.SetActive(true);
-                    KillButton.isActive = true;
-
-                    KillButton.SetCoolDown(PlayerTools.GetOfficerKD(), PlayerControl.GameOptions.KillCooldown + 15.0f);
-                    if (DistLocalClosest < KMOGFLPJLLK.JMLGACIOLIK[PlayerControl.GameOptions.KillDistance])
-                    {
-                        KillButton.SetTarget(PlayerTools.closestPlayer);
-                        KBTarget = PlayerTools.closestPlayer.PlayerId;
-                    }
-                }
-                if (PlayerControl.LocalPlayer == EngineerSettings.Engineer)
-                {
-                    Texture2D tex = rotateTexture(CustomSpriteArr.repairImgArr.Reverse().ToArray(), false, 106, 106);
-                    tex.Apply(false, false);
-                    if (tex != KillButton.renderer.sprite.texture)
-                    {
-                        KillButton.renderer.sprite = Sprite.Create(tex, new Rect(0, 0, 106, 106), Vector2.one / 2f);
-                    }
-                    KillButton.gameObject.SetActive(true);
-                    KillButton.isActive = true;
-                    KillButton.SetCoolDown(0f, PlayerControl.GameOptions.KillCooldown + 15.0f);
-                    var allTasks = PlayerControl.LocalPlayer.myTasks;
-                    if (allTasks.Count > 0)
-                    {
-                        var lastTaskType = allTasks.ToArray().Last().TaskType;
-                        var sabotageActive = false;
-                        if (lastTaskType == TaskTypes.FixLights || lastTaskType == TaskTypes.FixComms || lastTaskType == TaskTypes.ResetReactor || lastTaskType == TaskTypes.ResetSeismic || lastTaskType == TaskTypes.RestoreOxy)
-                        {
-                            sabotageActive = true;
-                        }
-                        if (EngineerSettings.repairUsed == false && sabotageActive)
-                        {
-                            KillButton.SetTarget(PlayerControl.LocalPlayer);
-                            KBTarget = -2;
-                        }
-                    }
-                }
-                if (PlayerControl.LocalPlayer.Data.IsDead)
-                {
-                    KillButton.gameObject.SetActive(false);
-                    KillButton.isActive = false;
-                }
-            }
-
-            //function to rotate textures
-            Texture2D rotateTexture(Color[] originalTexture, bool clockwise, int w, int h)
-            {
-                Color[] original = originalTexture;
-                Color[] rotated = new Color[original.Length];
-
-                int iRotated, iOriginal;
-
-                for (int j = 0; j < h; ++j)
-                {
-                    for (int i = 0; i < w; ++i)
-                    {
-                        iRotated = (i + 1) * h - j - 1;
-                        iOriginal = clockwise ? original.Length - 1 - (j * w + i) : j * w + i;
-                        rotated[iRotated] = original[iOriginal];
-                    }
-                }
-
-                Texture2D rotatedTexture = new Texture2D(h, w, TextureFormat.ARGB32, true);
-                rotatedTexture.SetPixels(rotated);
-                rotatedTexture.Apply();
-                return rotatedTexture;
-            }
-        }
-
         //the code that activates venting for engineers
-        [HarmonyPatch]
+        [HarmonyPatch(typeof(Vent), "CanUse")]
         public static class VentPatch
         {
-            [HarmonyPatch(typeof(Vent), "CanUse")]
             public static bool Prefix(Vent __instance, ref float __result, [HarmonyArgument(0)] GameData.PlayerInfo pc, [HarmonyArgument(1)] out bool canUse, [HarmonyArgument(2)] out bool couldUse)
             {
                 float num = float.MaxValue;
@@ -937,22 +744,223 @@ namespace ExtraRolesMod
                 __result = num;
                 return false;
             }
+        }
 
-            //handles a vent enter and sets it in the rate-limiter array
-            [HarmonyPatch(typeof(Vent), "Method_38")]
-            public static void Postfix(PlayerControl NMEAPOJFNKA)
+        [HarmonyPatch(typeof(Vent), "Method_38")]
+        public static class VentEnterPatch
+        {
+            public static void Prefix(PlayerControl NMEAPOJFNKA)
             {
                 ConsoleTools.Info("ENTER! " + NMEAPOJFNKA.name);
                 PlayerVentTimeExtension.SetLastVent(NMEAPOJFNKA.PlayerId);
             }
+        }
 
-            //handles a vent exit and sets it in the rate-limiter array
-            [HarmonyPatch(typeof(Vent), "Method_1")]
+        [HarmonyPatch(typeof(Vent), "Method_1")]
+        public static class VentExitPatch
+        {
             public static bool Prefix(PlayerControl NMEAPOJFNKA)
             {
                 ConsoleTools.Info("EXIT! " + NMEAPOJFNKA.name);
                 PlayerVentTimeExtension.SetLastVent(NMEAPOJFNKA.PlayerId);
                 return true;
+            }
+        }
+
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
+        public static class MurderPlayerPatch
+        {
+            public static bool Prefix(PlayerControl __instance, PlayerControl CAKODNGLPDF)
+            {
+                if (MainHooks.OfficerSettings.Officer != null)
+                {
+                    //check if the player is an officer
+                    if (PlayerControl.LocalPlayer == MainHooks.OfficerSettings.Officer)
+                    {
+                        MainHooks.OfficerSettings.firstKill = false;
+                        //if so, set them to impostor for one frame so they aren't banned for anti-cheat
+                        PlayerControl.LocalPlayer.Data.IsImpostor = true;
+                    }
+                }
+                return true;
+            }
+
+            //handle the murder after it's ran
+            public static void Postfix(PlayerControl __instance, PlayerControl CAKODNGLPDF)
+            {
+                if (MainHooks.MedicSettings.Medic != null)
+                {
+                    if (CAKODNGLPDF.PlayerId == MainHooks.MedicSettings.Medic.PlayerId)
+                    {
+                        //medic was just killed for sure.
+                        MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MedicDead, Hazel.SendOption.None, -1);
+                        FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                        //simply set the protected player to null to break the shield
+                        MainHooks.MedicSettings.Protected = null;
+                    }
+                }
+                if (MainHooks.OfficerSettings.Officer != null)
+                {
+                    //check if killer is officer
+                    if (PlayerControl.LocalPlayer == MainHooks.OfficerSettings.Officer)
+                    {
+                        //finally, set them back to normal
+                        PlayerControl.LocalPlayer.Data.IsImpostor = false;
+                    }
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
+        public static class UpdatePatch
+        {
+            public static void Postfix(HudManager __instance)
+            {
+                //this is the only way I could reliably figure out if the game was started or just in the lobby.
+                var gameStarted = true;
+                try
+                {
+                    //this function throws an error in the lobby, so it gets caught and the main update code has it's condition set to false.
+                    PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
+                    DistLocalClosest = PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
+                }
+                catch
+                {
+                    //set the main update code's condition to false
+                    gameStarted = false;
+                }
+                if (gameStarted)
+                {
+                    KillButton = __instance.KillButton;
+                    PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
+                    DistLocalClosest = PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
+                    KBTarget = -1;
+                    if (JokerSettings.Joker != null && JokerSettings.Joker.myTasks.Count > 0)
+                    {
+                        while (JokerSettings.Joker.myTasks.Count > 0)
+                        {
+                            JokerSettings.Joker.RemoveTask(JokerSettings.Joker.myTasks[0]);
+                        }
+                    }
+
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    {
+                        player.nameText.Color = Color.white;
+                    }
+
+                    if (PlayerControl.LocalPlayer.Data.IsImpostor)
+                    {
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                        {
+                            if (player.Data.IsImpostor)
+                                player.nameText.Color = Color.red;
+                        }
+                    }
+                    if (MedicSettings.Medic != null)
+                    {
+                        if (MedicSettings.Medic == PlayerControl.LocalPlayer || MedicSettings.showMedic)
+                        {
+                            MedicSettings.Medic.nameText.Color = MedicSettings.medicColor;
+                        }
+                    }
+                    if (OfficerSettings.Officer != null)
+                    {
+                        if (OfficerSettings.Officer == PlayerControl.LocalPlayer || OfficerSettings.showOfficer)
+                        {
+                            OfficerSettings.Officer.nameText.Color = OfficerSettings.officerColor;
+                        }
+                    }
+                    if (EngineerSettings.Engineer != null)
+                    {
+                        if (EngineerSettings.Engineer == PlayerControl.LocalPlayer || EngineerSettings.showEngineer)
+                        {
+                            EngineerSettings.Engineer.nameText.Color = EngineerSettings.engineerColor;
+                        }
+                    }
+                    if (JokerSettings.Joker != null)
+                    {
+                        if (JokerSettings.Joker == PlayerControl.LocalPlayer || JokerSettings.showJoker)
+                        {
+                            JokerSettings.Joker.nameText.Color = JokerSettings.jokerColor;
+                        }
+                    }
+                    if (MedicSettings.Protected != null)
+                    {
+                        if (MedicSettings.Protected == PlayerControl.LocalPlayer || MedicSettings.showProtected)
+                        {
+                            MedicSettings.Protected.nameText.Color = MedicSettings.protectedColor;
+                            //broken; doesn't set the colors properly
+                            //this changes the player color and visor color. it's a cool effect to make it obvious a player is shielded.
+                            //MedicSettings.Protected.SetColor(7);
+
+                            //SKINID: EGLJNOMOGNP.Instance.GetPlayerById(MedicSettings.Medic.PlayerId).AFEJLMBMKCJ
+                            //HATID: EGLJNOMOGNP.Instance.GetPlayerById(MedicSettings.Medic.PlayerId).AJIBCNMKNPM
+                            //TASKS: EGLJNOMOGNP.Instance.GetPlayerById(MedicSettings.Medic.PlayerId).CJOBIPKGGHC
+                        }
+                    }
+
+                    if (PlayerControl.LocalPlayer == MedicSettings.Medic)
+                    {
+                        Texture2D tex = rotateTexture(CustomSpriteArr.shieldImgArr.Reverse().ToArray(), false, 106, 106);
+                        tex.Apply(false, false);
+                        if (tex != KillButton.renderer.sprite.texture)
+                        {
+                            KillButton.renderer.sprite = Sprite.Create(tex, new Rect(0, 0, 106, 106), Vector2.one / 2f);
+                        }
+                        KillButton.gameObject.SetActive(true);
+                        KillButton.isActive = true;
+                        KillButton.SetCoolDown(0f, PlayerControl.GameOptions.KillCooldown + 15.0f);
+                        if (DistLocalClosest < KMOGFLPJLLK.JMLGACIOLIK[PlayerControl.GameOptions.KillDistance] && MedicSettings.shieldUsed == false)
+                        {
+                            KillButton.SetTarget(PlayerTools.closestPlayer);
+                            KBTarget = PlayerTools.closestPlayer.PlayerId;
+                        }
+                    }
+                    if (PlayerControl.LocalPlayer == OfficerSettings.Officer)
+                    {
+                        KillButton.gameObject.SetActive(true);
+                        KillButton.isActive = true;
+
+                        KillButton.SetCoolDown(PlayerTools.GetOfficerKD(), PlayerControl.GameOptions.KillCooldown + 15.0f);
+                        if (DistLocalClosest < KMOGFLPJLLK.JMLGACIOLIK[PlayerControl.GameOptions.KillDistance])
+                        {
+                            KillButton.SetTarget(PlayerTools.closestPlayer);
+                            KBTarget = PlayerTools.closestPlayer.PlayerId;
+                        }
+                    }
+                    if (PlayerControl.LocalPlayer == EngineerSettings.Engineer)
+                    {
+                        Texture2D tex = rotateTexture(CustomSpriteArr.repairImgArr.Reverse().ToArray(), false, 106, 106);
+                        tex.Apply(false, false);
+                        if (tex != KillButton.renderer.sprite.texture)
+                        {
+                            KillButton.renderer.sprite = Sprite.Create(tex, new Rect(0, 0, 106, 106), Vector2.one / 2f);
+                        }
+                        KillButton.gameObject.SetActive(true);
+                        KillButton.isActive = true;
+                        KillButton.SetCoolDown(0f, PlayerControl.GameOptions.KillCooldown + 15.0f);
+                        var allTasks = PlayerControl.LocalPlayer.myTasks;
+                        if (allTasks.Count > 0)
+                        {
+                            var lastTaskType = allTasks.ToArray().Last().TaskType;
+                            var sabotageActive = false;
+                            if (lastTaskType == TaskTypes.FixLights || lastTaskType == TaskTypes.FixComms || lastTaskType == TaskTypes.ResetReactor || lastTaskType == TaskTypes.ResetSeismic || lastTaskType == TaskTypes.RestoreOxy)
+                            {
+                                sabotageActive = true;
+                            }
+                            if (EngineerSettings.repairUsed == false && sabotageActive)
+                            {
+                                KillButton.SetTarget(PlayerControl.LocalPlayer);
+                                KBTarget = -2;
+                            }
+                        }
+                    }
+                    if (PlayerControl.LocalPlayer.Data.IsDead)
+                    {
+                        KillButton.gameObject.SetActive(false);
+                        KillButton.isActive = false;
+                    }
+                }
             }
         }
     }
