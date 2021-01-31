@@ -7,6 +7,22 @@ using System.Text;
 using System.Threading.Tasks;
 using UnhollowerBaseLib;
 using UnityEngine;
+using BepInEx;
+using BepInEx.Configuration;
+using BepInEx.IL2CPP;
+using BepInEx.IL2CPP.UnityEngine;
+using Il2CppDumper;
+using InnerNet;
+using Steamworks;
+using System.CodeDom;
+using System.ComponentModel;
+using System.Net;
+using System.Reflection;
+using UnityEngine.SceneManagement;
+using System.Runtime.InteropServices;
+using System.IO;
+using Reactor;
+using ExtraRolesMod;
 
 namespace ExtraRolesMod
 {
@@ -64,15 +80,15 @@ namespace ExtraRolesMod
     [HarmonyPatch]
     public static class PlayerTools
     {
-        public static FFGALNAPKCD closestPlayer = null;
+        public static PlayerControl closestPlayer = null;
         
-        public static List<FFGALNAPKCD> getCrewMates()
+        public static List<PlayerControl> getCrewMates()
         {
-            List<FFGALNAPKCD> CrewmateIds = new List<FFGALNAPKCD>();
-            foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+            List<PlayerControl> CrewmateIds = new List<PlayerControl>();
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
             {
                 bool isInfected = false;
-                if (player.NDGFFHMFGIG.DAPKNDBLKIA)
+                if (player.Data.IsImpostor)
                 {
                     isInfected = true;
                     break;
@@ -85,9 +101,9 @@ namespace ExtraRolesMod
             return CrewmateIds;
         }
 
-        public static FFGALNAPKCD getPlayerById(byte id)
+        public static PlayerControl getPlayerById(byte id)
         {
-            foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
             {
                 if (player.PlayerId == id)
                 {
@@ -114,13 +130,14 @@ namespace ExtraRolesMod
                 return (KillCoolDown - (float)diff.TotalMilliseconds) / 1000.0f;
             }
         }
-        public static FFGALNAPKCD getClosestPlayer(FFGALNAPKCD refplayer)
+
+        public static PlayerControl getClosestPlayer(PlayerControl refplayer)
         {
             double mindist = double.MaxValue;
-            FFGALNAPKCD closestplayer = null;
-            foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+            PlayerControl closestplayer = null;
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
             {
-                if (player.NDGFFHMFGIG.DLPCKPBIJOE) continue;
+                if (player.Data.IsDead) continue;
                 if (player != refplayer)
                 {
 
@@ -137,7 +154,7 @@ namespace ExtraRolesMod
             return closestplayer;
         }
 
-        public static double getDistBetweenPlayers(FFGALNAPKCD player, FFGALNAPKCD refplayer)
+        public static double getDistBetweenPlayers(PlayerControl player, PlayerControl refplayer)
         {
             var refpos = refplayer.GetTruePosition();
             var playerpos = player.GetTruePosition();

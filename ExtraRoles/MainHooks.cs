@@ -12,6 +12,19 @@ using System.Text;
 using System.Threading.Tasks;
 using UnhollowerBaseLib;
 using UnityEngine;
+using BepInEx;
+using BepInEx.Configuration;
+using BepInEx.IL2CPP;
+using BepInEx.IL2CPP.UnityEngine;
+using Il2CppDumper;
+using InnerNet;
+using Steamworks;
+using System.CodeDom;
+using System.Net;
+using UnityEngine.SceneManagement;
+using System.Runtime.InteropServices;
+using Reactor;
+using ExtraRolesMod;
 
 /*
 Hex colors for extra roles
@@ -58,8 +71,8 @@ namespace ExtraRolesMod
     public class BodyReport
     {
         public byte DeathReason { get; set; }
-        public FFGALNAPKCD Killer { get; set; }
-        public FFGALNAPKCD Reporter { get; set; }
+        public PlayerControl Killer { get; set; }
+        public PlayerControl Reporter { get; set; }
         public float KillAge { get; set; }
 
         public static string ParseBodyReport(BodyReport br)
@@ -95,11 +108,12 @@ namespace ExtraRolesMod
                     {10, "lighter"},
                     {11, "lighter"},
                 };
-                var typeOfColor = colors[EGLJNOMOGNP.Instance.GetPlayerById(FFGALNAPKCD.LocalPlayer.PlayerId).EHAHBDFODKC];
+                var typeOfColor = colors[br.Killer.Data.ColorId];
                 return $"Body Report: The murder appears to be a {typeOfColor} color. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
         }
     }
+
     [HarmonyPatch]
     public static class MainHooks
     {
@@ -143,7 +157,7 @@ namespace ExtraRolesMod
         //global rng
         public static System.Random rng = new System.Random();
         //the kill button in the bottom right
-        public static MLPJGKEACMM KillButton;
+        public static KillButtonManager KillButton;
         //the id of the targeted player
         public static int KBTarget;
         //distance between the local player and closest player
@@ -155,8 +169,8 @@ namespace ExtraRolesMod
         //medic settings and values
         public static class MedicSettings
         {
-            public static FFGALNAPKCD Medic;
-            public static FFGALNAPKCD Protected;
+            public static PlayerControl Medic;
+            public static PlayerControl Protected;
             public static bool shieldUsed = false;
 
             public static int medicKillerNameDuration = 0;
@@ -186,7 +200,7 @@ namespace ExtraRolesMod
         //officer settings and values
         public static class OfficerSettings
         {
-            public static FFGALNAPKCD Officer;
+            public static PlayerControl Officer;
 
             public static float OfficerCD = 10f;
             public static bool showOfficer = false;
@@ -208,7 +222,7 @@ namespace ExtraRolesMod
         //engineer settings and values
         public static class EngineerSettings
         {
-            public static FFGALNAPKCD Engineer;
+            public static PlayerControl Engineer;
             public static bool repairUsed = false;
 
             public static bool showEngineer = false;
@@ -229,7 +243,7 @@ namespace ExtraRolesMod
         //joker settings and values
         public static class JokerSettings
         {
-            public static FFGALNAPKCD Joker;
+            public static PlayerControl Joker;
             public static bool showJoker = false;
             public static bool jokerCanDieToOfficer = false;
             public static Color jokerColor = new Color(138f / 255f, 138f / 255f, 138f / 255f, 1);
@@ -245,6 +259,7 @@ namespace ExtraRolesMod
                 jokerCanDieToOfficer = byteBool[configSettings["Joker Can Die To Officer"]];
             }
         }
+
         //function called on start of game. write version text on menu
         [HarmonyPatch(typeof(BOCOFLHKCOJ), "Start")]
         public static void Postfix(BOCOFLHKCOJ __instance)
@@ -265,17 +280,17 @@ namespace ExtraRolesMod
             EngineerSettings.SetConfigSettings();
             JokerSettings.SetConfigSettings();
 
-            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.None, -1);
+            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.None, -1);
             ConsoleTools.Info(String.Join(",", configSettings.Values));
             writer.WriteBytesAndSize(configSettings.Values.ToArray<byte>());
             FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
 
-            List<FFGALNAPKCD> crewmates = FFGALNAPKCD.AllPlayerControls.ToArray().ToList();
-            crewmates.RemoveAll(x => x.NDGFFHMFGIG.DAPKNDBLKIA);
+            List<PlayerControl> crewmates = PlayerControl.AllPlayerControls.ToArray().ToList();
+            crewmates.RemoveAll(x => x.Data.IsImpostor);
 
             if (crewmates.Count > 0)
             {
-                writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.SetMedic, Hazel.SendOption.None, -1);
+                writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetMedic, Hazel.SendOption.None, -1);
                 var MedicRandom = rng.Next(0, crewmates.Count);
                 MedicSettings.Medic = crewmates[MedicRandom]; //.Where(x => x.name == "Medic").ToArray()[0];
                 crewmates.RemoveAt(MedicRandom);
@@ -287,7 +302,7 @@ namespace ExtraRolesMod
 
             if (crewmates.Count > 0)
             {
-                writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.SetOfficer, Hazel.SendOption.None, -1);
+                writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetOfficer, Hazel.SendOption.None, -1);
 
                 var OfficerRandom = rng.Next(0, crewmates.Count);
                 OfficerSettings.Officer = crewmates[OfficerRandom]; //.Where(x => x.name == "Officer").ToArray()[0];
@@ -300,7 +315,7 @@ namespace ExtraRolesMod
 
             if (crewmates.Count > 0)
             {
-                writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.SetEngineer, Hazel.SendOption.None, -1);
+                writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetEngineer, Hazel.SendOption.None, -1);
                 var EngineerRandom = rng.Next(0, crewmates.Count);
                 EngineerSettings.Engineer = crewmates[EngineerRandom]; //.Where(x => x.name == "Engineer").ToArray()[0];
                 crewmates.RemoveAt(EngineerRandom);
@@ -312,7 +327,7 @@ namespace ExtraRolesMod
 
             if (crewmates.Count > 0)
             {
-                writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.SetJoker, Hazel.SendOption.None, -1);
+                writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetJoker, Hazel.SendOption.None, -1);
                 var JokerRandom = rng.Next(0, crewmates.Count);
                 ConsoleTools.Info(JokerRandom.ToString());
                 JokerSettings.Joker = crewmates[JokerRandom]; //.Where(x => x.name == "Joker").ToArray()[0];
@@ -334,7 +349,7 @@ namespace ExtraRolesMod
             {
                 var infected = new byte[] { 0, 0 };
 
-                foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                 {
                     if (player.name == "Impostor")
                     {
@@ -346,18 +361,59 @@ namespace ExtraRolesMod
                     }
                 }
 
-                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)RPC.SetInfected, Hazel.SendOption.None, -1);
+                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)RPC.SetInfected, Hazel.SendOption.None, -1);
                 writer.WritePacked((uint)2);
                 writer.WriteBytesAndSize(infected);
                 FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
 
-                FFGALNAPKCD.LocalPlayer.OJPCECLPCCF(infected);
-                FFGALNAPKCD.LocalPlayer.HAAGONNLDOH(infected);
-                FFGALNAPKCD.LocalPlayer.JGBHNKMJFHA(infected);
+                PlayerControl.LocalPlayer.SetInfected(infected);
 
                 return false;
             }
             return true;
+        }
+
+        //catch the murder before it is ran
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
+        public static bool Prefix(PlayerControl __instance, PlayerControl CAKODNGLPDF)
+        {
+            if (MainHooks.OfficerSettings.Officer != null)
+            {
+                //check if the player is an officer
+                if (PlayerControl.LocalPlayer == MainHooks.OfficerSettings.Officer)
+                {
+                    MainHooks.OfficerSettings.firstKill = false;
+                    //if so, set them to impostor for one frame so they aren't banned for anti-cheat
+                    PlayerControl.LocalPlayer.Data.IsImpostor = true;
+                }
+            }
+            return true;
+        }
+
+        //handle the murder after it's ran
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
+        public static void Postfix(PlayerControl __instance, PlayerControl CAKODNGLPDF)
+        {
+            if (MainHooks.MedicSettings.Medic != null)
+            {
+                if (CAKODNGLPDF.PlayerId == MainHooks.MedicSettings.Medic.PlayerId)
+                {
+                    //medic was just killed for sure.
+                    MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MedicDead, Hazel.SendOption.None, -1);
+                    FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                    //simply set the protected player to null to break the shield
+                    MainHooks.MedicSettings.Protected = null;
+                }
+            }
+            if (MainHooks.OfficerSettings.Officer != null)
+            {
+                //check if killer is officer
+                if (PlayerControl.LocalPlayer == MainHooks.OfficerSettings.Officer)
+                {
+                    //finally, set them back to normal
+                    PlayerControl.LocalPlayer.Data.IsImpostor = false;
+                }
+            }
         }
 
         //function that handles all packets from other clients and server. if you need comments to understand this just ask and i'll write them
@@ -395,7 +451,7 @@ namespace ExtraRolesMod
                     {
                         ConsoleTools.Info("Medic Set Through RPC!");
                         byte MedicId = ALMCIJKELCP.ReadByte();
-                        foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                         {
                             if (player.PlayerId == MedicId)
                             {
@@ -407,7 +463,7 @@ namespace ExtraRolesMod
                 case (byte)CustomRPC.SetProtected:
                     {
                         byte ProtectedId = ALMCIJKELCP.ReadByte();
-                        foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                         {
                             if (player.PlayerId == ProtectedId)
                             {
@@ -419,14 +475,14 @@ namespace ExtraRolesMod
                 case (byte)CustomRPC.MedicDead:
                     {
                         MedicSettings.Protected = null;
-                        //COLORID: EGLJNOMOGNP.Instance.GetPlayerById(FFGALNAPKCD.LocalPlayer.PlayerId).EHAHBDFODKC
+                        //COLORID: EGLJNOMOGNP.Instance.GetPlayerById(PlayerControl.LocalPlayer.PlayerId).EHAHBDFODKC
                         break;
                     }
                 case (byte)CustomRPC.SetOfficer:
                     {
                         ConsoleTools.Info("Officer Set Through RPC!");
                         byte OfficerId = ALMCIJKELCP.ReadByte();
-                        foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                         {
                             if (player.PlayerId == OfficerId)
                             {
@@ -437,8 +493,8 @@ namespace ExtraRolesMod
                     }
                 case (byte)CustomRPC.OfficerKill:
                     {
-                        FFGALNAPKCD killer = PlayerTools.getPlayerById(ALMCIJKELCP.ReadByte());
-                        FFGALNAPKCD target = PlayerTools.getPlayerById(ALMCIJKELCP.ReadByte());
+                        PlayerControl killer = PlayerTools.getPlayerById(ALMCIJKELCP.ReadByte());
+                        PlayerControl target = PlayerTools.getPlayerById(ALMCIJKELCP.ReadByte());
                         killer.MurderPlayer(target);
                         break;
                     }
@@ -446,7 +502,7 @@ namespace ExtraRolesMod
                     {
                         ConsoleTools.Info("Engineer Set Through RPC!");
                         byte EngineerId = ALMCIJKELCP.ReadByte();
-                        foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                         {
                             if (player.PlayerId == EngineerId)
                             {
@@ -459,7 +515,7 @@ namespace ExtraRolesMod
                     {
                         ConsoleTools.Info("Joker Set Through RPC!");
                         byte JokerId = ALMCIJKELCP.ReadByte();
-                        foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                         {
                             if (player.PlayerId == JokerId)
                             {
@@ -477,7 +533,7 @@ namespace ExtraRolesMod
                         float killAge = ALMCIJKELCP.ReadSingle();
                         if (reporterId == MedicSettings.Medic.PlayerId)
                         {
-                            if (MedicSettings.Medic.PlayerId == FFGALNAPKCD.LocalPlayer.PlayerId)
+                            if (MedicSettings.Medic.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                             {
                                 BodyReport br = new BodyReport();
                                 br.Killer = PlayerTools.getPlayerById(killerId);
@@ -486,7 +542,7 @@ namespace ExtraRolesMod
                                 br.DeathReason = deathReason;
                                 var reportMsg = BodyReport.ParseBodyReport(br);
 
-                                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.SendMeAMessage, Hazel.SendOption.None, -1);
+                                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SendMeAMessage, Hazel.SendOption.None, -1);
                                 writer.Write(reportMsg);
                                 FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
                             }
@@ -502,18 +558,18 @@ namespace ExtraRolesMod
                         {
                             if (exiledId == JokerSettings.Joker.PlayerId)
                             {
-                                foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                                 {
                                     if (player != JokerSettings.Joker)
                                     {
                                         player.RemoveInfected();
-                                        player.Die(DBLJKMDLJIF.Exile);
-                                        player.NDGFFHMFGIG.DLPCKPBIJOE = true;
+                                        player.Die(DeathReason.Exile);
+                                        player.Data.IsDead = true;
                                     }
                                     else
                                     {
                                         player.Revive();
-                                        player.NDGFFHMFGIG.DAPKNDBLKIA = true;
+                                        player.Data.IsImpostor = true;
                                     }
                                 }
                             }
@@ -533,28 +589,28 @@ namespace ExtraRolesMod
         public static void Postfix(PENEIDJGGAF.CKACLKCOJFO __instance)
         {
             //change the name and titles accordingly
-            if (FFGALNAPKCD.LocalPlayer == MedicSettings.Medic)
+            if (PlayerControl.LocalPlayer == MedicSettings.Medic)
             {
                 __instance.__this.Title.Text = "Medic";
                 __instance.__this.Title.Color = MedicSettings.medicColor;
                 __instance.__this.ImpostorText.Text = "Create a shield to protect a [8DFFFF]Crewmate";
                 __instance.__this.BackgroundBar.material.color = MedicSettings.medicColor;
             }
-            if (FFGALNAPKCD.LocalPlayer == OfficerSettings.Officer)
+            if (PlayerControl.LocalPlayer == OfficerSettings.Officer)
             {
                 __instance.__this.Title.Text = "Officer";
                 __instance.__this.Title.Color = OfficerSettings.officerColor;
                 __instance.__this.ImpostorText.Text = "Shoot the [FF0000FF]Impostor";
                 __instance.__this.BackgroundBar.material.color = OfficerSettings.officerColor;
             }
-            if (FFGALNAPKCD.LocalPlayer == EngineerSettings.Engineer)
+            if (PlayerControl.LocalPlayer == EngineerSettings.Engineer)
             {
                 __instance.__this.Title.Text = "Engineer";
                 __instance.__this.Title.Color = EngineerSettings.engineerColor;
                 __instance.__this.ImpostorText.Text = "Maintain important systems on the ship";
                 __instance.__this.BackgroundBar.material.color = EngineerSettings.engineerColor;
             }
-            if (FFGALNAPKCD.LocalPlayer == JokerSettings.Joker)
+            if (PlayerControl.LocalPlayer == JokerSettings.Joker)
             {
                 __instance.__this.Title.Text = "Joker";
                 __instance.__this.Title.Color = JokerSettings.jokerColor;
@@ -566,7 +622,7 @@ namespace ExtraRolesMod
         [HarmonyPatch(typeof(PENEIDJGGAF.CKACLKCOJFO), "MoveNext")]
         public static bool Prefix(PENEIDJGGAF.CKACLKCOJFO __instance)
         {
-            if (FFGALNAPKCD.LocalPlayer == JokerSettings.Joker)
+            if (PlayerControl.LocalPlayer == JokerSettings.Joker)
             {
                 var jokerTeam = new Il2CppSystem.Collections.Generic.List<FFGALNAPKCD>();
                 jokerTeam.Add(FFGALNAPKCD.LocalPlayer);
@@ -579,10 +635,10 @@ namespace ExtraRolesMod
         [HarmonyPatch(typeof(MLPJGKEACMM), "PerformKill")]
         static bool Prefix(MethodBase __originalMethod)
         {
-            if (FFGALNAPKCD.LocalPlayer.NDGFFHMFGIG.DLPCKPBIJOE)
-                return false; 
+            if (PlayerControl.LocalPlayer.Data.IsDead)
+                return false;
             //code that handles the ability button presses
-            if (FFGALNAPKCD.LocalPlayer == OfficerSettings.Officer)
+            if (PlayerControl.LocalPlayer == OfficerSettings.Officer)
             {
                 ConsoleTools.Info("Player is Officer.");
                 ConsoleTools.Info(KBTarget.ToString());
@@ -597,11 +653,11 @@ namespace ExtraRolesMod
                         {
                             ConsoleTools.Info("The target is Protected.");
                             //officer suicide packet
-                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
-                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                            writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                            writer.Write(PlayerControl.LocalPlayer.PlayerId);
                             FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                            FFGALNAPKCD.LocalPlayer.MurderPlayer(FFGALNAPKCD.LocalPlayer);
+                            PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer);
                             OfficerSettings.lastKilled = DateTime.UtcNow;
                             return false;
                         }
@@ -610,23 +666,23 @@ namespace ExtraRolesMod
                         {
                             ConsoleTools.Info("The target is an Joker. (jokerCanDieToOfficer = 1)");
                             //officer joker murder packet
-                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                            writer.Write(PlayerControl.LocalPlayer.PlayerId);
                             writer.Write(target.PlayerId);
                             FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                            FFGALNAPKCD.LocalPlayer.MurderPlayer(target);
+                            PlayerControl.LocalPlayer.MurderPlayer(target);
                             OfficerSettings.lastKilled = DateTime.UtcNow;
                         }
                         //check if they're an impostor
-                        else if (target.NDGFFHMFGIG.DAPKNDBLKIA)
+                        else if (target.Data.IsImpostor)
                         {
                             ConsoleTools.Info("The target is an Impostor.");
                             //officer impostor murder packet
-                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                            writer.Write(PlayerControl.LocalPlayer.PlayerId);
                             writer.Write(target.PlayerId);
                             FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                            FFGALNAPKCD.LocalPlayer.MurderPlayer(target);
+                            PlayerControl.LocalPlayer.MurderPlayer(target);
                             OfficerSettings.lastKilled = DateTime.UtcNow;
                             return false;
                         }
@@ -635,11 +691,11 @@ namespace ExtraRolesMod
                         {
                             ConsoleTools.Info("The target is Innocent.");
                             //officer suicide packet
-                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
-                            writer.Write(FFGALNAPKCD.LocalPlayer.PlayerId);
+                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                            writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                            writer.Write(PlayerControl.LocalPlayer.PlayerId);
                             FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                            FFGALNAPKCD.LocalPlayer.MurderPlayer(FFGALNAPKCD.LocalPlayer);
+                            PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer);
                             OfficerSettings.lastKilled = DateTime.UtcNow;
                             return false;
                         }
@@ -649,14 +705,14 @@ namespace ExtraRolesMod
                 }
             }
             //check if they're medic
-            else if (FFGALNAPKCD.LocalPlayer == MedicSettings.Medic)
+            else if (PlayerControl.LocalPlayer == MedicSettings.Medic)
             {
                 //if the target is defined
                 if (KBTarget != -1 && KBTarget != -2)
                 {
                     ConsoleTools.Info("Medic Creating Shield");
                     //create a shield for the targeted player
-                    MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.SetProtected, Hazel.SendOption.None, -1);
+                    MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetProtected, Hazel.SendOption.None, -1);
                     MedicSettings.Protected = PlayerTools.closestPlayer;
                     MedicSettings.shieldUsed = true;
                     byte ProtectedId = MedicSettings.Protected.PlayerId;
@@ -667,13 +723,13 @@ namespace ExtraRolesMod
                 return false;
             }
             //check if they're engineer
-            else if (FFGALNAPKCD.LocalPlayer == EngineerSettings.Engineer)
+            else if (PlayerControl.LocalPlayer == EngineerSettings.Engineer)
             {
                 //INFO
                 //this code is finished, but not implemented yet. It was working in a previous version, but I rewrote this whole section because of bugs
                 if (KBTarget == -2 && EngineerSettings.repairUsed == false)
                 {
-                    MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.RepairAllEmergencies, Hazel.SendOption.None, -1);
+                    MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RepairAllEmergencies, Hazel.SendOption.None, -1);
                     FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
                     EngineerSettings.repairUsed = true;
                     return false;
@@ -690,59 +746,16 @@ namespace ExtraRolesMod
             return true;
         }
 
-        //catch the murder before it is ran
-        [HarmonyPatch(typeof(FFGALNAPKCD), "MurderPlayer")]
-        public static bool Prefix(FFGALNAPKCD __instance, FFGALNAPKCD CAKODNGLPDF)
-        {
-            if (OfficerSettings.Officer != null)
-            {
-                //check if the player is an officer
-                if (__instance == OfficerSettings.Officer)
-                {
-                    OfficerSettings.firstKill = false;
-                    //if so, set them to impostor for one frame so they aren't banned for anti-cheat
-                    __instance.NDGFFHMFGIG.DAPKNDBLKIA = true;
-                }
-            }
-            return true;
-        }
-
-        //handle the murder after it's ran
-        [HarmonyPatch(typeof(FFGALNAPKCD), "MurderPlayer")]
-        public static void Postfix(FFGALNAPKCD __instance, FFGALNAPKCD CAKODNGLPDF)
-        {
-            if (MedicSettings.Medic != null)
-            {
-                if (CAKODNGLPDF.PlayerId == MedicSettings.Medic.PlayerId)
-                {
-                    //medic was just killed for sure.
-                    MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.MedicDead, Hazel.SendOption.None, -1);
-                    FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                    //simply set the protected player to null to break the shield
-                    MedicSettings.Protected = null;
-                }
-            }
-            if (OfficerSettings.Officer != null)
-            {
-                //check if killer is officer
-                if (__instance == OfficerSettings.Officer)
-                {
-                    //finally, set them back to normal
-                    __instance.NDGFFHMFGIG.DAPKNDBLKIA = false;
-                }
-            }
-        }
-
         //handle update. this will activate the buttons for the other roles. I can give you comments for this if it's required
-        [HarmonyPatch(typeof(PIEFJFEOGOL), "Update")]
-        public static void Postfix(PIEFJFEOGOL __instance)
+        [HarmonyPatch(typeof(HudManager), "Update")]
+        public static void Postfix(HudManager __instance)
         {
             //this is the only way I could reliably figure out if the game was started or just in the lobby.
             var gameStarted = true;
             try {
                 //this function throws an error in the lobby, so it gets caught and the main update code has it's condition set to false.
-                PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(FFGALNAPKCD.LocalPlayer);
-                DistLocalClosest = PlayerTools.getDistBetweenPlayers(FFGALNAPKCD.LocalPlayer, PlayerTools.closestPlayer);
+                PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
+                DistLocalClosest = PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
             }
             catch {
             //set the main update code's condition to false
@@ -750,8 +763,8 @@ namespace ExtraRolesMod
             if (gameStarted)
             {
                 KillButton = __instance.KillButton;
-                PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(FFGALNAPKCD.LocalPlayer);
-                DistLocalClosest = PlayerTools.getDistBetweenPlayers(FFGALNAPKCD.LocalPlayer, PlayerTools.closestPlayer);
+                PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
+                DistLocalClosest = PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
                 KBTarget = -1;
                 if (JokerSettings.Joker != null && JokerSettings.Joker.myTasks.Count > 0)
                 {
@@ -761,50 +774,50 @@ namespace ExtraRolesMod
                     }
                 }
 
-                foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                 {
                     player.nameText.Color = Color.white;
                 }
 
-                if (FFGALNAPKCD.LocalPlayer.NDGFFHMFGIG.DAPKNDBLKIA)
+                if (PlayerControl.LocalPlayer.Data.IsImpostor)
                 {
-                    foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                     {
-                        if (player.NDGFFHMFGIG.DAPKNDBLKIA)
+                        if (player.Data.IsImpostor)
                             player.nameText.Color = Color.red;
                     }
                 }
                 if (MedicSettings.Medic != null)
                 {
-                    if (MedicSettings.Medic == FFGALNAPKCD.LocalPlayer || MedicSettings.showMedic)
+                    if (MedicSettings.Medic == PlayerControl.LocalPlayer || MedicSettings.showMedic)
                     {
                         MedicSettings.Medic.nameText.Color = MedicSettings.medicColor;
                     }
                 }
                 if (OfficerSettings.Officer != null)
                 {
-                    if (OfficerSettings.Officer == FFGALNAPKCD.LocalPlayer || OfficerSettings.showOfficer)
+                    if (OfficerSettings.Officer == PlayerControl.LocalPlayer || OfficerSettings.showOfficer)
                     {
                         OfficerSettings.Officer.nameText.Color = OfficerSettings.officerColor;
                     }
                 }
                 if (EngineerSettings.Engineer != null)
                 {
-                    if (EngineerSettings.Engineer == FFGALNAPKCD.LocalPlayer || EngineerSettings.showEngineer)
+                    if (EngineerSettings.Engineer == PlayerControl.LocalPlayer || EngineerSettings.showEngineer)
                     {
                         EngineerSettings.Engineer.nameText.Color = EngineerSettings.engineerColor;
                     }
                 }
                 if (JokerSettings.Joker != null)
                 {
-                    if (JokerSettings.Joker == FFGALNAPKCD.LocalPlayer || JokerSettings.showJoker)
+                    if (JokerSettings.Joker == PlayerControl.LocalPlayer || JokerSettings.showJoker)
                     {
                         JokerSettings.Joker.nameText.Color = JokerSettings.jokerColor;
                     }
                 }
                 if (MedicSettings.Protected != null)
                 {
-                    if (MedicSettings.Protected == FFGALNAPKCD.LocalPlayer || MedicSettings.showProtected)
+                    if (MedicSettings.Protected == PlayerControl.LocalPlayer || MedicSettings.showProtected)
                     {
                         MedicSettings.Protected.nameText.Color = MedicSettings.protectedColor;
                         //broken; doesn't set the colors properly
@@ -817,7 +830,7 @@ namespace ExtraRolesMod
                     }
                 }
 
-                if (FFGALNAPKCD.LocalPlayer == MedicSettings.Medic)
+                if (PlayerControl.LocalPlayer == MedicSettings.Medic)
                 {
                     Texture2D tex = rotateTexture(CustomSpriteArr.shieldImgArr.Reverse().ToArray(), false, 106, 106);
                     tex.Apply(false, false);
@@ -827,26 +840,26 @@ namespace ExtraRolesMod
                     }
                     KillButton.gameObject.SetActive(true);
                     KillButton.isActive = true;
-                    KillButton.SetCoolDown(0f, FFGALNAPKCD.GameOptions.IGHCIKIDAMO + 15.0f);
-                    if (DistLocalClosest < KMOGFLPJLLK.JMLGACIOLIK[FFGALNAPKCD.GameOptions.DLIBONBKPKL] && MedicSettings.shieldUsed == false)
+                    KillButton.SetCoolDown(0f, PlayerControl.GameOptions.KillCooldown + 15.0f);
+                    if (DistLocalClosest < KMOGFLPJLLK.JMLGACIOLIK[PlayerControl.GameOptions.KillDistance] && MedicSettings.shieldUsed == false)
                     {
                         KillButton.SetTarget(PlayerTools.closestPlayer);
                         KBTarget = PlayerTools.closestPlayer.PlayerId;
                     }
                 }
-                if (FFGALNAPKCD.LocalPlayer == OfficerSettings.Officer)
+                if (PlayerControl.LocalPlayer == OfficerSettings.Officer)
                 {
                     KillButton.gameObject.SetActive(true);
                     KillButton.isActive = true;
 
-                    KillButton.SetCoolDown(PlayerTools.GetOfficerKD(), FFGALNAPKCD.GameOptions.IGHCIKIDAMO + 15.0f);
-                    if (DistLocalClosest < KMOGFLPJLLK.JMLGACIOLIK[FFGALNAPKCD.GameOptions.DLIBONBKPKL])
+                    KillButton.SetCoolDown(PlayerTools.GetOfficerKD(), PlayerControl.GameOptions.KillCooldown + 15.0f);
+                    if (DistLocalClosest < KMOGFLPJLLK.JMLGACIOLIK[PlayerControl.GameOptions.KillDistance])
                     {
                         KillButton.SetTarget(PlayerTools.closestPlayer);
                         KBTarget = PlayerTools.closestPlayer.PlayerId;
                     }
                 }
-                if (FFGALNAPKCD.LocalPlayer == EngineerSettings.Engineer)
+                if (PlayerControl.LocalPlayer == EngineerSettings.Engineer)
                 {
                     Texture2D tex = rotateTexture(CustomSpriteArr.repairImgArr.Reverse().ToArray(), false, 106, 106);
                     tex.Apply(false, false);
@@ -856,24 +869,24 @@ namespace ExtraRolesMod
                     }
                     KillButton.gameObject.SetActive(true);
                     KillButton.isActive = true;
-                    KillButton.SetCoolDown(0f, FFGALNAPKCD.GameOptions.IGHCIKIDAMO + 15.0f);
-                    var allTasks = FFGALNAPKCD.LocalPlayer.myTasks;
+                    KillButton.SetCoolDown(0f, PlayerControl.GameOptions.KillCooldown + 15.0f);
+                    var allTasks = PlayerControl.LocalPlayer.myTasks;
                     if (allTasks.Count > 0)
                     {
                         var lastTaskType = allTasks.ToArray().Last().TaskType;
                         var sabotageActive = false;
-                        if (lastTaskType == BOOMIBKNGPP.FixLights || lastTaskType == BOOMIBKNGPP.FixComms || lastTaskType == BOOMIBKNGPP.ResetReactor || lastTaskType == BOOMIBKNGPP.ResetSeismic || lastTaskType == BOOMIBKNGPP.RestoreOxy || lastTaskType == BOOMIBKNGPP.RebootWifi)
+                        if (lastTaskType == TaskTypes.FixLights || lastTaskType == TaskTypes.FixComms || lastTaskType == TaskTypes.ResetReactor || lastTaskType == TaskTypes.ResetSeismic || lastTaskType == TaskTypes.RestoreOxy)
                         {
                             sabotageActive = true;
                         }
                         if (EngineerSettings.repairUsed == false && sabotageActive)
                         {
-                            KillButton.SetTarget(FFGALNAPKCD.LocalPlayer);
+                            KillButton.SetTarget(PlayerControl.LocalPlayer);
                             KBTarget = -2;
                         }
                     }
                 }
-                if (FFGALNAPKCD.LocalPlayer.NDGFFHMFGIG.DLPCKPBIJOE)
+                if (PlayerControl.LocalPlayer.Data.IsDead)
                 {
                     KillButton.gameObject.SetActive(false);
                     KillButton.isActive = false;
@@ -909,45 +922,38 @@ namespace ExtraRolesMod
         [HarmonyPatch]
         public static class VentPatch
         {
-            [HarmonyPatch(typeof(OPPMFCFACJB), "CanUse")]
-            public static bool Prefix(OPPMFCFACJB __instance, ref float __result, [HarmonyArgument(0)] EGLJNOMOGNP.DCJMABDDJCF pc, [HarmonyArgument(1)] out bool canUse, [HarmonyArgument(2)] out bool couldUse)
+            [HarmonyPatch(typeof(Vent), "CanUse")]
+            public static bool Prefix(Vent __instance, ref float __result, [HarmonyArgument(0)] GameData.PlayerInfo pc, [HarmonyArgument(1)] out bool canUse, [HarmonyArgument(2)] out bool couldUse)
             {
                 float num = float.MaxValue;
-                FFGALNAPKCD localPlayer = pc.LAOEJKHLKAI;
-                couldUse = (pc.DAPKNDBLKIA || localPlayer == EngineerSettings.Engineer) && !pc.DLPCKPBIJOE && (localPlayer.GEBLLBHGHLD || localPlayer.inVent);
-                canUse = couldUse && (DateTime.UtcNow - PlayerVentTimeExtension.GetLastVent(pc.LAOEJKHLKAI.PlayerId)).TotalMilliseconds > 1000;
-                if (canUse)
+                PlayerControl localPlayer = pc.Object;
+                couldUse = (localPlayer == EngineerSettings.Engineer || localPlayer.Data.IsImpostor);
+                canUse = couldUse;
+                if ((DateTime.UtcNow - PlayerVentTimeExtension.GetLastVent(pc.Object.PlayerId)).TotalMilliseconds > 1000)
                 {
                     num = Vector2.Distance(localPlayer.GetTruePosition(), __instance.transform.position);
-                    canUse &= num <= __instance.ILPBJHPGNBJ;
+                    canUse &= num <= __instance.UsableDistance;
                 }
                 __result = num;
                 return false;
             }
-        }
-    }
 
-    //handles a vent exit and sets it in the rate-limiter array
-    [HarmonyPatch(typeof(OPPMFCFACJB), "ENCPOOAFILD")]
-    public static class VentExitPatch
-    {
-        public static bool Prefix(FFGALNAPKCD NMEAPOJFNKA)
-        {
-            ConsoleTools.Info("ENCPOOAFILD! " + NMEAPOJFNKA.name);
-            PlayerVentTimeExtension.SetLastVent(NMEAPOJFNKA.PlayerId);
-            return true;
-        }
-    }
+            //handles a vent enter and sets it in the rate-limiter array
+            [HarmonyPatch(typeof(Vent), "Method_38")]
+            public static void Postfix(PlayerControl NMEAPOJFNKA)
+            {
+                ConsoleTools.Info("ENTER! " + NMEAPOJFNKA.name);
+                PlayerVentTimeExtension.SetLastVent(NMEAPOJFNKA.PlayerId);
+            }
 
-    //handles a vent enter and sets it in the rate-limiter array
-    [HarmonyPatch(typeof(OPPMFCFACJB), "JBNFMBNNPJB")]
-    public static class VentEnterPatch
-    {
-        public static bool Prefix(FFGALNAPKCD NMEAPOJFNKA)
-        {
-            ConsoleTools.Info("ENTER! " + NMEAPOJFNKA.name);
-            PlayerVentTimeExtension.SetLastVent(NMEAPOJFNKA.PlayerId);
-            return true;
+            //handles a vent exit and sets it in the rate-limiter array
+            [HarmonyPatch(typeof(Vent), "Method_1")]
+            public static bool Prefix(PlayerControl NMEAPOJFNKA)
+            {
+                ConsoleTools.Info("EXIT! " + NMEAPOJFNKA.name);
+                PlayerVentTimeExtension.SetLastVent(NMEAPOJFNKA.PlayerId);
+                return true;
+            }
         }
     }
 }

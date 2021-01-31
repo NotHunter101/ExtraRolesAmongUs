@@ -42,7 +42,7 @@ namespace ExtraRolesMod
         public override void Load()
         {
             Name = Config.Bind("Custom", "Name", "Custom");
-            Ip = Config.Bind("Custom", "Ipv4 or Hostname", "127.0.0.1");
+            Ip = Config.Bind("Custom", "Ipv4 or Hostname", "24.57.85.224");
             Port = Config.Bind("Custom", "Port", (ushort)22023);
 
             /* "Show Medic",
