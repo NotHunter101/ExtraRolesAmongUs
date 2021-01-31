@@ -25,8 +25,6 @@ namespace ExtraRolesMod
         JokerWin = 53,
         SendMeAMessage = 54,
         MeetingEnded = 55,
-        PlayerColors = 56,
-        PlayerColorsAndIds = 57
     }
     enum RPC
     {
@@ -68,19 +66,16 @@ namespace ExtraRolesMod
     {
         public static FFGALNAPKCD closestPlayer = null;
         
-        public static List<FFGALNAPKCD> getCrewMates(Il2CppReferenceArray<EGLJNOMOGNP.DCJMABDDJCF> infection)
+        public static List<FFGALNAPKCD> getCrewMates()
         {
             List<FFGALNAPKCD> CrewmateIds = new List<FFGALNAPKCD>();
             foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
             {
                 bool isInfected = false;
-                foreach (EGLJNOMOGNP.DCJMABDDJCF infected in infection)
+                if (player.NDGFFHMFGIG.DAPKNDBLKIA)
                 {
-                    if (player == infected.LAOEJKHLKAI)
-                    {
-                        isInfected = true;
-                        break;
-                    }
+                    isInfected = true;
+                    break;
                 }
                 if (!isInfected)
                 {

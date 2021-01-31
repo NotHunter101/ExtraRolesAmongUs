@@ -57,9 +57,9 @@ namespace ExtraRolesMod
 
             configSettings["Show Medic"] = (byte)Config.Bind("Custom", "Show Medic", 0).Value;
             configSettings["Show Shielded Player"] = (byte)Config.Bind("Custom", "Show Shielded Player", 1).Value; 
-            configSettings["Murder Attempt Indicator For Shielded Player"] = (byte)Config.Bind("Custom", "Murder Attempt Indicator For Shielded Player", 0).Value;
+            configSettings["Murder Attempt Indicator For Shielded Player"] = (byte)Config.Bind("Custom", "Murder Attempt Indicator For Shielded Player", 1).Value;
             configSettings["Show Officer"] = (byte)Config.Bind("Custom", "Show Officer", 0).Value;
-            configSettings["Officer Kill Cooldown"] = (byte)Config.Bind("Custom", "Officer Kill Cooldown", 35).Value;
+            configSettings["Officer Kill Cooldown"] = (byte)Config.Bind("Custom", "Officer Kill Cooldown", 30).Value;
             configSettings["Show Engineer"] = (byte)Config.Bind("Custom", "Show Engineer", 0).Value;
             configSettings["Show Joker"] = (byte)Config.Bind("Custom", "Show Joker", 0).Value;
             configSettings["Joker Can Die To Officer"] = (byte)Config.Bind("Custom", "Joker Can Die To Officer", 1).Value;

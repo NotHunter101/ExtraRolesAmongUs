@@ -96,8 +96,6 @@ namespace ExtraRolesMod
                     {11, "lighter"},
                 };
                 var typeOfColor = "unknown";
-                if (MainHooks.playerColors.ContainsKey(br.Killer.PlayerId))
-                    typeOfColor = colors[MainHooks.playerColors[br.Killer.PlayerId]];
                 return $"Body Report: The murder appears to be a {typeOfColor} color. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
         }
@@ -135,7 +133,6 @@ namespace ExtraRolesMod
             { "Duration In Which Medic Report Will Contain The Killers Name", 0 },
             { "Duration In Which Medic Report Will Contain The Killers Color Type", 0 }
         };
-        public static IDictionary<byte, byte> playerColors = new Dictionary<byte, byte>() { };
         //rudimentary array to convert a byte setting from config into true/false
         public static bool[] byteBool =
         {
@@ -254,7 +251,6 @@ namespace ExtraRolesMod
             __instance.text.Text = __instance.text.Text + "   Extra Roles V0.8 Loaded. (https://github.com/NotHunter101/ExtraRolesAmongUs/)";
         }
 
-        //function called when the game starts and impostors are chosen. this is where we choose all the roles and send the packets
         [HarmonyPatch(typeof(FFGALNAPKCD), "RpcSetInfected")]
         public static void Postfix(Il2CppReferenceArray<EGLJNOMOGNP.DCJMABDDJCF> JPGEIBIBJPJ)
         {
@@ -267,21 +263,20 @@ namespace ExtraRolesMod
             OfficerSettings.SetConfigSettings();
             EngineerSettings.SetConfigSettings();
             JokerSettings.SetConfigSettings();
-            playerColors.Clear();
-            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.PlayerColors, Hazel.SendOption.None, -1);
-            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-            writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.None, -1);
+
+            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.None, -1);
             Console.WriteLine(String.Join(",", configSettings.Values));
             writer.WriteBytesAndSize(configSettings.Values.ToArray<byte>());
             FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
 
-            List<FFGALNAPKCD> crewmates = PlayerTools.getCrewMates(JPGEIBIBJPJ);
+            List<FFGALNAPKCD> crewmates = FFGALNAPKCD.AllPlayerControls.ToArray().ToList();
+            crewmates.RemoveAll(x => x.NDGFFHMFGIG.DAPKNDBLKIA);
 
             if (crewmates.Count > 0)
             {
                 writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.SetMedic, Hazel.SendOption.None, -1);
                 var MedicRandom = rng.Next(0, crewmates.Count);
-                MedicSettings.Medic = crewmates[MedicRandom];
+                MedicSettings.Medic = crewmates[MedicRandom]; //.Where(x => x.name == "Medic").ToArray()[0];
                 crewmates.RemoveAt(MedicRandom);
                 byte MedicId = MedicSettings.Medic.PlayerId;
 
@@ -294,7 +289,7 @@ namespace ExtraRolesMod
                 writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.SetOfficer, Hazel.SendOption.None, -1);
 
                 var OfficerRandom = rng.Next(0, crewmates.Count);
-                OfficerSettings.Officer = crewmates[OfficerRandom];
+                OfficerSettings.Officer = crewmates[OfficerRandom]; //.Where(x => x.name == "Officer").ToArray()[0];
                 crewmates.RemoveAt(OfficerRandom);
                 byte OfficerId = OfficerSettings.Officer.PlayerId;
 
@@ -306,7 +301,7 @@ namespace ExtraRolesMod
             {
                 writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.SetEngineer, Hazel.SendOption.None, -1);
                 var EngineerRandom = rng.Next(0, crewmates.Count);
-                EngineerSettings.Engineer = crewmates[EngineerRandom];
+                EngineerSettings.Engineer = crewmates[EngineerRandom]; //.Where(x => x.name == "Engineer").ToArray()[0];
                 crewmates.RemoveAt(EngineerRandom);
                 byte EngineerId = EngineerSettings.Engineer.PlayerId;
 
@@ -319,7 +314,7 @@ namespace ExtraRolesMod
                 writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)CustomRPC.SetJoker, Hazel.SendOption.None, -1);
                 var JokerRandom = rng.Next(0, crewmates.Count);
                 Console.WriteLine(JokerRandom);
-                JokerSettings.Joker = crewmates[JokerRandom];
+                JokerSettings.Joker = crewmates[JokerRandom]; //.Where(x => x.name == "Joker").ToArray()[0];
                 JokerSettings.Joker.myTasks.Clear();
                 crewmates.RemoveAt(JokerRandom);
                 byte JokerId = JokerSettings.Joker.PlayerId;
@@ -329,6 +324,41 @@ namespace ExtraRolesMod
             }
         }
 
+        //function called when the game starts and impostors are chosen. this is where we choose all the roles and send the packets
+        [HarmonyPatch(typeof(FFGALNAPKCD), "RpcSetInfected")]
+        public static bool Prefix(Il2CppReferenceArray<EGLJNOMOGNP.DCJMABDDJCF> JPGEIBIBJPJ)
+        {
+            var debugImpostors = false;
+            if (debugImpostors)
+            {
+                var infected = new byte[] { 0, 0 };
+
+                foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
+                {
+                    if (player.name == "Impostor")
+                    {
+                        infected[0] = player.PlayerId;
+                    }
+                    if (player.name == "Pretender")
+                    {
+                        infected[1] = player.PlayerId;
+                    }
+                }
+
+                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(FFGALNAPKCD.LocalPlayer.NetId, (byte)RPC.SetInfected, Hazel.SendOption.None, -1);
+                writer.WritePacked((uint)2);
+                writer.WriteBytesAndSize(infected);
+                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+
+                FFGALNAPKCD.LocalPlayer.OJPCECLPCCF(infected);
+                FFGALNAPKCD.LocalPlayer.HAAGONNLDOH(infected);
+                FFGALNAPKCD.LocalPlayer.JGBHNKMJFHA(infected);
+
+                return false;
+            }
+            return true;
+        }
+
         //function that handles all packets from other clients and server. if you need comments to understand this just ask and i'll write them
         //i'll also send the server rpc code if you want
         [HarmonyPatch(typeof(FFGALNAPKCD), "HandleRpc")]
@@ -336,6 +366,11 @@ namespace ExtraRolesMod
         {
             switch (HKHMBLJFLMC)
             {
+                case (byte)RPC.SetInfected:
+                    {
+                        Console.WriteLine("set infected.");
+                        break;
+                    }
                 case (byte)CustomRPC.ResetVaribles:
                     {
                         var configSettingsValues = ALMCIJKELCP.ReadBytesAndSize().ToArray();
@@ -352,7 +387,7 @@ namespace ExtraRolesMod
                         OfficerSettings.SetConfigSettings();
                         EngineerSettings.SetConfigSettings();
                         JokerSettings.SetConfigSettings();
-                        playerColors.Clear();
+
                         break;
                     }
                 case (byte)CustomRPC.SetMedic:
@@ -488,25 +523,6 @@ namespace ExtraRolesMod
                         OfficerSettings.lastKilled = DateTime.UtcNow;
                         break;
                     }
-                case (byte)CustomRPC.PlayerColorsAndIds:
-                    {
-                        foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
-                        {
-                            var playerId = ALMCIJKELCP.ReadByte();
-                            var colorId = ALMCIJKELCP.ReadByte();
-                            if (playerId != null)
-                            {
-                                var playerControl = PlayerTools.getPlayerById(playerId);
-                                if (playerControl != null)
-                                {
-                                    Console.WriteLine(playerId);
-                                    if (!playerColors.ContainsKey(playerId))
-                                        playerColors.Add(playerId, colorId);
-                                }
-                            }
-                        }
-                        break;
-                    }
             }
         }
 
@@ -544,7 +560,6 @@ namespace ExtraRolesMod
                 __instance.field_Public_PENEIDJGGAF_0.BackgroundBar.material.color = JokerSettings.jokerColor;
             }
         }
-
 
         [HarmonyPatch(typeof(MLPJGKEACMM), "PerformKill")]
         static bool Prefix(MethodBase __originalMethod)
@@ -735,24 +750,14 @@ namespace ExtraRolesMod
                 {
                     player.nameText.Color = Color.white;
                     player.MKIDFJAEBGH.color = Color.white;
-                    if (playerColors.ContainsKey(player.PlayerId))
-                    {
-                        player.SetColor(playerColors[player.PlayerId]);
-                    }
                 }
 
                 if (FFGALNAPKCD.LocalPlayer.NDGFFHMFGIG.DAPKNDBLKIA)
                 {
-                    FFGALNAPKCD.LocalPlayer.nameText.Color = Color.red;
-                }
-                if (MedicSettings.Protected != null)
-                {
-                    if (MedicSettings.Protected == FFGALNAPKCD.LocalPlayer || MedicSettings.showProtected)
+                    foreach (FFGALNAPKCD player in FFGALNAPKCD.AllPlayerControls)
                     {
-                        //MedicSettings.Protected.nameText.Color = MedicSettings.protectedColor;
-                        //this changes the player color and visor color. it's a cool effect to make it obvious a player is shielded.
-                        MedicSettings.Protected.SetColor(7);
-                        MedicSettings.Protected.MKIDFJAEBGH.color = MedicSettings.protectedColor;
+                        if (player.NDGFFHMFGIG.DAPKNDBLKIA)
+                            player.nameText.Color = Color.red;
                     }
                 }
                 if (MedicSettings.Medic != null)
@@ -781,6 +786,17 @@ namespace ExtraRolesMod
                     if (JokerSettings.Joker == FFGALNAPKCD.LocalPlayer || JokerSettings.showJoker)
                     {
                         JokerSettings.Joker.nameText.Color = JokerSettings.jokerColor;
+                    }
+                }
+                if (MedicSettings.Protected != null)
+                {
+                    if (MedicSettings.Protected == FFGALNAPKCD.LocalPlayer || MedicSettings.showProtected)
+                    {
+                        MedicSettings.Protected.nameText.Color = MedicSettings.protectedColor;
+                        //broken; doesn't set the colors properly
+                        //this changes the player color and visor color. it's a cool effect to make it obvious a player is shielded.
+                        //MedicSettings.Protected.SetColor(7);
+                        //MedicSettings.Protected.MKIDFJAEBGH.color = MedicSettings.protectedColor;
                     }
                 }
 
