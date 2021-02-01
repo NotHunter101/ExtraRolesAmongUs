@@ -118,7 +118,7 @@ namespace ExtraRolesMod
     [HarmonyPatch]
     public static class MainHooks
     {
-        public static SpriteRenderer indicatorRenderer;
+        public static GameObject rend;
         //list of all entries/exits of vents for each player and their times (used by VentPlayerExtension)
         public static IDictionary<byte, DateTime> allVentTimes = new Dictionary<byte, DateTime>() { };
         //array of config settings
@@ -499,6 +499,8 @@ namespace ExtraRolesMod
                         var targetid = ALMCIJKELCP.ReadByte();
                         PlayerControl killer = PlayerTools.getPlayerById(killerid);
                         PlayerControl target = PlayerTools.getPlayerById(targetid);
+                        if (target.PlayerId == MedicSettings.Protected.PlayerId)
+                            MedicSettings.Protected = null;
                         killer.MurderPlayer(target);
                         break;
                     }
@@ -862,6 +864,8 @@ namespace ExtraRolesMod
                     if (JokerSettings.Joker != null)
                         JokerSettings.ClearTasks();
 
+                    if (rend != null)
+                        rend.SetActive(false);
 
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                     {
@@ -882,6 +886,12 @@ namespace ExtraRolesMod
                         if (MedicSettings.Medic == PlayerControl.LocalPlayer || MedicSettings.showMedic)
                         {
                             MedicSettings.Medic.nameText.Color = MedicSettings.medicColor;
+                            if (MeetingHud.Instance != null)
+                                foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
+                                {
+                                    if (player.NameText != null & MedicSettings.Medic.PlayerId == player.TargetPlayerId)
+                                        player.NameText.Color = MedicSettings.medicColor;
+                                }
                         }
                     }
                     if (OfficerSettings.Officer != null)
@@ -889,6 +899,12 @@ namespace ExtraRolesMod
                         if (OfficerSettings.Officer == PlayerControl.LocalPlayer || OfficerSettings.showOfficer)
                         {
                             OfficerSettings.Officer.nameText.Color = OfficerSettings.officerColor;
+                            if (MeetingHud.Instance != null)
+                                foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
+                                {
+                                    if (player.NameText != null & OfficerSettings.Officer.PlayerId == player.TargetPlayerId)
+                                        player.NameText.Color = OfficerSettings.officerColor;
+                                }
                         }
                     }
                     if (EngineerSettings.Engineer != null)
@@ -896,6 +912,12 @@ namespace ExtraRolesMod
                         if (EngineerSettings.Engineer == PlayerControl.LocalPlayer || EngineerSettings.showEngineer)
                         {
                             EngineerSettings.Engineer.nameText.Color = EngineerSettings.engineerColor;
+                            if (MeetingHud.Instance != null)
+                                foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
+                                {
+                                    if (player.NameText != null & EngineerSettings.Engineer.PlayerId == player.TargetPlayerId)
+                                        player.NameText.Color = EngineerSettings.engineerColor;
+                                }
                         }
                     }
                     if (JokerSettings.Joker != null)
@@ -903,6 +925,12 @@ namespace ExtraRolesMod
                         if (JokerSettings.Joker == PlayerControl.LocalPlayer || JokerSettings.showJoker)
                         {
                             JokerSettings.Joker.nameText.Color = JokerSettings.jokerColor;
+                            if (MeetingHud.Instance != null)
+                                foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
+                                {
+                                    if (player.NameText != null & JokerSettings.Joker.PlayerId == player.TargetPlayerId)
+                                        player.NameText.Color = JokerSettings.jokerColor;
+                                }
                         }
                     }
                     if (MedicSettings.Protected != null)
@@ -947,7 +975,19 @@ namespace ExtraRolesMod
                     }
                     if (PlayerControl.LocalPlayer == MedicSettings.Protected)
                     {
-                        
+                        if (rend == null)
+                        {
+                            ConsoleTools.Info("protected draw");
+                            Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, false);
+                            byte[] imgdata = System.IO.File.ReadAllBytes(Directory.GetCurrentDirectory() + "\\Assets\\RESmall.png");
+                            ImageConversion.LoadImage(tex, imgdata);
+                            rend = new GameObject("Shield Icon", new Il2CppSystem.Type[] { SpriteRenderer.Il2CppType });
+                            rend.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tex, new Rect(0, 0, 50, 50), Vector2.one / 2f);
+                        }
+                        ConsoleTools.Info(PlayerControl.LocalPlayer.myRend.transform.localPosition.x.ToString());
+                        ConsoleTools.Info(PlayerControl.LocalPlayer.myRend.transform.localPosition.y.ToString());
+                        rend.transform.localPosition = Camera.main.ScreenToWorldPoint(new Vector3(0 + rend.GetComponent<SpriteRenderer>().sprite.texture.width / 2, 0 + rend.GetComponent<SpriteRenderer>().sprite.texture.width / 2, -50f));
+                        rend.SetActive(true);
                     }
                     if (PlayerControl.LocalPlayer == EngineerSettings.Engineer)
                     {
