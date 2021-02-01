@@ -25,6 +25,7 @@ using UnityEngine.SceneManagement;
 using System.Runtime.InteropServices;
 using Reactor;
 using ExtraRolesMod;
+using Reactor.Unstrip;
 
 /*
 Hex colors for extra roles
@@ -117,29 +118,6 @@ namespace ExtraRolesMod
     [HarmonyPatch]
     public static class MainHooks
     {
-        public static Texture2D rotateTexture(Color[] originalTexture, bool clockwise, int w, int h)
-        {
-            Color[] original = originalTexture;
-            Color[] rotated = new Color[original.Length];
-
-            int iRotated, iOriginal;
-
-            for (int j = 0; j < h; ++j)
-            {
-                for (int i = 0; i < w; ++i)
-                {
-                    iRotated = (i + 1) * h - j - 1;
-                    iOriginal = clockwise ? original.Length - 1 - (j * w + i) : j * w + i;
-                    rotated[iRotated] = original[iOriginal];
-                }
-            }
-
-            Texture2D rotatedTexture = new Texture2D(h, w, TextureFormat.ARGB32, true);
-            rotatedTexture.SetPixels(rotated);
-            rotatedTexture.Apply();
-            return rotatedTexture;
-        }
-
         public static SpriteRenderer indicatorRenderer;
         //list of all entries/exits of vents for each player and their times (used by VentPlayerExtension)
         public static IDictionary<byte, DateTime> allVentTimes = new Dictionary<byte, DateTime>() { };
@@ -276,6 +254,16 @@ namespace ExtraRolesMod
                 Joker = null;
             }
 
+            public static void ClearTasks()
+            {
+                var removeTask = new List<PlayerTask>();
+                foreach (PlayerTask task in JokerSettings.Joker.myTasks)
+                    if (task.TaskType == TaskTypes.FixComms || task.TaskType == TaskTypes.FixLights || task.TaskType == TaskTypes.ResetReactor || task.TaskType == TaskTypes.ResetSeismic || task.TaskType == TaskTypes.RestoreOxy)
+                        removeTask.Add(task);
+                foreach (PlayerTask task in removeTask)
+                    JokerSettings.Joker.RemoveTask(task);
+            }
+
             public static void SetConfigSettings()
             {
                 showJoker = byteBool[configSettings["Show Joker"]];
@@ -353,7 +341,6 @@ namespace ExtraRolesMod
                 var JokerRandom = rng.Next(0, crewmates.Count);
                 ConsoleTools.Info(JokerRandom.ToString());
                 JokerSettings.Joker = crewmates[JokerRandom]; //.Where(x => x.name == "Joker").ToArray()[0];
-                JokerSettings.Joker.myTasks.Clear();
                 crewmates.RemoveAt(JokerRandom);
                 byte JokerId = JokerSettings.Joker.PlayerId;
 
@@ -872,17 +859,14 @@ namespace ExtraRolesMod
                     PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
                     DistLocalClosest = PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
                     KBTarget = -1;
-                    if (JokerSettings.Joker != null && JokerSettings.Joker.myTasks.Count > 0)
-                    {
-                        while (JokerSettings.Joker.myTasks.Count > 0)
-                        {
-                            JokerSettings.Joker.RemoveTask(JokerSettings.Joker.myTasks[0]);
-                        }
-                    }
+                    if (JokerSettings.Joker != null)
+                        JokerSettings.ClearTasks();
+
 
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                     {
                         player.nameText.Color = Color.white;
+                        player.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
                     }
 
                     if (PlayerControl.LocalPlayer.Data.IsImpostor)
@@ -925,20 +909,16 @@ namespace ExtraRolesMod
                     {
                         if (MedicSettings.Protected == PlayerControl.LocalPlayer || MedicSettings.showProtected)
                         {
-                            MedicSettings.Protected.nameText.Color = MedicSettings.protectedColor;
-                            //broken; doesn't set the colors properly
-                            //this changes the player color and visor color. it's a cool effect to make it obvious a player is shielded.
-                            //MedicSettings.Protected.SetColor(7);
-
-                            //SKINID: EGLJNOMOGNP.Instance.GetPlayerById(MedicSettings.Medic.PlayerId).AFEJLMBMKCJ
-                            //HATID: EGLJNOMOGNP.Instance.GetPlayerById(MedicSettings.Medic.PlayerId).AJIBCNMKNPM
-                            //TASKS: EGLJNOMOGNP.Instance.GetPlayerById(MedicSettings.Medic.PlayerId).CJOBIPKGGHC
+                            MedicSettings.Protected.myRend.material.SetColor("_VisorColor", MedicSettings.protectedColor);
                         }
                     }
 
                     if (PlayerControl.LocalPlayer == MedicSettings.Medic)
                     {
-                        Texture2D tex = rotateTexture(CustomSpriteArr.shieldImgArr.Reverse().ToArray(), false, 106, 106);
+                        //looks like this framework supports unstripped unity libraries, allowing me to load the image from a file instead
+                        Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, false);
+                        byte[] imgdata = System.IO.File.ReadAllBytes(Directory.GetCurrentDirectory() + "\\Assets\\SA.png");
+                        ImageConversion.LoadImage(tex, imgdata);
                         tex.Apply(false, false);
                         if (tex != KillButton.renderer.sprite.texture)
                         {
@@ -965,13 +945,21 @@ namespace ExtraRolesMod
                             KBTarget = PlayerTools.closestPlayer.PlayerId;
                         }
                     }
+                    if (PlayerControl.LocalPlayer == MedicSettings.Protected)
+                    {
+                        
+                    }
                     if (PlayerControl.LocalPlayer == EngineerSettings.Engineer)
                     {
-                        Texture2D tex = rotateTexture(CustomSpriteArr.repairImgArr.Reverse().ToArray(), false, 106, 106);
+                        //looks like this framework supports unstripped unity libraries, allowing me to load the image from a file instead
+                        Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, false);
+                        byte[] imgdata = System.IO.File.ReadAllBytes(Directory.GetCurrentDirectory() + "\\Assets\\RE.png");
+                        ImageConversion.LoadImage(tex, imgdata);
+                        tex.Apply(false, false);
                         tex.Apply(false, false);
                         if (tex != KillButton.renderer.sprite.texture)
                         {
-                            KillButton.renderer.sprite = Sprite.Create(tex, new Rect(0, 0, 106, 106), Vector2.one / 2f);
+                            KillButton.renderer.sprite = Sprite.Create(tex, new Rect(0, 0, 107, 107), Vector2.one / 2f);
                         }
                         KillButton.gameObject.SetActive(true);
                         KillButton.isActive = true;
@@ -1014,7 +1002,14 @@ namespace ExtraRolesMod
                 {
                     ConsoleTools.Info(TempData.winners.Count.ToString());
                     TempData.winners.Clear();
-                    foreach (PlayerControl winner in localPlayers)
+                    List<PlayerControl> orderLocalPlayers = new List<PlayerControl>();
+                    foreach (PlayerControl player in localPlayers)
+                        if (player.PlayerId == localPlayer.PlayerId)
+                            orderLocalPlayers.Add(player);
+                    foreach (PlayerControl player in localPlayers)
+                        if (player.PlayerId != localPlayer.PlayerId)
+                            orderLocalPlayers.Add(player);
+                    foreach (PlayerControl winner in orderLocalPlayers)
                     {
                         TempData.winners.Add(new WinningPlayerData(winner.Data));
                     }
@@ -1046,29 +1041,3 @@ namespace ExtraRolesMod
         }
     }
 }
-
-/*
-//get Texture2D from picture
-//TexResource should be string with path and name of picture
-Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, false);
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Stream myStream = assembly.GetManifestResourceStream(TexResource);
-            byte[] buttonTexture = new byte[myStream.Length];
-            myStream.Read(buttonTexture, 0, (int)myStream.Length);
-            LoadImage(coolTex, buttonTexture, false);
-
-//Create sprite from Texture2D
-vent.GetComponent<SpriteRenderer>().sprite = Sprite.Create(coolTex, new Rect(0, 0, coolTex.width, coolTex.height), new Vector2(0.5f, 0.5f), 270f);
-[6:49 PM] JustAnotherDev: and loadImage function 
-internal delegate bool d_LoadImage(IntPtr tex, IntPtr data, bool markNonReadable);
-            internal static d_LoadImage iCall_LoadImage;
-            public static bool LoadImage(Texture2D tex, byte[] data, bool markNonReadable)
-            {
-                if (iCall_LoadImage == null)
-                    iCall_LoadImage = IL2CPP.ResolveICall<d_LoadImage>("UnityEngine.ImageConversion::LoadImage");
-
-                var il2cppArray = (Il2CppStructArray<byte>)data;
-
-                return iCall_LoadImage.Invoke(tex.Pointer, il2cppArray.Pointer, markNonReadable);
-            }
-*/
