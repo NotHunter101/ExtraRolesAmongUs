@@ -80,16 +80,16 @@ namespace ExtraRolesMod
         {
             if (br.KillAge > MainHooks.MedicSettings.medicKillerColorDuration * 1000)
             {
-                return $"Body Report: The body is too old to gain information from. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
+                return $"Body Report: The corpse is too old to gain information from. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
             else if (br.DeathReason == 3)
             {
-                return $"Body Report (Officer): The cause of death appears to be suicide by shooting an Innocent! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
+                return $"Body Report (Officer): The cause of death appears to be suicide! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
 
             }
             else if (br.KillAge < MainHooks.MedicSettings.medicKillerNameDuration * 1000)
             {
-                return $"Body Report: The murderer appears to be {br.Killer.name}! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
+                return $"Body Report: The killer appears to be {br.Killer.name}! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
             else
             {
@@ -110,7 +110,7 @@ namespace ExtraRolesMod
                     {11, "lighter"},
                 };
                 var typeOfColor = colors[br.Killer.Data.ColorId];
-                return $"Body Report: The murder appears to be a {typeOfColor} color. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
+                return $"Body Report: The killer appears to be a {typeOfColor} color. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
         }
     }
@@ -382,11 +382,11 @@ namespace ExtraRolesMod
 
                 foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                 {
-                    if (player.name == "Impostor")
+                    if (player.Data.PlayerName == "Impostor")
                     {
                         infected[0] = player.PlayerId;
                     }
-                    if (player.name == "Pretender")
+                    if (player.Data.PlayerName == "Pretender")
                     {
                         infected[1] = player.PlayerId;
                     }
