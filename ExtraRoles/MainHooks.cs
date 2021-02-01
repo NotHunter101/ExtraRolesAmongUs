@@ -302,7 +302,6 @@ namespace ExtraRolesMod
             OfficerSettings.SetConfigSettings();
             EngineerSettings.SetConfigSettings();
             JokerSettings.SetConfigSettings();
-
             MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.None, -1);
             ConsoleTools.Info(String.Join(",", configSettings.Values));
             writer.WriteBytesAndSize(configSettings.Values.ToArray<byte>());
@@ -361,6 +360,28 @@ namespace ExtraRolesMod
                 writer.Write(JokerId);
                 FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
             }
+
+            localPlayers.Clear();
+            localPlayer = PlayerControl.LocalPlayer;
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            {
+                ConsoleTools.Info(player.name);
+                ConsoleTools.Info(player.Data.IsImpostor.ToString());
+                if (player.Data.IsImpostor)
+                    continue;
+                if (JokerSettings.Joker != null && player.PlayerId == JokerSettings.Joker.PlayerId)
+                    continue;
+                else
+                    localPlayers.Add(player);
+            }
+            var localPlayerBytes = new List<byte>();
+            foreach (PlayerControl player in localPlayers)
+            {
+                localPlayerBytes.Add(player.PlayerId);
+            }
+            writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetLocalPlayers, Hazel.SendOption.None, -1);
+            writer.WriteBytesAndSize(localPlayerBytes.ToArray());
+            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
         }
 
         //function called when the game starts and impostors are chosen. this is where we choose all the roles and send the packets
@@ -403,6 +424,21 @@ namespace ExtraRolesMod
         {
             switch (HKHMBLJFLMC)
             {
+                case (byte)CustomRPC.SetLocalPlayers:
+                    ConsoleTools.Info("Setting Local Players...");
+                    localPlayers.Clear();
+                    localPlayer = PlayerControl.LocalPlayer;
+                    var localPlayerBytes = ALMCIJKELCP.ReadBytesAndSize();
+
+                    foreach (byte id in localPlayerBytes)
+                    {
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                        {
+                            if (player.PlayerId == id)
+                                localPlayers.Add(player);
+                        }
+                    }
+                    break;
                 case (byte)RPC.SetInfected:
                     {
                         ConsoleTools.Info("set infected.");
@@ -424,7 +460,6 @@ namespace ExtraRolesMod
                         OfficerSettings.SetConfigSettings();
                         EngineerSettings.SetConfigSettings();
                         JokerSettings.SetConfigSettings();
-
                         break;
                     }
                 case (byte)CustomRPC.SetMedic:
@@ -473,8 +508,10 @@ namespace ExtraRolesMod
                     }
                 case (byte)CustomRPC.OfficerKill:
                     {
-                        PlayerControl killer = PlayerTools.getPlayerById(ALMCIJKELCP.ReadByte());
-                        PlayerControl target = PlayerTools.getPlayerById(ALMCIJKELCP.ReadByte());
+                        var killerid = ALMCIJKELCP.ReadByte();
+                        var targetid = ALMCIJKELCP.ReadByte();
+                        PlayerControl killer = PlayerTools.getPlayerById(killerid);
+                        PlayerControl target = PlayerTools.getPlayerById(targetid);
                         killer.MurderPlayer(target);
                         break;
                     }
@@ -548,6 +585,7 @@ namespace ExtraRolesMod
                                     }
                                     else
                                     {
+                                        localPlayers.Add(player);
                                         player.Revive();
                                         player.Data.IsImpostor = true;
                                     }
@@ -775,11 +813,10 @@ namespace ExtraRolesMod
                 if (MainHooks.OfficerSettings.Officer != null)
                 {
                     //check if the player is an officer
-                    if (PlayerControl.LocalPlayer == MainHooks.OfficerSettings.Officer)
+                    if (__instance == MainHooks.OfficerSettings.Officer)
                     {
-                        MainHooks.OfficerSettings.firstKill = false;
                         //if so, set them to impostor for one frame so they aren't banned for anti-cheat
-                        PlayerControl.LocalPlayer.Data.IsImpostor = true;
+                        __instance.Data.IsImpostor = true;
                     }
                 }
                 return true;
@@ -802,10 +839,10 @@ namespace ExtraRolesMod
                 if (MainHooks.OfficerSettings.Officer != null)
                 {
                     //check if killer is officer
-                    if (PlayerControl.LocalPlayer == MainHooks.OfficerSettings.Officer)
+                    if (__instance == MainHooks.OfficerSettings.Officer)
                     {
                         //finally, set them back to normal
-                        PlayerControl.LocalPlayer.Data.IsImpostor = false;
+                        __instance.Data.IsImpostor = false;
                     }
                 }
             }
@@ -963,5 +1000,75 @@ namespace ExtraRolesMod
                 }
             }
         }
+
+        public static PlayerControl localPlayer = null;
+        public static List<PlayerControl> localPlayers = new List<PlayerControl>();
+
+        [HarmonyPatch(typeof(EndGameManager), "SetEverythingUp")]
+        public static class EndGamePatch
+        {
+            public static bool Prefix(EndGameManager __instance)
+            {
+                ConsoleTools.Info(TempData.EndReason.ToString());
+                if (TempData.winners.Count > 1 && TempData.DidHumansWin(TempData.EndReason))
+                {
+                    ConsoleTools.Info(TempData.winners.Count.ToString());
+                    TempData.winners.Clear();
+                    foreach (PlayerControl winner in localPlayers)
+                    {
+                        TempData.winners.Add(new WinningPlayerData(winner.Data));
+                    }
+                    ConsoleTools.Info(TempData.winners.Count.ToString());
+                }
+                return true;
+            }
+
+            public static void Postfix(EndGameManager __instance)
+            {
+                if (TempData.DidHumansWin(TempData.EndReason))
+                {
+                    bool flag = true;
+                    foreach (PlayerControl player in localPlayers)
+                    {
+                        if (player.PlayerId == localPlayer.PlayerId)
+                        {
+                            flag = false;
+                        }
+                    }
+                    if (flag)
+                    {
+                        __instance.WinText.Text = "Defeat";
+                        __instance.WinText.Color = Palette.ImpostorRed;
+                        __instance.BackgroundBar.material.color = new Color(1, 0, 0);
+                    }
+                }
+            }
+        }
     }
 }
+
+/*
+//get Texture2D from picture
+//TexResource should be string with path and name of picture
+Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, false);
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Stream myStream = assembly.GetManifestResourceStream(TexResource);
+            byte[] buttonTexture = new byte[myStream.Length];
+            myStream.Read(buttonTexture, 0, (int)myStream.Length);
+            LoadImage(coolTex, buttonTexture, false);
+
+//Create sprite from Texture2D
+vent.GetComponent<SpriteRenderer>().sprite = Sprite.Create(coolTex, new Rect(0, 0, coolTex.width, coolTex.height), new Vector2(0.5f, 0.5f), 270f);
+[6:49 PM] JustAnotherDev: and loadImage function 
+internal delegate bool d_LoadImage(IntPtr tex, IntPtr data, bool markNonReadable);
+            internal static d_LoadImage iCall_LoadImage;
+            public static bool LoadImage(Texture2D tex, byte[] data, bool markNonReadable)
+            {
+                if (iCall_LoadImage == null)
+                    iCall_LoadImage = IL2CPP.ResolveICall<d_LoadImage>("UnityEngine.ImageConversion::LoadImage");
+
+                var il2cppArray = (Il2CppStructArray<byte>)data;
+
+                return iCall_LoadImage.Invoke(tex.Pointer, il2cppArray.Pointer, markNonReadable);
+            }
+*/

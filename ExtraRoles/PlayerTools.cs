@@ -41,6 +41,7 @@ namespace ExtraRolesMod
         JokerWin = 53,
         SendMeAMessage = 54,
         MeetingEnded = 55,
+        SetLocalPlayers = 56,
     }
     enum RPC
     {
