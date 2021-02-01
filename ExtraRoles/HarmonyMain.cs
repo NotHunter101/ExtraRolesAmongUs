@@ -67,6 +67,10 @@ namespace ExtraRolesMod
             configSettings["Joker Can Die To Officer"] = (byte)Config.Bind("Custom", "Joker Can Die To Officer", 1).Value;
             configSettings["Duration In Which Medic Report Will Contain The Killers Name"] = (byte)Config.Bind("Custom", "Duration In Which Medic Report Will Contain The Killers Name", 5).Value;
             configSettings["Duration In Which Medic Report Will Contain The Killers Color Type"] = (byte)Config.Bind("Custom", "Duration In Which Medic Report Will Contain The Killers Color Type", 20).Value;
+            configSettings["Medic Spawn Chance"] = (byte)Config.Bind("Custom", "Medic Spawn Chance", 50).Value;
+            configSettings["Officer Spawn Chance"] = (byte)Config.Bind("Custom", "Officer Spawn Chance", 50).Value;
+            configSettings["Engineer Spawn Chance"] = (byte)Config.Bind("Custom", "Engineer Spawn Chance", 50).Value;
+            configSettings["Joker Spawn Chance"] = (byte)Config.Bind("Custom", "Joker Spawn Chance", 50).Value;
             var defaultRegions = AOBNFCIHAJL.DefaultRegions.ToList();
             var ip = Ip.Value;
             if (Uri.CheckHostName(Ip.Value).ToString() == "Dns")

@@ -26,6 +26,7 @@ using System.Runtime.InteropServices;
 using Reactor;
 using ExtraRolesMod;
 using Reactor.Unstrip;
+using UnityEngine.Networking;
 
 /*
 Hex colors for extra roles
@@ -133,7 +134,11 @@ namespace ExtraRolesMod
             "Show Joker",
             "Joker Can Die To Officer",
             "Duration In Which Medic Report Will Contain The Killers Name",
-            "Duration In Which Medic Report Will Contain The Killers Color Type"
+            "Duration In Which Medic Report Will Contain The Killers Color Type",
+            "Medic Spawn Chance",
+            "Officer Spawn Chance",
+            "Engineer Spawn Chance",
+            "Joker Spawn Chance"
         };
         //array of all config settings and their values. these will be loaded by a config and sent to all clients
         public static IDictionary<string, byte> configSettings = new Dictionary<string, byte>()
@@ -147,7 +152,11 @@ namespace ExtraRolesMod
             { "Show Joker", 0 },
             { "Joker Can Die To Officer", 0 },
             { "Duration In Which Medic Report Will Contain The Killers Name", 0 },
-            { "Duration In Which Medic Report Will Contain The Killers Color Type", 0 }
+            { "Duration In Which Medic Report Will Contain The Killers Color Type", 0 },
+            { "Medic Spawn Chance", 0 },
+            { "Officer Spawn Chance", 0 },
+            { "Engineer Spawn Chance", 0 },
+            { "Joker Spawn Chance", 0 }
         };
         //rudimentary array to convert a byte setting from config into true/false
         public static bool[] byteBool =
@@ -298,7 +307,7 @@ namespace ExtraRolesMod
             List<PlayerControl> crewmates = PlayerControl.AllPlayerControls.ToArray().ToList();
             crewmates.RemoveAll(x => x.Data.IsImpostor);
 
-            if (crewmates.Count > 0)
+            if (crewmates.Count > 0 && (rng.Next(1, 101) <= configSettings["Medic Spawn Chance"]))
             {
                 writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetMedic, Hazel.SendOption.None, -1);
                 var MedicRandom = rng.Next(0, crewmates.Count);
@@ -310,7 +319,7 @@ namespace ExtraRolesMod
                 FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
             }
 
-            if (crewmates.Count > 0)
+            if (crewmates.Count > 0 && (rng.Next(1, 101) <= configSettings["Officer Spawn Chance"]))
             {
                 writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetOfficer, Hazel.SendOption.None, -1);
 
@@ -323,7 +332,7 @@ namespace ExtraRolesMod
                 FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
             }
 
-            if (crewmates.Count > 0)
+            if (crewmates.Count > 0 && (rng.Next(1, 101) <= configSettings["Engineer Spawn Chance"]))
             {
                 writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetEngineer, Hazel.SendOption.None, -1);
                 var EngineerRandom = rng.Next(0, crewmates.Count);
@@ -335,7 +344,7 @@ namespace ExtraRolesMod
                 FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
             }
 
-            if (crewmates.Count > 0)
+            if (crewmates.Count > 0 && (rng.Next(1, 101) <= configSettings["Joker Spawn Chance"]))
             {
                 writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetJoker, Hazel.SendOption.None, -1);
                 var JokerRandom = rng.Next(0, crewmates.Count);
@@ -476,6 +485,14 @@ namespace ExtraRolesMod
                     }
                 case (byte)CustomRPC.MedicDead:
                     {
+                        
+                        /*if (MedicSettings.Protected.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                        {
+                            var breakSound = File.ReadAllBytes(Directory.GetCurrentDirectory() + "\\Assets\\SB.wav");
+                            var breakClip = new AudioClip();
+                            
+                            SoundManager.Instance.PlaySound(
+                        }*/
                         MedicSettings.Protected = null;
                         //COLORID: EGLJNOMOGNP.Instance.GetPlayerById(PlayerControl.LocalPlayer.PlayerId).EHAHBDFODKC
                         break;
@@ -499,8 +516,6 @@ namespace ExtraRolesMod
                         var targetid = ALMCIJKELCP.ReadByte();
                         PlayerControl killer = PlayerTools.getPlayerById(killerid);
                         PlayerControl target = PlayerTools.getPlayerById(targetid);
-                        if (target.PlayerId == MedicSettings.Protected.PlayerId)
-                            MedicSettings.Protected = null;
                         killer.MurderPlayer(target);
                         break;
                     }
@@ -867,6 +882,9 @@ namespace ExtraRolesMod
                     if (rend != null)
                         rend.SetActive(false);
 
+                    if (MedicSettings.Protected != null && (MedicSettings.Protected.PlayerId == PlayerControl.LocalPlayer.PlayerId && PlayerControl.LocalPlayer.Data.IsDead))
+                        MedicSettings.Protected = null;
+
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                     {
                         player.nameText.Color = Color.white;
@@ -978,7 +996,7 @@ namespace ExtraRolesMod
                         if (rend == null)
                         {
                             ConsoleTools.Info("protected draw");
-                            Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, false);
+                            Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
                             byte[] imgdata = System.IO.File.ReadAllBytes(Directory.GetCurrentDirectory() + "\\Assets\\RESmall.png");
                             ImageConversion.LoadImage(tex, imgdata);
                             rend = new GameObject("Shield Icon", new Il2CppSystem.Type[] { SpriteRenderer.Il2CppType });
@@ -986,7 +1004,12 @@ namespace ExtraRolesMod
                         }
                         ConsoleTools.Info(PlayerControl.LocalPlayer.myRend.transform.localPosition.x.ToString());
                         ConsoleTools.Info(PlayerControl.LocalPlayer.myRend.transform.localPosition.y.ToString());
-                        rend.transform.localPosition = Camera.main.ScreenToWorldPoint(new Vector3(0 + rend.GetComponent<SpriteRenderer>().sprite.texture.width / 2, 0 + rend.GetComponent<SpriteRenderer>().sprite.texture.width / 2, -50f));
+                        var scale = 1;
+                        if (Screen.width > Screen.height)
+                            scale = Screen.width / 800;
+                        else
+                            scale = Screen.height / 600;
+                        rend.transform.localPosition = Camera.main.ScreenToWorldPoint(new Vector3(0 + (25 * scale), 0 + (25 * scale), -50f));
                         rend.SetActive(true);
                     }
                     if (PlayerControl.LocalPlayer == EngineerSettings.Engineer)
