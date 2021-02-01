@@ -284,7 +284,7 @@ namespace ExtraRolesMod
         [HarmonyPatch(typeof(BOCOFLHKCOJ), "Start")]
         public static void Postfix(BOCOFLHKCOJ __instance)
         {
-            __instance.text.Text = __instance.text.Text + "   Extra Roles V0.9 Loaded. (https://github.com/NotHunter101/ExtraRolesAmongUs/)";
+            __instance.text.Text = __instance.text.Text + "   Extra Roles V0.9.5 Loaded. (https://github.com/NotHunter101/ExtraRolesAmongUs/)";
         }
 
         [HarmonyPatch(typeof(FFGALNAPKCD), "RpcSetInfected")]
