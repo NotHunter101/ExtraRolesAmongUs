@@ -20,7 +20,7 @@ The Officer is a class of Crewmate that is allowed to kill people, similar to Im
 Their goal is to locate the Impostor and deliver vigilante justice, but if they accidentally shoot a Crewmate, they die instead.  
   
 ## Engineer
-The Engineer cab repair one emergency per game from anywhere on the entire map.  
+The Engineer can repair one emergency per game from anywhere on the entire map.  
 The other ablity of The Engineer is that they are able to use the vents that were previously exclusive to Impostors.  
 
 ## Joker
