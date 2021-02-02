@@ -46,7 +46,61 @@ This value is the port the mod will use when connecting to the IP above. The def
   
 ### Show Medic
 *Default: 0*<br/>
+This is the game setting that toggles wether the Medic's name is lit up green for everybody in the game, or just themselves.
+  
+### Show Shielded Player
+*Default: 1*<br/>
+When The Medic shield's somebody, their visor will change to the color cyan. If this setting is set to 1, everybody can see the color change. If not, only the shielded player can see.
+  
+### Murder Attempt Indicator For Shielded Player
+*Default: 1*<br/>
+If this setting is enabled, the shielded player will hear a *ting* noise when somebody tries (and fails) to murder them.
+  
+### Show Officer
+*Default:0*<br/>
+If this setting is enabled, The Officer's name will be lit up blue for everyone. If it isn't, it will only be lit for themselves.
+  
+### Officer Kill Cooldown
+*Default:30*<br/>
+This is the kill cooldown length for The Officer. The first cooldown on the first round will be equal to ten no matter what, just like the Impostor.
+  
+### Show Engineer
+*Default:0*<br/>
+If this setting is enabled, The Engineer's name will be lit up orange for everyone. If it isn't, it will only be lit for themselves.
+  
+### Show Joker
+*Default:0*<br/>
+If this setting is enabled, The Jokers's name will be lit up gray for everyone. If it isn't, it will only be lit for themselves.
+  
+### Joker Can Die To Officer
+*Default:1*<br/>
+If this setting is enabled, The Officer will be able to kill The Joker without reprecussion. If it's disabled, it will function as if they were a crewmate.
+  
+### Duration In Which Medic Report Will Contain The Killers Name
+*Default:5*<br/>
+The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's identity.
 
+### Duration In Which Medic Report Will Contain The Killers Color Type
+*Default:20*<br/>
+The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's color type.  
+"color type" means either "lighter" or "darker", and a full list of colors and their types are included at the bottom of the page.  
+  
+### Medic Spawn Chance
+*Default:100*<br/>
+The percentage chance that anybody in the game will become The Medic.  
+  
+### Officer Spawn Chance
+*Default:100*<br/>
+The percentage chance that anybody in the game will become The Officer.  
+  
+### Engineer Spawn Chance
+*Default:100*<br/>
+The percentage chance that anybody in the game will become The Engineer.  
+  
+### Joker Spawn Chance
+*Default:100*<br/>
+The percentage chance that anybody in the game will become The Joker.  
+  
 # Credits
 https://github.com/NuclearPowered/Reactor The framework the mod uses.  
 https://github.com/BepInEx For hooking game functions.  
