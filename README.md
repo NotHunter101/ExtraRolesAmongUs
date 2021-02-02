@@ -1,10 +1,12 @@
 # Extra Roles
-A BepInEx mod for Among Us that adds 4 new roles into the game. This mod cannot be played on Innersloth servers.
+A BepInEx mod for Among Us that adds 4 new roles into the game.
 
 ![character infographic](./characterGraphic.png)
 
 # Notice
-Make sure your server region in the online menu is set to 'Custom', or else the game will not function properly.
+This mod cannot be played on Innersloth servers. A modded server is hosted by me and connected to by default, but if you want to join your own server, you can build my fork of the Impostor server and switch the IP in the config.
+
+# What does the mod add?
 
 # Credits
 https://github.com/NuclearPowered/Reactor The framework the mod uses.  
