@@ -42,6 +42,7 @@ namespace ExtraRolesMod
         SendMeAMessage = 54,
         MeetingEnded = 55,
         SetLocalPlayers = 56,
+        ShieldSound = 57,
     }
     enum RPC
     {

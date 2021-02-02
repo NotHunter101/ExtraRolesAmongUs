@@ -27,6 +27,7 @@ using Reactor;
 using ExtraRolesMod;
 using Reactor.Unstrip;
 using UnityEngine.Networking;
+using Reactor.Extensions;
 
 /*
 Hex colors for extra roles
@@ -119,6 +120,16 @@ namespace ExtraRolesMod
     [HarmonyPatch]
     public static class MainHooks
     {
+        public static AssetBundle bundle = AssetBundle.LoadFromFile(Directory.GetCurrentDirectory() + "\\Assets\\bundle");
+        public static AudioClip breakClip = bundle.LoadAsset<AudioClip>("SB").DontUnload();
+
+        public static void BreakShield(bool flag)
+        {
+            if (flag)
+                MedicSettings.Protected = null;
+            SoundManager.Instance.PlaySound(breakClip, false, 100f);
+        }
+
         public static GameObject rend;
         //list of all entries/exits of vents for each player and their times (used by VentPlayerExtension)
         public static IDictionary<byte, DateTime> allVentTimes = new Dictionary<byte, DateTime>() { };
@@ -420,6 +431,9 @@ namespace ExtraRolesMod
         {
             switch (HKHMBLJFLMC)
             {
+                case (byte)CustomRPC.ShieldSound:
+                    BreakShield(false);
+                    break;
                 case (byte)CustomRPC.SetLocalPlayers:
                     ConsoleTools.Info("Setting Local Players...");
                     localPlayers.Clear();
@@ -667,6 +681,11 @@ namespace ExtraRolesMod
                             FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
                             PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer);
                             OfficerSettings.lastKilled = DateTime.UtcNow;
+                            if (MedicSettings.shieldKillAttemptIndicator)
+                            {
+                                writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShieldSound, Hazel.SendOption.None, -1);
+                                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                            }
                             return false;
                         }
                         //check if they're joker and the setting is configured
@@ -747,6 +766,11 @@ namespace ExtraRolesMod
             //finally, check if the target is protected.
             if (MedicSettings.Protected != null && PlayerTools.closestPlayer.PlayerId == MedicSettings.Protected.PlayerId)
             {
+                if (MedicSettings.shieldKillAttemptIndicator)
+                {
+                    MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShieldSound, Hazel.SendOption.None, -1);
+                    FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                }
                 //cancel the kill
                 return false;
             }
@@ -858,11 +882,11 @@ namespace ExtraRolesMod
                         rend.SetActive(false);
 
                     if (MedicSettings.Protected != null && MedicSettings.Protected.Data.IsDead)
-                        BreakShield();
+                        BreakShield(true);
                     if (MedicSettings.Protected != null && MedicSettings.Medic != null && MedicSettings.Medic.Data.IsDead)
-                        BreakShield();
+                        BreakShield(true);
                     if (MedicSettings.Medic == null && MedicSettings.Protected != null)
-                        BreakShield();
+                        BreakShield(true);
 
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                     {
@@ -1031,15 +1055,6 @@ namespace ExtraRolesMod
                         KillButton.isActive = false;
                     }
                 }
-            }
-
-            public static AssetBundle bundle = AssetBundle.LoadFromFile(Directory.GetCurrentDirectory() + "\\Assets\\bundle");
-            public static AudioClip breakClip = bundle.LoadAsset<AudioClip>("SB");
-
-            private static void BreakShield()
-            {
-                MedicSettings.Protected = null;
-                SoundManager.Instance.PlaySound(breakClip, false, 100f);
             }
         }
 
