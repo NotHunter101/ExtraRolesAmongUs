@@ -122,7 +122,7 @@ namespace ExtraRolesMod
         {
             if (flag)
                 MedicSettings.Protected = null;
-            SoundManager.Instance.PlaySound(breakClip, false, 100f);
+            SoundManager.Instance.PlaySound(breakClip, false, 100f * SaveManager.SfxVolume );
         }
 
         public static GameObject rend;
