@@ -483,20 +483,6 @@ namespace ExtraRolesMod
                         }
                         break;
                     }
-                case (byte)CustomRPC.MedicDead:
-                    {
-                        
-                        /*if (MedicSettings.Protected.PlayerId == PlayerControl.LocalPlayer.PlayerId)
-                        {
-                            var breakSound = File.ReadAllBytes(Directory.GetCurrentDirectory() + "\\Assets\\SB.wav");
-                            var breakClip = new AudioClip();
-                            
-                            SoundManager.Instance.PlaySound(
-                        }*/
-                        MedicSettings.Protected = null;
-                        //COLORID: EGLJNOMOGNP.Instance.GetPlayerById(PlayerControl.LocalPlayer.PlayerId).EHAHBDFODKC
-                        break;
-                    }
                 case (byte)CustomRPC.SetOfficer:
                     {
                         ConsoleTools.Info("Officer Set Through RPC!");
@@ -829,17 +815,6 @@ namespace ExtraRolesMod
             //handle the murder after it's ran
             public static void Postfix(PlayerControl __instance, PlayerControl CAKODNGLPDF)
             {
-                if (MainHooks.MedicSettings.Medic != null)
-                {
-                    if (CAKODNGLPDF.PlayerId == MainHooks.MedicSettings.Medic.PlayerId)
-                    {
-                        //medic was just killed for sure.
-                        MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MedicDead, Hazel.SendOption.None, -1);
-                        FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                        //simply set the protected player to null to break the shield
-                        MainHooks.MedicSettings.Protected = null;
-                    }
-                }
                 if (MainHooks.OfficerSettings.Officer != null)
                 {
                     //check if killer is officer
@@ -882,8 +857,12 @@ namespace ExtraRolesMod
                     if (rend != null)
                         rend.SetActive(false);
 
-                    if (MedicSettings.Protected != null && (MedicSettings.Protected.PlayerId == PlayerControl.LocalPlayer.PlayerId && PlayerControl.LocalPlayer.Data.IsDead))
-                        MedicSettings.Protected = null;
+                    if (MedicSettings.Protected != null && MedicSettings.Protected.Data.IsDead)
+                        BreakShield();
+                    if (MedicSettings.Protected != null && MedicSettings.Medic != null && MedicSettings.Medic.Data.IsDead)
+                        BreakShield();
+                    if (MedicSettings.Medic == null && MedicSettings.Protected != null)
+                        BreakShield();
 
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                     {
@@ -1002,8 +981,6 @@ namespace ExtraRolesMod
                             rend = new GameObject("Shield Icon", new Il2CppSystem.Type[] { SpriteRenderer.Il2CppType });
                             rend.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tex, new Rect(0, 0, 50, 50), Vector2.one / 2f);
                         }
-                        ConsoleTools.Info(PlayerControl.LocalPlayer.myRend.transform.localPosition.x.ToString());
-                        ConsoleTools.Info(PlayerControl.LocalPlayer.myRend.transform.localPosition.y.ToString());
                         var scale = 1;
                         if (Screen.width > Screen.height)
                             scale = Screen.width / 800;
@@ -1054,6 +1031,15 @@ namespace ExtraRolesMod
                         KillButton.isActive = false;
                     }
                 }
+            }
+
+            public static AssetBundle bundle = AssetBundle.LoadFromFile(Directory.GetCurrentDirectory() + "\\Assets\\bundle");
+            public static AudioClip breakClip = bundle.LoadAsset<AudioClip>("SB");
+
+            private static void BreakShield()
+            {
+                MedicSettings.Protected = null;
+                SoundManager.Instance.PlaySound(breakClip, false, 100f);
             }
         }
 
