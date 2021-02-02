@@ -289,7 +289,7 @@ namespace ExtraRolesMod
         [HarmonyPatch(typeof(BOCOFLHKCOJ), "Start")]
         public static void Postfix(BOCOFLHKCOJ __instance)
         {
-            __instance.text.Text = __instance.text.Text + "   Extra Roles V0.9.5 Loaded. (https://github.com/NotHunter101/ExtraRolesAmongUs/)";
+            __instance.text.Text = __instance.text.Text + "   Extra Roles V1.0.0 Loaded. (http://www.extraroles.net/)";
         }
 
         [HarmonyPatch(typeof(FFGALNAPKCD), "RpcSetInfected")]
@@ -1057,7 +1057,7 @@ namespace ExtraRolesMod
             public static void Postfix(PingTracker __instance)
             {
                 __instance.text.Text += "\nextraroles.net";
-                __instance.text.Text += "\nExtraRoles v0.9.5";
+                __instance.text.Text += "\nExtraRoles v1.0.0";
             }
         }
 
