@@ -30,22 +30,22 @@ The Joker also has no tasks.
 
 # Configuration
 
-There are a lot of configurable game settings in this mod, but they aren't changable in game. If you want to change your settings, go to the directory *Among Us\BepInEx\config* and open the *gg.reactor.extraroles.cfg* file with any text editor. The config settings of the host will be the ones loaded by default. The settings may be a little hard to understand, so I've compiled a list of what every one does below.
+There are a lot of configurable game settings in this mod, but they aren't changable in game. If you want to change your settings, go to the directory *Among Us\BepInEx\config* and open the *gg.reactor.extraroles.cfg* file with any text editor. The game options of the lobby host will be the ones loaded by default. The settings may be a little hard to understand, so I've compiled a list of what every one does below.
 
 ## Custom Server
   
 ### IP
-*Default: 24.57.85.224*  
+*Default: 24.57.85.224  *
 This value is the IP address that the mod will try to connect to when creating a lobby. If you build the custom server yourself, you have to change this to your IP. If you are okay to use the default server, you can just use the default setting.  
   
 ### Port
-*Default: 22023*
+*Default: 22023  *
 This value is the port the mod will use when connecting to the IP above. The default IP in the Impostor server is 22023, so you will most likely not need to change this.  
   
 ## Game Options
   
 ### Show Medic
-*Default: 0*
+*Default: 0  *
 
 # Credits
 https://github.com/NuclearPowered/Reactor The framework the mod uses.  
