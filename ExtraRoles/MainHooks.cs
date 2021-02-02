@@ -267,7 +267,7 @@ namespace ExtraRolesMod
             {
                 var removeTask = new List<PlayerTask>();
                 foreach (PlayerTask task in JokerSettings.Joker.myTasks)
-                    if (task.TaskType == TaskTypes.FixComms || task.TaskType == TaskTypes.FixLights || task.TaskType == TaskTypes.ResetReactor || task.TaskType == TaskTypes.ResetSeismic || task.TaskType == TaskTypes.RestoreOxy)
+                    if (task.TaskType != TaskTypes.FixComms && task.TaskType != TaskTypes.FixLights && task.TaskType != TaskTypes.ResetReactor && task.TaskType != TaskTypes.ResetSeismic && task.TaskType != TaskTypes.RestoreOxy)
                         removeTask.Add(task);
                 foreach (PlayerTask task in removeTask)
                     JokerSettings.Joker.RemoveTask(task);
@@ -776,7 +776,7 @@ namespace ExtraRolesMod
             {
                 float num = float.MaxValue;
                 PlayerControl localPlayer = pc.Object;
-                couldUse = (localPlayer == EngineerSettings.Engineer || localPlayer.Data.IsImpostor);
+                couldUse = (localPlayer == EngineerSettings.Engineer || localPlayer.Data.IsImpostor) && !localPlayer.Data.IsDead;
                 canUse = couldUse;
                 if ((DateTime.UtcNow - PlayerVentTimeExtension.GetLastVent(pc.Object.PlayerId)).TotalMilliseconds > 1000)
                 {
@@ -1043,8 +1043,13 @@ namespace ExtraRolesMod
                             }
                         }
                     }
-                    if (PlayerControl.LocalPlayer.Data.IsDead)
+                    if (PlayerControl.LocalPlayer.Data.IsDead || !__instance.UseButton.isActiveAndEnabled)
                     {
+                        if (rend != null)
+                        {
+                            rend.SetActive(false);
+                            rend.active = false;
+                        }
                         KillButton.gameObject.SetActive(false);
                         KillButton.isActive = false;
                     }
