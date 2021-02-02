@@ -96,6 +96,7 @@ namespace ExtraRolesMod
 
             var port = Port.Value;
 
+            defaultRegions.Clear();
             defaultRegions.Insert(0, new OIBMKGDLGOG(
                 Name.Value, ip, new[]
                 {

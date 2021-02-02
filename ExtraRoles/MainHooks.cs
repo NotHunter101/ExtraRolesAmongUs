@@ -35,11 +35,6 @@ Engineer: 972e00
 Joker: 838383
 Medic: 24b720
 Officer: 0028c6
-
-Yes, I know the code is bad. I'm going to clean up the rpc handler soon, and the engineer's sabotage clearing ability doesn't work right now because i'm in the middle of rewriting that section. 
-Also, the medic shield doesn't break when the medic dies.
-
-I can comment the code more extensively if you need me to.
 */
 
 namespace ExtraRolesMod
@@ -227,7 +222,6 @@ namespace ExtraRolesMod
             public static bool showOfficer = false;
             public static Color officerColor = new Color(0, 40f / 255f, 198f / 255f, 1);
             public static DateTime? lastKilled = null;
-            public static bool firstKill = true;
             public static void ClearSettings()
             {
                 Officer = null;
@@ -1060,6 +1054,18 @@ namespace ExtraRolesMod
 
         public static PlayerControl localPlayer = null;
         public static List<PlayerControl> localPlayers = new List<PlayerControl>();
+
+        //
+
+        [HarmonyPatch(typeof(ShipStatus), "GetSpawnLocation")]
+        public static class StartGamePatch
+        {
+            public static void Postfix(ShipStatus __instance)
+            {
+                ConsoleTools.Info("Game Started!");
+                OfficerSettings.lastKilled = DateTime.UtcNow.AddSeconds((OfficerSettings.OfficerCD * -1) + 15);
+            }
+        }
 
         [HarmonyPatch(typeof(EndGameManager), "SetEverythingUp")]
         public static class EndGamePatch

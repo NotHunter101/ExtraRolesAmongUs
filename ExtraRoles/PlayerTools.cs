@@ -119,7 +119,6 @@ namespace ExtraRolesMod
         {
             if (MainHooks.OfficerSettings.lastKilled == null)
             {
-                MainHooks.OfficerSettings.lastKilled = DateTime.UtcNow;
                 return MainHooks.OfficerSettings.OfficerCD;
             }
             DateTime now = DateTime.UtcNow;
