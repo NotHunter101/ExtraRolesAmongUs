@@ -70,7 +70,7 @@ If this setting is enabled, The Engineer's name will be lit up orange for everyo
   
 ### Show Joker
 *Default: 0*<br/>
-If this setting is enabled, The Jokers's name will be lit up gray for everyone. If it isn't, it will only be lit for themselves.
+If this setting is enabled, The Jokers's name will be lit up grey for everyone. If it isn't, it will only be lit for themselves.
   
 ### Joker Can Die To Officer
 *Default: 1*<br/>
