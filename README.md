@@ -30,7 +30,7 @@ The Joker also has no tasks.
 
 # Installation
 
-![installationvid](./installation.mp4)
+https://youtu.be/gtuqYsdir_k
 
 # Configuration
 
