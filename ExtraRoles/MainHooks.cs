@@ -120,9 +120,10 @@ namespace ExtraRolesMod
 
         public static void BreakShield(bool flag)
         {
+            if (MedicSettings.Protected != null && MedicSettings.Protected.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                SoundManager.Instance.PlaySound(breakClip, false, 100f * SaveManager.SfxVolume);
             if (flag)
                 MedicSettings.Protected = null;
-            SoundManager.Instance.PlaySound(breakClip, false, 100f * SaveManager.SfxVolume );
         }
 
         public static GameObject rend;
