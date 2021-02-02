@@ -74,7 +74,7 @@ If this setting is enabled, The Jokers's name will be lit up gray for everyone. 
   
 ### Joker Can Die To Officer
 *Default: 1*<br/>
-If this setting is enabled, The Officer will be able to kill The Joker without reprecussion. If it's disabled, it will function as if they were a crewmate.
+If this setting is enabled, The Officer will be able to kill The Joker without reprecussion. If it's disabled, killing The Joker will execute as if they were a Crewmate.
   
 ### Duration In Which Medic Report Will Contain The Killers Name
 *Default: 5*<br/>
