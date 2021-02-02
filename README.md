@@ -30,6 +30,8 @@ The Joker also has no tasks.
 
 # Installation
 
+![installationvid](./installation.mp4)
+
 # Configuration
 
 There are a lot of configurable game settings in this mod, but they aren't changable in game. If you want to change your settings, go to the directory *Among Us\BepInEx\config* and open the *gg.reactor.extraroles.cfg* file with any text editor. The game options of the lobby host will be the ones loaded by default. The settings may be a little hard to understand, so I've compiled a list of what every single setting does below.
