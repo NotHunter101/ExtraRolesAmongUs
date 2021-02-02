@@ -849,21 +849,8 @@ namespace ExtraRolesMod
         public static class UpdatePatch
         {
             public static void Postfix(HudManager __instance)
-            {
-                //this is the only way I could reliably figure out if the game was started or just in the lobby.
-                var gameStarted = true;
-                try
-                {
-                    //this function throws an error in the lobby, so it gets caught and the main update code has it's condition set to false.
-                    PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
-                    DistLocalClosest = PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
-                }
-                catch
-                {
-                    //set the main update code's condition to false
-                    gameStarted = false;
-                }
-                if (gameStarted)
+            { 
+                if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
                 {
                     KillButton = __instance.KillButton;
                     PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
@@ -1055,7 +1042,24 @@ namespace ExtraRolesMod
         public static PlayerControl localPlayer = null;
         public static List<PlayerControl> localPlayers = new List<PlayerControl>();
 
-        //
+        [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.AmBanned), MethodType.Getter)]
+        public static class AmBannedPatch
+        {
+            public static void Postfix(out bool __result)
+            {
+                __result = false;
+            }
+        }
+
+        [HarmonyPatch(typeof(PingTracker), "Update")]
+        public static class PingPatch
+        {
+            public static void Postfix(PingTracker __instance)
+            {
+                __instance.text.Text += "\nextraroles.net";
+                __instance.text.Text += "\nExtraRoles v0.9.5";
+            }
+        }
 
         [HarmonyPatch(typeof(ShipStatus), "GetSpawnLocation")]
         public static class StartGamePatch
