@@ -24,7 +24,7 @@ The Engineer cab repair one emergency per game from anywhere on the entire map.
 The other ablity of The Engineer is that they are able to use the vents that were previously exclusive to Impostors.  
 
 ## Joker
-The Joker is interesting; they aren't part of the Crewmates **or** Impostors, and they can only win by convincing being falsely convicted as an Impostor.  
+The Joker is interesting; they aren't part of the Crewmates **or** Impostors, and they can only win by being falsely convicted as an Impostor.  
 If The Joker get's voted off the ship, the game will end instantly.  
 The Joker also has no tasks.  
 
