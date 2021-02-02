@@ -120,7 +120,7 @@ The percentage chance that anybody in the game will become The Joker.
 # Resources
 https://github.com/NuclearPowered/Reactor The framework the mod uses.  
 https://github.com/BepInEx For hooking game functions.  
-https://github.com/Impostor/Impostor For running a non-official server.
+https://github.com/Impostor/Impostor For running a non-official server.  
 https://github.com/Woodi-dev/Among-Us-Sheriff-Mod For code snippets.  
 https://github.com/tomozbot/SweeperMod For code snippets.  
 https://github.com/NotHunter101/Impostor My fork of Impostor that the mod needs to run.  
