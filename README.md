@@ -35,17 +35,17 @@ There are a lot of configurable game settings in this mod, but they aren't chang
 ## Custom Server
   
 ### IP
-*Default: 24.57.85.224  *
+*Default: 24.57.85.224*<br/>
 This value is the IP address that the mod will try to connect to when creating a lobby. If you build the custom server yourself, you have to change this to your IP. If you are okay to use the default server, you can just use the default setting.  
   
 ### Port
-*Default: 22023  *
+*Default: 22023*<br/>
 This value is the port the mod will use when connecting to the IP above. The default IP in the Impostor server is 22023, so you will most likely not need to change this.  
   
 ## Game Options
   
 ### Show Medic
-*Default: 0  *
+*Default: 0*<br/>
 
 # Credits
 https://github.com/NuclearPowered/Reactor The framework the mod uses.  
