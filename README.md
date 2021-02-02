@@ -28,6 +28,8 @@ The Joker is interesting; they aren't part of the Crewmates **or** Impostors, an
 If The Joker get's voted off the ship, the game will end instantly.  
 The Joker also has no tasks.  
 
+# Installation
+
 # Configuration
 
 There are a lot of configurable game settings in this mod, but they aren't changable in game. If you want to change your settings, go to the directory *Among Us\BepInEx\config* and open the *gg.reactor.extraroles.cfg* file with any text editor. The game options of the lobby host will be the ones loaded by default. The settings may be a little hard to understand, so I've compiled a list of what every single setting does below.
@@ -107,4 +109,4 @@ https://github.com/BepInEx For hooking game functions.
 https://github.com/Woodi-dev/Among-Us-Sheriff-Mod For code snippets.  
 https://github.com/tomozbot/SweeperMod For code snippets.  
 https://github.com/NotHunter101/Impostor My fork of Impostor that the mod needs to run.  
-https://github.com/Hiumee/Impostor The fork of Impostor that can repair sabotages programmatically.  
+https://github.com/Hiumee/Impostor The fork of Impostor that can repair sabotages programmatically.
