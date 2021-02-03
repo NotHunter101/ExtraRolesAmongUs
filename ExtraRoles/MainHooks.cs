@@ -754,7 +754,6 @@ namespace ExtraRolesMod
         {
             public static void Prefix(PlayerControl NMEAPOJFNKA)
             {
-                ConsoleTools.Info("ENTER! " + NMEAPOJFNKA.name);
                 PlayerVentTimeExtension.SetLastVent(NMEAPOJFNKA.PlayerId);
             }
         }
@@ -764,7 +763,6 @@ namespace ExtraRolesMod
         {
             public static bool Prefix(PlayerControl NMEAPOJFNKA)
             {
-                ConsoleTools.Info("EXIT! " + NMEAPOJFNKA.name);
                 PlayerVentTimeExtension.SetLastVent(NMEAPOJFNKA.PlayerId);
                 return true;
             }
