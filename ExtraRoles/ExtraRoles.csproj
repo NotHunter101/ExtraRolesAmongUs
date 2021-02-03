@@ -19,6 +19,9 @@
       <Reference Include="Assembly-CSharp">
         <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Among Us\BepInEx\unhollowed\Assembly-CSharp.dll</HintPath>
       </Reference>
+      <Reference Include="Essentials">
+        <HintPath>..\..\..\..\Desktop\Reactor-Essentials-master\Essentials\bin\Debug\netstandard2.1\Essentials.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
     <Target Name="Copy" AfterTargets="Reobfuscate">

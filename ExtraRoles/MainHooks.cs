@@ -129,42 +129,6 @@ namespace ExtraRolesMod
         public static GameObject rend;
         //list of all entries/exits of vents for each player and their times (used by VentPlayerExtension)
         public static IDictionary<byte, DateTime> allVentTimes = new Dictionary<byte, DateTime>() { };
-        //array of config settings
-        public static string[] configSettingsKeys =
-        {
-            "Show Medic",
-            "Show Shielded Player",
-            "Murder Attempt Indicator For Shielded Player",
-            "Show Officer",
-            "Officer Kill Cooldown",
-            "Show Engineer",
-            "Show Joker",
-            "Joker Can Die To Officer",
-            "Duration In Which Medic Report Will Contain The Killers Name",
-            "Duration In Which Medic Report Will Contain The Killers Color Type",
-            "Medic Spawn Chance",
-            "Officer Spawn Chance",
-            "Engineer Spawn Chance",
-            "Joker Spawn Chance"
-        };
-        //array of all config settings and their values. these will be loaded by a config and sent to all clients
-        public static IDictionary<string, byte> configSettings = new Dictionary<string, byte>()
-        {
-            { "Show Medic", 0 },
-            { "Show Shielded Player", 0 },
-            { "Murder Attempt Indicator For Shielded Player", 0 }, //TODO
-            { "Show Officer", 0 },
-            { "Officer Kill Cooldown", 0 },
-            { "Show Engineer", 0 },
-            { "Show Joker", 0 },
-            { "Joker Can Die To Officer", 0 },
-            { "Duration In Which Medic Report Will Contain The Killers Name", 0 },
-            { "Duration In Which Medic Report Will Contain The Killers Color Type", 0 },
-            { "Medic Spawn Chance", 0 },
-            { "Officer Spawn Chance", 0 },
-            { "Engineer Spawn Chance", 0 },
-            { "Joker Spawn Chance", 0 }
-        };
         //rudimentary array to convert a byte setting from config into true/false
         public static bool[] byteBool =
         {
@@ -207,11 +171,11 @@ namespace ExtraRolesMod
 
             public static void SetConfigSettings()
             {
-                showMedic = byteBool[configSettings["Show Medic"]];
-                showProtected = byteBool[configSettings["Show Shielded Player"]];
-                shieldKillAttemptIndicator = byteBool[configSettings["Murder Attempt Indicator For Shielded Player"]];
-                medicKillerNameDuration = configSettings["Duration In Which Medic Report Will Contain The Killers Name"];
-                medicKillerColorDuration = configSettings["Duration In Which Medic Report Will Contain The Killers Color Type"];
+                showMedic = HarmonyMain.showMedic.GetValue();
+                showProtected = HarmonyMain.showShieldedPlayer.GetValue();
+                shieldKillAttemptIndicator = HarmonyMain.playerMurderIndicator.GetValue();
+                medicKillerNameDuration = (int)HarmonyMain.medicReportNameDuration.GetValue();
+                medicKillerColorDuration = (int)HarmonyMain.medicReportColorDuration.GetValue();
             }
         }
         //officer settings and values
@@ -231,8 +195,8 @@ namespace ExtraRolesMod
 
             public static void SetConfigSettings()
             {
-                showOfficer = byteBool[configSettings["Show Officer"]];
-                OfficerCD = configSettings["Officer Kill Cooldown"];
+                showOfficer = HarmonyMain.showOfficer.GetValue();
+                OfficerCD = HarmonyMain.OfficerKillCooldown.GetValue();
             }
         }
         //engineer settings and values
@@ -252,7 +216,7 @@ namespace ExtraRolesMod
 
             public static void SetConfigSettings()
             {
-                showEngineer = byteBool[configSettings["Show Engineer"]];
+                showEngineer = HarmonyMain.showEngineer.GetValue();
             }
         }
 
@@ -281,8 +245,8 @@ namespace ExtraRolesMod
 
             public static void SetConfigSettings()
             {
-                showJoker = byteBool[configSettings["Show Joker"]];
-                jokerCanDieToOfficer = byteBool[configSettings["Joker Can Die To Officer"]];
+                showJoker = HarmonyMain.showJoker.GetValue();
+                jokerCanDieToOfficer = HarmonyMain.jokerCanDieToOfficer.GetValue();
             }
         }
 
@@ -305,15 +269,13 @@ namespace ExtraRolesMod
             EngineerSettings.SetConfigSettings();
             JokerSettings.SetConfigSettings();
             MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.None, -1);
-            ConsoleTools.Info(String.Join(",", configSettings.Values));
-            writer.WriteBytesAndSize(configSettings.Values.ToArray<byte>());
             FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
 
             ConsoleTools.Error("SETTING INFECTED! IF YOU AREN'T THE HOST, COPY YOUR CONSOLE AND SEND!");
             List<PlayerControl> crewmates = PlayerControl.AllPlayerControls.ToArray().ToList();
             crewmates.RemoveAll(x => x.Data.IsImpostor);
 
-            if (crewmates.Count > 0 && (rng.Next(1, 101) <= configSettings["Medic Spawn Chance"]))
+            if (crewmates.Count > 0 && (rng.Next(1, 101) <= HarmonyMain.medicSpawnChance.GetValue()))
             {
                 writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetMedic, Hazel.SendOption.None, -1);
                 var MedicRandom = rng.Next(0, crewmates.Count);
@@ -325,7 +287,7 @@ namespace ExtraRolesMod
                 FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
             }
 
-            if (crewmates.Count > 0 && (rng.Next(1, 101) <= configSettings["Officer Spawn Chance"]))
+            if (crewmates.Count > 0 && (rng.Next(1, 101) <= HarmonyMain.officerSpawnChance.GetValue()))
             {
                 writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetOfficer, Hazel.SendOption.None, -1);
 
@@ -338,7 +300,7 @@ namespace ExtraRolesMod
                 FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
             }
 
-            if (crewmates.Count > 0 && (rng.Next(1, 101) <= configSettings["Engineer Spawn Chance"]))
+            if (crewmates.Count > 0 && (rng.Next(1, 101) <= HarmonyMain.engineerSpawnChance.GetValue()))
             {
                 writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetEngineer, Hazel.SendOption.None, -1);
                 var EngineerRandom = rng.Next(0, crewmates.Count);
@@ -350,7 +312,7 @@ namespace ExtraRolesMod
                 FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
             }
 
-            if (crewmates.Count > 0 && (rng.Next(1, 101) <= configSettings["Joker Spawn Chance"]))
+            if (crewmates.Count > 0 && (rng.Next(1, 101) <= HarmonyMain.jokerSpawnChance.GetValue()))
             {
                 writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetJoker, Hazel.SendOption.None, -1);
                 var JokerRandom = rng.Next(0, crewmates.Count);
@@ -451,12 +413,6 @@ namespace ExtraRolesMod
                     }
                 case (byte)CustomRPC.ResetVaribles:
                     {
-                        var configSettingsValues = ALMCIJKELCP.ReadBytesAndSize().ToArray();
-                        for (var i = 0; i < configSettingsValues.Length; i++)
-                        {
-                            configSettings[configSettingsKeys[i]] = configSettingsValues[i];
-                        }
-                        ConsoleTools.Info(String.Join(",", configSettings));
                         MedicSettings.ClearSettings();
                         OfficerSettings.ClearSettings();
                         EngineerSettings.ClearSettings();
