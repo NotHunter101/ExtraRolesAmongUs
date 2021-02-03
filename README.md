@@ -9,9 +9,8 @@ This mod cannot be played on Innersloth servers. A modded server is hosted by me
 # What does the mod add?
 
 ## Medic
-The Medic can give any player a shield that will make them immortal.  
+The Medic can give any player a shield that will make them immortal. Although, if The Medic dies, the shield will break.  
 The only exception is The Officer; they will still die if they try to kill a Crewmate.  
-Although, if The Medic dies, the shield will break.  
 The Medic's other feature shows when they find a corpse: they can get a report that contains clues to the killer's identity.  
 The type of information they get is based on a timer that can be configured inside the host's config file. 
   
