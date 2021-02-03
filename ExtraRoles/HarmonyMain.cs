@@ -70,7 +70,7 @@ namespace ExtraRolesMod
             Ip = Config.Bind("Custom Server", "IP", "24.57.85.224");
             Port = Config.Bind("Custom Server", "Port", (ushort)22023);
 
-            var defaultRegions = AOBNFCIHAJL.DefaultRegions.ToList();
+            var defaultRegions = ServerManager.DefaultRegions.ToList();
             var ip = Ip.Value;
             if (Uri.CheckHostName(Ip.Value).ToString() == "Dns")
             {
@@ -96,15 +96,19 @@ namespace ExtraRolesMod
             var port = Port.Value;
 
 
-            defaultRegions.Clear();
-            defaultRegions.Insert(0, new OIBMKGDLGOG(
+            var region = new RegionInfo(
                 "Custom", ip, new[]
                 {
-                    new PLFDMKKDEMI($"Custom-Master-1", ip, port)
-                })
-            );
+                    new ServerInfo($"Custom-Master-1", ip, port)
+                });
 
-            AOBNFCIHAJL.DefaultRegions = defaultRegions.ToArray();
+            defaultRegions.Clear();
+            defaultRegions.Insert(0, region);
+
+            ServerManager.DefaultRegions = defaultRegions.ToArray();
+
+            ServerManager.Instance.ReselectRegion();
+            ServerManager.Instance.CurrentRegion = region;
             Harmony.PatchAll();
         }
     }
