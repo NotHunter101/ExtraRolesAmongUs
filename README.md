@@ -43,76 +43,62 @@ For the rest of you, here's the installation instructions.
 6) To verify the mod is installed, look at the text in the top left of the menu screen.
 7) Make sure it says "Mods: 2" and "Extra Roles Mod vX.X.X Loaded." (X.X.X being the current version number)
 
-# Configuration
-
-There are a lot of configurable game settings in this mod, but they aren't changable in game. If you want to change your settings, go to the directory *Among Us\BepInEx\config* and open the *gg.reactor.extraroles.cfg* file with any text editor. The game options of the lobby host will be the ones loaded by default. The settings may be a little hard to understand, so I've compiled a list of what every single setting does below.
-
-## Custom Server
+# Game Options
   
-### IP
-*Default: 24.57.85.224*<br/>
-This value is the IP address that the mod will try to connect to when creating a lobby. If you build the custom server yourself, you have to change this to your IP. If you are okay to use the default server, you can just use the default setting.  
-  
-### Port
-*Default: 22023*<br/>
-This value is the port the mod will use when connecting to the IP above. The default IP in the Impostor server is 22023, so you will most likely not need to change this.  
-  
-## Game Options
-  
-### Show Medic
-*Default: 0*<br/>
+## Show Medic
+*Default: false*<br/>
 This is the game setting that toggles wether the Medic's name is lit up green for everybody in the game, or just themselves.
   
-### Show Shielded Player
-*Default: 1*<br/>
+## Show Shielded Player
+*Default: true*<br/>
 When The Medic shield's somebody, their visor will change to the color cyan. If this setting is set to 1, everybody can see the color change. If not, only the shielded player can see.
   
-### Murder Attempt Indicator For Shielded Player
-*Default: 1*<br/>
+## Murder Attempt Indicator For Shielded Player
+*Default: true*<br/>
 If this setting is enabled, the shielded player will hear a *ting* noise when somebody tries (and fails) to murder them.
   
-### Show Officer
-*Default: 0*<br/>
+## Show Officer
+*Default: false*<br/>
 If this setting is enabled, The Officer's name will be lit up blue for everyone. If it isn't, it will only be lit for themselves.
   
-### Officer Kill Cooldown
+## Officer Kill Cooldown
 *Default: 30*<br/>
 This is the kill cooldown length for The Officer. The first cooldown on the first round will be equal to ten no matter what, just like the Impostor.
   
-### Show Engineer
-*Default: 0*<br/>
+## Show Engineer
+*Default: false*<br/>
 If this setting is enabled, The Engineer's name will be lit up orange for everyone. If it isn't, it will only be lit for themselves.
   
-### Show Joker
-*Default: 0*<br/>
+## Show Joker
+*Default: false*<br/>
 If this setting is enabled, The Jokers's name will be lit up grey for everyone. If it isn't, it will only be lit for themselves.
   
-### Joker Can Die To Officer
-*Default: 1*<br/>
+## Joker Can Die To Officer
+*Default: true*<br/>
 If this setting is enabled, The Officer will be able to kill The Joker without reprecussion. If it's disabled, killing The Joker will execute as if they were a Crewmate.
   
-### Duration In Which Medic Report Will Contain The Killers Name
+### Time Where Medic Reports Will Have Name
 *Default: 5*<br/>
-The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's identity.
+The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's name.
 
-### Duration In Which Medic Report Will Contain The Killers Color Type
+## Time Where Medic Reports Will Have Color Type
 *Default: 20*<br/>
 The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's color type.  
 "color type" means either "lighter" or "darker", and a full list of colors and their types are included at the bottom of the page.  
   
-### Medic Spawn Chance
+## Medic Spawn Chance
 *Default: 100*<br/>
 The percentage chance that anybody in the game will become The Medic.  
   
-### Officer Spawn Chance
+## Officer Spawn Chance
 *Default: 100*<br/>
 The percentage chance that anybody in the game will become The Officer.  
   
-### Engineer Spawn Chance
+## Engineer Spawn Chance
 *Default: 100*<br/>
 The percentage chance that anybody in the game will become The Engineer.  
   
-### Joker Spawn Chance
+## Joker Spawn Chance
 *Default: 100*<br/>
 The percentage chance that anybody in the game will become The Joker.  
   
@@ -120,6 +106,7 @@ The percentage chance that anybody in the game will become The Joker.
 https://github.com/NuclearPowered/Reactor The framework the mod uses.  
 https://github.com/BepInEx For hooking game functions.  
 https://github.com/Impostor/Impostor For running a non-official server.  
+https://github.com/DorCoMaNdO/Reactor-Essentials For creating custom game options easily.  
 https://github.com/Woodi-dev/Among-Us-Sheriff-Mod For code snippets.  
 https://github.com/tomozbot/SweeperMod For code snippets.  
 https://github.com/NotHunter101/Impostor My fork of Impostor that the mod needs to run.  
