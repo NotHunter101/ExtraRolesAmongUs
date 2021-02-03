@@ -101,7 +101,21 @@ The percentage chance that anybody in the game will become The Engineer.
 ## Joker Spawn Chance
 *Default: 100*<br/>
 The percentage chance that anybody in the game will become The Joker.  
-  
+
+# Color Types
+Red is darker.
+Blue is darker.
+Green is darker.
+Pink is lighter.
+Orange is lighter.
+Yellow is lighter.
+Grey is darker.
+White is lighter.
+Purple is darker.
+Brown is darker.
+Cyan is lighter.
+Lime is lighter.
+ 
 # Resources
 https://github.com/NuclearPowered/Reactor The framework the mod uses.  
 https://github.com/BepInEx For hooking game functions.  
