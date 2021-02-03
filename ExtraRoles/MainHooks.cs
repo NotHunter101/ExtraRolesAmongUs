@@ -296,7 +296,6 @@ namespace ExtraRolesMod
         [HarmonyPatch(typeof(FFGALNAPKCD), "RpcSetInfected")]
         public static void Postfix(Il2CppReferenceArray<EGLJNOMOGNP.DCJMABDDJCF> JPGEIBIBJPJ)
         {
-            ConsoleTools.Error("SETTING INFECTED! IF YOU AREN'T THE HOST, COPY YOUR CONSOLE AND SEND!");
             MedicSettings.ClearSettings();
             OfficerSettings.ClearSettings();
             EngineerSettings.ClearSettings();
@@ -310,6 +309,7 @@ namespace ExtraRolesMod
             writer.WriteBytesAndSize(configSettings.Values.ToArray<byte>());
             FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
 
+            ConsoleTools.Error("SETTING INFECTED! IF YOU AREN'T THE HOST, COPY YOUR CONSOLE AND SEND!");
             List<PlayerControl> crewmates = PlayerControl.AllPlayerControls.ToArray().ToList();
             crewmates.RemoveAll(x => x.Data.IsImpostor);
 
@@ -751,9 +751,9 @@ namespace ExtraRolesMod
                 //this code is finished, but not implemented yet. It was working in a previous version, but I rewrote this whole section because of bugs
                 if (KBTarget == -2 && EngineerSettings.repairUsed == false)
                 {
+                    EngineerSettings.repairUsed = true;
                     MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RepairAllEmergencies, Hazel.SendOption.None, -1);
                     FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                    EngineerSettings.repairUsed = true;
                     return false;
                 }
                 return false;
