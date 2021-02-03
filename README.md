@@ -103,18 +103,18 @@ The percentage chance that anybody in the game will become The Engineer.
 The percentage chance that anybody in the game will become The Joker.  
 
 # Color Types
-Red is darker.
-Blue is darker.
-Green is darker.
-Pink is lighter.
-Orange is lighter.
-Yellow is lighter.
-Grey is darker.
-White is lighter.
-Purple is darker.
-Brown is darker.
-Cyan is lighter.
-Lime is lighter.
+Red is darker.  
+Blue is darker.  
+Green is darker.  
+Pink is lighter.  
+Orange is lighter.  
+Yellow is lighter.  
+Grey is darker.  
+White is lighter.  
+Purple is darker.  
+Brown is darker.  
+Cyan is lighter.  
+Lime is lighter.  
  
 # Resources
 https://github.com/NuclearPowered/Reactor The framework the mod uses.  
