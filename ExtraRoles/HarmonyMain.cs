@@ -92,9 +92,7 @@ namespace ExtraRolesMod
                 ConsoleTools.Info("IP is " + ip);
             }
 
-
             var port = Port.Value;
-
 
             var region = new RegionInfo(
                 "Custom", ip, new[]
