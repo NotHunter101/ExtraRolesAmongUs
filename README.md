@@ -41,7 +41,7 @@ For the rest of you, here's the installation instructions.
 4) Drag every single file inside the downloaded .rar into your Among Us directory. (The folder that contains Among Us.exe)
 5) Run the game. The mod will take pretty long to start the first time, but after that, it will start at about the same speed.
 6) To verify the mod is installed, look at the text in the top left of the menu screen.
-7) Make sure it says "Mods: 2" and "Extra Roles Mod vX.X.X Loaded." (X.X.X being the current version number)
+7) Make sure it says "Mods: 3" and "Extra Roles Mod vX.X.X Loaded." (X.X.X being the current version number)
 
 # Game Options
   
@@ -101,7 +101,21 @@ The percentage chance that anybody in the game will become The Engineer.
 ## Joker Spawn Chance
 *Default: 100*<br/>
 The percentage chance that anybody in the game will become The Joker.  
-  
+
+# Color Types
+Red is darker.  
+Blue is darker.  
+Green is darker.  
+Pink is lighter.  
+Orange is lighter.  
+Yellow is lighter.  
+Grey is darker.  
+White is lighter.  
+Purple is darker.  
+Brown is darker.  
+Cyan is lighter.  
+Lime is lighter.  
+ 
 # Resources
 https://github.com/NuclearPowered/Reactor The framework the mod uses.  
 https://github.com/BepInEx For hooking game functions.  
