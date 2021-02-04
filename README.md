@@ -4,7 +4,7 @@ A BepInEx mod for Among Us that adds 4 new roles into the game.
 ![character infographic](./characterGraphic.png)
 
 # Notice
-This mod cannot be played on Innersloth servers (this will be patched soon...). A modded server is hosted by me and connected to by default, but if you want to join your own server, you can build my fork of the Impostor server and switch the IP in the config. For help with installing the mod, getting it to work, or fixing an issue, join the [Discord](https://discord.gg/f8Yv2Tawcg).
+This mod will work on Innersloth servers, but everybody in the lobby has to have the same version of the mod. For help with installing the mod, getting it to work, or fixing an issue, join the [Discord](https://discord.gg/f8Yv2Tawcg).
 
 # What does the mod add?
 
@@ -122,9 +122,7 @@ If you ever need to talk to someone for help fixing an issue, want to report a b
 # Resources
 https://github.com/NuclearPowered/Reactor The framework the mod uses.  
 https://github.com/BepInEx For hooking game functions.  
-https://github.com/Impostor/Impostor For running a non-official server.  
+https://github.com/Impostor/Impostor For running a non-official server. (if you wish)  
 https://github.com/DorCoMaNdO/Reactor-Essentials For creating custom game options easily.  
 https://github.com/Woodi-dev/Among-Us-Sheriff-Mod For code snippets.  
 https://github.com/tomozbot/SweeperMod For code snippets.  
-https://github.com/NotHunter101/Impostor My fork of Impostor that the mod needs to run.  
-https://github.com/Hiumee/Impostor The fork of Impostor that can repair sabotages programmatically.
