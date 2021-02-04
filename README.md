@@ -4,7 +4,7 @@ A BepInEx mod for Among Us that adds 4 new roles into the game.
 ![character infographic](./characterGraphic.png)
 
 # Notice
-This mod cannot be played on Innersloth servers. A modded server is hosted by me and connected to by default, but if you want to join your own server, you can build my fork of the Impostor server and switch the IP in the config. For help with installing the mod, getting it to work, or fixing an issue, join the [Discord](https://discord.gg/f8Yv2Tawcg).
+This mod cannot be played on Innersloth servers (this will be patched soon...). A modded server is hosted by me and connected to by default, but if you want to join your own server, you can build my fork of the Impostor server and switch the IP in the config. For help with installing the mod, getting it to work, or fixing an issue, join the [Discord](https://discord.gg/f8Yv2Tawcg).
 
 # What does the mod add?
 
