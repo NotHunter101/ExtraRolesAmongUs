@@ -63,10 +63,6 @@ namespace ExtraRolesMod
 
         public override void Load()
         {
-            System.Console.WriteLine(Path.GetFileName(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\..\\LocalLow\\InnerSloth\\Among Us\\regionInfo.dat") );
-            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\..\\LocalLow\\InnerSloth\\Among Us\\regionInfo.dat"))
-                File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\..\\LocalLow\\InnerSloth\\Among Us\\regionInfo.dat");
-
             Ip = Config.Bind("Custom Server", "IP", "174.89.28.84");
             Port = Config.Bind("Custom Server", "Port", (ushort)22023);
 
@@ -102,7 +98,6 @@ namespace ExtraRolesMod
 
             defaultRegions.Clear();
             defaultRegions.Insert(0, region);
-
             ServerManager.DefaultRegions = defaultRegions.ToArray();
             ServerManager.Instance.ReselectRegion();
             ServerManager.Instance.CurrentRegion = region;

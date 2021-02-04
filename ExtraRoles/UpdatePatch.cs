@@ -61,33 +61,49 @@ namespace ExtraRolesMod
                         if (player.Data.IsImpostor)
                             player.nameText.Color = Color.red;
                 if (MedicSettings.Medic != null)
+                {
                     if (MedicSettings.Medic == PlayerControl.LocalPlayer || MedicSettings.showMedic)
+                    {
                         MedicSettings.Medic.nameText.Color = ModdedPalette.medicColor;
                         if (MeetingHud.Instance != null)
                             foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                                if (player.NameText != null & MedicSettings.Medic.PlayerId == player.TargetPlayerId)
+                                if (player.NameText != null && MedicSettings.Medic.PlayerId == player.TargetPlayerId)
                                     player.NameText.Color = ModdedPalette.medicColor;
+                    }
+                }
                 if (OfficerSettings.Officer != null)
+                {
                     if (OfficerSettings.Officer == PlayerControl.LocalPlayer || OfficerSettings.showOfficer)
+                    {
                         OfficerSettings.Officer.nameText.Color = ModdedPalette.officerColor;
                         if (MeetingHud.Instance != null)
                             foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                                if (player.NameText != null & OfficerSettings.Officer.PlayerId == player.TargetPlayerId)
+                                if (player.NameText != null && OfficerSettings.Officer.PlayerId == player.TargetPlayerId)
                                     player.NameText.Color = ModdedPalette.officerColor;
+                    }
+                }
                 if (EngineerSettings.Engineer != null)
+                {
                     if (EngineerSettings.Engineer == PlayerControl.LocalPlayer || EngineerSettings.showEngineer)
+                    {
                         EngineerSettings.Engineer.nameText.Color = ModdedPalette.engineerColor;
                         if (MeetingHud.Instance != null)
                             foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                                if (player.NameText != null & EngineerSettings.Engineer.PlayerId == player.TargetPlayerId)
+                                if (player.NameText != null && EngineerSettings.Engineer.PlayerId == player.TargetPlayerId)
                                     player.NameText.Color = ModdedPalette.engineerColor;
+                    }
+                }
                 if (JokerSettings.Joker != null)
+                {
                     if (JokerSettings.Joker == PlayerControl.LocalPlayer || JokerSettings.showJoker)
+                    {
                         JokerSettings.Joker.nameText.Color = ModdedPalette.jokerColor;
                         if (MeetingHud.Instance != null)
                             foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                                if (player.NameText != null & JokerSettings.Joker.PlayerId == player.TargetPlayerId)
+                                if (player.NameText != null && JokerSettings.Joker.PlayerId == player.TargetPlayerId)
                                     player.NameText.Color = ModdedPalette.jokerColor;
+                    }
+                }
                 if (MedicSettings.Protected != null)
                     if (MedicSettings.Protected == PlayerControl.LocalPlayer || MedicSettings.showProtected)
                         MedicSettings.Protected.myRend.material.SetColor("_VisorColor", ModdedPalette.protectedColor);
