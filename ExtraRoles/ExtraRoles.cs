@@ -107,8 +107,8 @@ namespace ExtraRolesMod
         {
             if (flag)
             {
-                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShieldBreak, Hazel.SendOption.None, -1);
-                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShieldBreak, Hazel.SendOption.None, -1);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
                 MedicSettings.Protected.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
                 MedicSettings.Protected = null;
             }
@@ -242,10 +242,13 @@ namespace ExtraRolesMod
         }
 
         //function called on start of game. write version text on menu
-        [HarmonyPatch(typeof(BOCOFLHKCOJ), "Start")]
-        public static void Postfix(BOCOFLHKCOJ __instance)
+        [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
+        public static class VersionStartPatch
         {
-            __instance.text.Text = __instance.text.Text + "   Extra Roles " + versionString + " Loaded. (http://www.extraroles.net/)";
+            static void Postfix(VersionShower __instance)
+            {
+                __instance.text.Text = __instance.text.Text + "   Extra Roles " + versionString + " Loaded. (http://www.extraroles.net/)";
+            }
         }
 
         [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.AmBanned), MethodType.Getter)]
@@ -257,7 +260,7 @@ namespace ExtraRolesMod
             }
         }
 
-        [HarmonyPatch(typeof(PingTracker), "Update")]
+        [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]
         public static class PingPatch
         {
             public static void Postfix(PingTracker __instance)

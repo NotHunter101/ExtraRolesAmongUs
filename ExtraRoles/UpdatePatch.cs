@@ -123,7 +123,7 @@ namespace ExtraRolesMod
                     KillButton.gameObject.SetActive(true);
                     KillButton.isActive = true;
                     KillButton.SetCoolDown(0f, PlayerControl.GameOptions.KillCooldown + 15.0f);
-                    if (DistLocalClosest < KMOGFLPJLLK.JMLGACIOLIK[PlayerControl.GameOptions.KillDistance] && MedicSettings.shieldUsed == false)
+                    if (DistLocalClosest < GameOptionsData.KillDistances[PlayerControl.GameOptions.KillDistance] && MedicSettings.shieldUsed == false)
                     {
                         KillButton.SetTarget(PlayerTools.closestPlayer);
                         CurrentTarget = PlayerTools.closestPlayer;
@@ -139,7 +139,7 @@ namespace ExtraRolesMod
                     KillButton.gameObject.SetActive(true);
                     KillButton.isActive = true;
                     KillButton.SetCoolDown(PlayerTools.GetOfficerKD(), PlayerControl.GameOptions.KillCooldown + 15.0f);
-                    if (DistLocalClosest < KMOGFLPJLLK.JMLGACIOLIK[PlayerControl.GameOptions.KillDistance])
+                    if (DistLocalClosest < GameOptionsData.KillDistances[PlayerControl.GameOptions.KillDistance])
                     {
                         KillButton.SetTarget(PlayerTools.closestPlayer);
                         CurrentTarget = PlayerTools.closestPlayer;

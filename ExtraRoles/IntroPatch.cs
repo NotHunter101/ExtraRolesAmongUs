@@ -6,23 +6,22 @@ using static ExtraRolesMod.ExtraRoles;
 
 namespace ExtraRolesMod
 {
-    [HarmonyPatch(typeof(PENEIDJGGAF.CKACLKCOJFO), "MoveNext")]
-    class IntroCutscene
+    [HarmonyPatch(typeof(IntroCutscene.CoBegin__d), nameof(IntroCutscene.CoBegin__d.MoveNext))]
+    class IntroCutscenePath
     {
-        [HarmonyPatch(typeof(PENEIDJGGAF.CKACLKCOJFO), "MoveNext")]
-        public static bool Prefix(PENEIDJGGAF.CKACLKCOJFO __instance)
+        static bool Prefix(IntroCutscene.CoBegin__d __instance)
         {
             if (PlayerControl.LocalPlayer == JokerSettings.Joker)
             {
-                var jokerTeam = new Il2CppSystem.Collections.Generic.List<FFGALNAPKCD>();
-                jokerTeam.Add(FFGALNAPKCD.LocalPlayer);
+                var jokerTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                jokerTeam.Add(PlayerControl.LocalPlayer);
                 __instance.yourTeam = jokerTeam;
                 return true;
             }
             return true;
         }
 
-        public static void Postfix(PENEIDJGGAF.CKACLKCOJFO __instance)
+        static void Postfix(IntroCutscene.CoBegin__d __instance)
         {
             //change the name and titles accordingly
             if (PlayerControl.LocalPlayer == MedicSettings.Medic)

@@ -39,10 +39,10 @@ namespace ExtraRolesMod
                         if (MedicSettings.Protected != null && target.PlayerId == MedicSettings.Protected.PlayerId)
                         {
                             //officer suicide packet
-                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
                             writer.Write(PlayerControl.LocalPlayer.PlayerId);
                             writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                            AmongUsClient.Instance.FinishRpcImmediately(writer);
                             PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer);
                             OfficerSettings.lastKilled = DateTime.UtcNow;
                             return false;
@@ -51,10 +51,10 @@ namespace ExtraRolesMod
                         else if (JokerSettings.jokerCanDieToOfficer && (JokerSettings.Joker != null && target.PlayerId == JokerSettings.Joker.PlayerId))
                         {
                             //officer joker murder packet
-                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
                             writer.Write(PlayerControl.LocalPlayer.PlayerId);
                             writer.Write(target.PlayerId);
-                            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                            AmongUsClient.Instance.FinishRpcImmediately(writer);
                             PlayerControl.LocalPlayer.MurderPlayer(target);
                             OfficerSettings.lastKilled = DateTime.UtcNow;
                         }
@@ -62,10 +62,10 @@ namespace ExtraRolesMod
                         else if (target.Data.IsImpostor)
                         {
                             //officer impostor murder packet
-                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
                             writer.Write(PlayerControl.LocalPlayer.PlayerId);
                             writer.Write(target.PlayerId);
-                            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                            AmongUsClient.Instance.FinishRpcImmediately(writer);
                             PlayerControl.LocalPlayer.MurderPlayer(target);
                             OfficerSettings.lastKilled = DateTime.UtcNow;
                             return false;
@@ -74,10 +74,10 @@ namespace ExtraRolesMod
                         else
                         {
                             //officer suicide packet
-                            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
                             writer.Write(PlayerControl.LocalPlayer.PlayerId);
                             writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                            AmongUsClient.Instance.FinishRpcImmediately(writer);
                             PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer);
                             OfficerSettings.lastKilled = DateTime.UtcNow;
                             return false;
@@ -88,12 +88,12 @@ namespace ExtraRolesMod
                 }
                 else if (MedicSettings.Medic != null && PlayerControl.LocalPlayer == MedicSettings.Medic)
                 {
-                    MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetProtected, Hazel.SendOption.None, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetProtected, Hazel.SendOption.None, -1);
                     MedicSettings.Protected = PlayerTools.closestPlayer;
                     MedicSettings.shieldUsed = true;
                     byte ProtectedId = MedicSettings.Protected.PlayerId;
                     writer.Write(ProtectedId);
-                    FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
                     return false;
                 }
             }

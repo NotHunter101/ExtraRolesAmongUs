@@ -10,10 +10,10 @@ using static ExtraRolesMod.ExtraRoles;
 
 namespace ExtraRolesMod
 {
-    [HarmonyPatch(typeof(FFGALNAPKCD), "RpcSetInfected")]
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSetInfected))]
     class SetInfectedPatch
     {
-        public static void Postfix(Il2CppReferenceArray<EGLJNOMOGNP.DCJMABDDJCF> JPGEIBIBJPJ)
+        public static void Postfix(Il2CppReferenceArray<GameData.PlayerInfo> JPGEIBIBJPJ)
         {
             MedicSettings.ClearSettings();
             OfficerSettings.ClearSettings();
@@ -24,27 +24,27 @@ namespace ExtraRolesMod
             EngineerSettings.SetConfigSettings();
             JokerSettings.SetConfigSettings();
             killedPlayers.Clear();
-            MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.None, -1);
-            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.None, -1);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
 
             List<PlayerControl> crewmates = PlayerControl.AllPlayerControls.ToArray().ToList();
             crewmates.RemoveAll(x => x.Data.IsImpostor);
 
             if (crewmates.Count > 0 && (rng.Next(1, 101) <= HarmonyMain.medicSpawnChance.GetValue()))
             {
-                writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetMedic, Hazel.SendOption.None, -1);
+                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetMedic, Hazel.SendOption.None, -1);
                 var MedicRandom = rng.Next(0, crewmates.Count);
                 MedicSettings.Medic = crewmates[MedicRandom];
                 crewmates.RemoveAt(MedicRandom);
                 byte MedicId = MedicSettings.Medic.PlayerId;
 
                 writer.Write(MedicId);
-                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
 
             if (crewmates.Count > 0 && (rng.Next(1, 101) <= HarmonyMain.officerSpawnChance.GetValue()))
             {
-                writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetOfficer, Hazel.SendOption.None, -1);
+                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetOfficer, Hazel.SendOption.None, -1);
 
                 var OfficerRandom = rng.Next(0, crewmates.Count);
                 OfficerSettings.Officer = crewmates[OfficerRandom];
@@ -52,24 +52,24 @@ namespace ExtraRolesMod
                 byte OfficerId = OfficerSettings.Officer.PlayerId;
 
                 writer.Write(OfficerId);
-                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
 
             if (crewmates.Count > 0 && (rng.Next(1, 101) <= HarmonyMain.engineerSpawnChance.GetValue()))
             {
-                writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetEngineer, Hazel.SendOption.None, -1);
+                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetEngineer, Hazel.SendOption.None, -1);
                 var EngineerRandom = rng.Next(0, crewmates.Count);
                 EngineerSettings.Engineer = crewmates[EngineerRandom];
                 crewmates.RemoveAt(EngineerRandom);
                 byte EngineerId = EngineerSettings.Engineer.PlayerId;
 
                 writer.Write(EngineerId);
-                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
 
             if (crewmates.Count > 0 && (rng.Next(1, 101) <= HarmonyMain.jokerSpawnChance.GetValue()))
             {
-                writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetJoker, Hazel.SendOption.None, -1);
+                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetJoker, Hazel.SendOption.None, -1);
                 var JokerRandom = rng.Next(0, crewmates.Count);
                 ConsoleTools.Info(JokerRandom.ToString());
                 JokerSettings.Joker = crewmates[JokerRandom];
@@ -77,7 +77,7 @@ namespace ExtraRolesMod
                 byte JokerId = JokerSettings.Joker.PlayerId;
 
                 writer.Write(JokerId);
-                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
 
             localPlayers.Clear();
@@ -96,11 +96,11 @@ namespace ExtraRolesMod
             {
                 localPlayerBytes.Add(player.PlayerId);
             }
-            writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetLocalPlayers, Hazel.SendOption.None, -1);
+            writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetLocalPlayers, Hazel.SendOption.None, -1);
             writer.WriteBytesAndSize(localPlayerBytes.ToArray());
-            FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
-        public static bool Prefix(Il2CppReferenceArray<EGLJNOMOGNP.DCJMABDDJCF> JPGEIBIBJPJ)
+        public static bool Prefix(Il2CppReferenceArray<GameData.PlayerInfo> JPGEIBIBJPJ)
         {
             var debugImpostors = false;
             if (debugImpostors)
@@ -119,10 +119,10 @@ namespace ExtraRolesMod
                     }
                 }
 
-                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)RPC.SetInfected, Hazel.SendOption.None, -1);
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)RPC.SetInfected, Hazel.SendOption.None, -1);
                 writer.WritePacked((uint)2);
                 writer.WriteBytesAndSize(infected);
-                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
 
                 PlayerControl.LocalPlayer.SetInfected(infected);
 

@@ -18,8 +18,8 @@ namespace ExtraRoles
             {
                 if (__instance.exiledPlayer.PlayerId == JokerSettings.Joker.PlayerId)
                 {
-                    MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.JokerWin, Hazel.SendOption.None, -1);
-                    FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.JokerWin, Hazel.SendOption.None, -1);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
 
                     localPlayers.Clear();
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls)
