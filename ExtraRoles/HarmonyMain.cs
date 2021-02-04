@@ -67,7 +67,7 @@ namespace ExtraRolesMod
             if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\..\\LocalLow\\InnerSloth\\Among Us\\regionInfo.dat"))
                 File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\..\\LocalLow\\InnerSloth\\Among Us\\regionInfo.dat");
 
-            Ip = Config.Bind("Custom Server", "IP", "174.89.28.84");
+            Ip = Config.Bind("Custom Server", "IP", "24.57.85.224");
             Port = Config.Bind("Custom Server", "Port", (ushort)22023);
 
             var defaultRegions = ServerManager.DefaultRegions.ToList();
