@@ -20,7 +20,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Runtime.InteropServices;
 using System.IO;
-using static ExtraRolesMod.MainHooks;
+using static ExtraRolesMod.ExtraRoles;
 using Reactor;
 using ExtraRolesMod;
 using Essentials;
