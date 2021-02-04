@@ -30,7 +30,7 @@ namespace ExtraRolesMod
                 KillButton = __instance.KillButton;
                 PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
                 DistLocalClosest = PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
-                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId && __instance.UseButton.isActiveAndEnabled)
                 {
                     KillButton.gameObject.SetActive(true);
                     KillButton.isActive = true;
@@ -93,7 +93,7 @@ namespace ExtraRolesMod
                         MedicSettings.Protected.myRend.material.SetColor("_VisorColor", ModdedPalette.protectedColor);
                 if (PlayerControl.LocalPlayer.Data.IsDead)
                     return;
-                if (MedicSettings.Medic != null && MedicSettings.Medic.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                if (MedicSettings.Medic != null && MedicSettings.Medic.PlayerId == PlayerControl.LocalPlayer.PlayerId && __instance.UseButton.isActiveAndEnabled)
                 {
                     KillButton.renderer.sprite = shieldIco;
                     KillButton.gameObject.SetActive(true);
@@ -110,7 +110,7 @@ namespace ExtraRolesMod
                         CurrentTarget = null;
                     }
                 }
-                if (OfficerSettings.Officer != null && OfficerSettings.Officer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                if (OfficerSettings.Officer != null && OfficerSettings.Officer.PlayerId == PlayerControl.LocalPlayer.PlayerId && __instance.UseButton.isActiveAndEnabled)
                 {
                     KillButton.gameObject.SetActive(true);
                     KillButton.isActive = true;
@@ -126,7 +126,7 @@ namespace ExtraRolesMod
                         CurrentTarget = null;
                     }
                 }
-                if (MedicSettings.Protected != null && MedicSettings.Protected.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                if (MedicSettings.Protected != null && MedicSettings.Protected.PlayerId == PlayerControl.LocalPlayer.PlayerId && __instance.UseButton.isActiveAndEnabled)
                 {
                     if (rend == null)
                     {
