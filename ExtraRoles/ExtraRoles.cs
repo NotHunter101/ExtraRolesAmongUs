@@ -127,6 +127,7 @@ namespace ExtraRolesMod
         //renderer for the shield indicator
         public static SpriteRenderer shieldRenderer = null;
         //medic settings and values
+        public static string versionString = "v1.1.0";
         public static class ModdedPalette
         {
             public static Color medicColor = new Color(36f / 255f, 183f / 255f, 32f / 255f, 1);
@@ -233,7 +234,7 @@ namespace ExtraRolesMod
         [HarmonyPatch(typeof(BOCOFLHKCOJ), "Start")]
         public static void Postfix(BOCOFLHKCOJ __instance)
         {
-            __instance.text.Text = __instance.text.Text + "   Extra Roles V1.0.0 Loaded. (http://www.extraroles.net/)";
+            __instance.text.Text = __instance.text.Text + "   Extra Roles " + versionString + " Loaded. (http://www.extraroles.net/)";
         }
 
         [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.AmBanned), MethodType.Getter)]
@@ -251,7 +252,7 @@ namespace ExtraRolesMod
             public static void Postfix(PingTracker __instance)
             {
                 __instance.text.Text += "\nextraroles.net";
-                __instance.text.Text += "\nExtraRoles v1.0.0";
+                __instance.text.Text += "\nExtraRoles " + versionString;
             }
         }
 
