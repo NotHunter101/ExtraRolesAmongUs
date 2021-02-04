@@ -30,6 +30,15 @@ namespace ExtraRolesMod
                 KillButton = __instance.KillButton;
                 PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
                 DistLocalClosest = PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
+                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                {
+                    KillButton.gameObject.SetActive(true);
+                    KillButton.isActive = true;
+                    KillButton.SetCoolDown(0f, 30f);
+                    KillButton.renderer.sprite = repairIco;
+                    KillButton.renderer.color = Palette.EnabledColor;
+                    KillButton.renderer.material.SetFloat("_Desat", 0f);
+                }
                 if (JokerSettings.Joker != null)
                     JokerSettings.ClearTasks();
                 if (rend != null)
@@ -82,6 +91,8 @@ namespace ExtraRolesMod
                 if (MedicSettings.Protected != null)
                     if (MedicSettings.Protected == PlayerControl.LocalPlayer || MedicSettings.showProtected)
                         MedicSettings.Protected.myRend.material.SetColor("_VisorColor", ModdedPalette.protectedColor);
+                if (PlayerControl.LocalPlayer.Data.IsDead)
+                    return;
                 if (MedicSettings.Medic != null && MedicSettings.Medic.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                 {
                     KillButton.renderer.sprite = shieldIco;
@@ -129,15 +140,6 @@ namespace ExtraRolesMod
                         scale = Screen.height / 600;
                     rend.transform.localPosition = Camera.main.ScreenToWorldPoint(new Vector3(0 + (25 * scale), 0 + (25 * scale), -50f));
                     rend.SetActive(true);
-                }
-                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
-                {
-                    KillButton.gameObject.SetActive(true);
-                    KillButton.isActive = true;
-                    KillButton.SetCoolDown(0f, 30f);
-                    KillButton.renderer.sprite = repairIco;
-                    KillButton.renderer.color = Palette.EnabledColor;
-                    KillButton.renderer.material.SetFloat("_Desat", 0f);
                 }
             }
         }
