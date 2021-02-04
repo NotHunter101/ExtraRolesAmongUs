@@ -11,6 +11,15 @@ using print = System.Console;
 
 namespace ExtraRolesMod
 {
+    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.Method_24))]
+    class GameOptionsData_ToHudString
+    {
+        static void Postfix(ref string __result)
+        {
+            DestroyableSingleton<HudManager>.Instance.GameSettings.scale = 0.5f;
+        }
+    }
+
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     class HudUpdateManager
     {
