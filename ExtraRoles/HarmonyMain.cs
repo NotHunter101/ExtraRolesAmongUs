@@ -104,9 +104,8 @@ namespace ExtraRolesMod
             defaultRegions.Insert(0, region);
 
             ServerManager.DefaultRegions = defaultRegions.ToArray();
-
-            ServerManager.Instance.ReselectRegion();
             ServerManager.Instance.CurrentRegion = region;
+            ServerManager.Instance.ReselectRegion();
             Harmony.PatchAll();
         }
     }
