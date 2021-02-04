@@ -35,7 +35,10 @@ namespace ExtraRolesMod
         {
             float num = float.MaxValue;
             PlayerControl localPlayer = pc.Object;
-            couldUse = (EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId || localPlayer.Data.IsImpostor) && !localPlayer.Data.IsDead;
+            if (EngineerSettings.Engineer != null)
+                couldUse = (EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId || localPlayer.Data.IsImpostor) && !localPlayer.Data.IsDead;
+            else
+                couldUse = localPlayer.Data.IsImpostor && !localPlayer.Data.IsDead;
             canUse = couldUse;
             if ((DateTime.UtcNow - PlayerVentTimeExtension.GetLastVent(pc.Object.PlayerId)).TotalMilliseconds > 1000)
             {

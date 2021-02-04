@@ -39,21 +39,29 @@ Officer: 0028c6
 
 namespace ExtraRolesMod
 {
+    public class DeadPlayer
+    {
+        public byte KillerId { get; set; }
+        public byte PlayerId { get; set; }
+        public DateTime KillTime { get; set; }
+        public DeathReason DeathReason { get; set; }
+    }
     //body report class for when medic reports a body
     public class BodyReport
     {
-        public byte DeathReason { get; set; }
+        public DeathReason DeathReason { get; set; }
         public PlayerControl Killer { get; set; }
         public PlayerControl Reporter { get; set; }
         public float KillAge { get; set; }
 
         public static string ParseBodyReport(BodyReport br)
         {
+            System.Console.WriteLine(br.KillAge);
             if (br.KillAge > ExtraRoles.MedicSettings.medicKillerColorDuration * 1000)
             {
                 return $"Body Report: The corpse is too old to gain information from. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
-            else if (br.DeathReason == 3)
+            else if (br.DeathReason == (DeathReason)3)
             {
                 return $"Body Report (Officer): The cause of death appears to be suicide! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
 
@@ -99,7 +107,9 @@ namespace ExtraRolesMod
         {
             if (flag)
             {
-                PlayerControl.LocalPlayer.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
+                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShieldBreak, Hazel.SendOption.None, -1);
+                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
+                MedicSettings.Protected.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
                 MedicSettings.Protected = null;
             }
         }
@@ -111,6 +121,7 @@ namespace ExtraRolesMod
             false,
             true
         };
+        public static List<DeadPlayer> killedPlayers = new List<DeadPlayer>();
         public static PlayerControl CurrentTarget = null;
         public static PlayerControl localPlayer = null;
         public static List<PlayerControl> localPlayers = new List<PlayerControl>();
@@ -136,7 +147,7 @@ namespace ExtraRolesMod
             public static Color jokerColor = new Color(138f / 255f, 138f / 255f, 138f / 255f, 1);
             public static Color protectedColor = new Color(0, 1, 1, 1);
         }
-        public static class MedicSettings
+        public static class MedicSettings 
         {
             public static PlayerControl Medic { get; set; }
             public static PlayerControl Protected { get; set; }

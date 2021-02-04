@@ -7,6 +7,7 @@ using System.Text;
 using UnityEngine;
 using static ExtraRolesMod.ExtraRoles;
 using print = System.Console;
+using ExtraRolesMod;
 
 namespace ExtraRolesMod
 {
@@ -171,7 +172,7 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance, float DCEFKAOFGOG)
             {
-                if (EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                 {
                     return false;
                 }
@@ -184,7 +185,7 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId && !PlayerControl.LocalPlayer.Data.IsDead)
                 {
                     if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive)
                     {
@@ -202,7 +203,7 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId && !PlayerControl.LocalPlayer.Data.IsDead)
                 {
                     if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive)
                     {
@@ -223,7 +224,7 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId && !PlayerControl.LocalPlayer.Data.IsDead)
                 {
                     if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive)
                     {
@@ -242,7 +243,7 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId && !PlayerControl.LocalPlayer.Data.IsDead)
                 {
                     if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive)
                     {
@@ -261,7 +262,7 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId && !PlayerControl.LocalPlayer.Data.IsDead)
                 {
                     if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive)
                     {
@@ -294,6 +295,11 @@ namespace ExtraRolesMod
             //handle the murder after it's ran
             public static void Postfix(PlayerControl __instance, PlayerControl CAKODNGLPDF)
             {
+                var deadBody = new DeadPlayer();
+                deadBody.PlayerId = CAKODNGLPDF.PlayerId;
+                deadBody.KillerId = __instance.PlayerId;
+                deadBody.KillTime = DateTime.UtcNow;
+                deadBody.DeathReason = DeathReason.Kill;
                 if (OfficerSettings.Officer != null)
                 {
                     //check if killer is officer
@@ -302,7 +308,12 @@ namespace ExtraRolesMod
                         //finally, set them back to normal
                         __instance.Data.IsImpostor = false;
                     }
+                    if (__instance.PlayerId == CAKODNGLPDF.PlayerId)
+                    {
+                        deadBody.DeathReason = (DeathReason)3;
+                    }
                 }
+                killedPlayers.Add(deadBody);
             }
         }
     }

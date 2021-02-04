@@ -36,8 +36,6 @@ namespace ExtraRolesMod
         public const string Id = "gg.reactor.extraroles";
 
         public Harmony Harmony { get; } = new Harmony(Id);
-        public ConfigEntry<string> Ip { get; set; }
-        public ConfigEntry<ushort> Port { get; set; }
 
         //This section uses the https://github.com/DorCoMaNdO/Reactor-Essentials framework, but I disabled the watermark.
         //The code said that you were allowed, as long as you provided credit elsewhere. 
@@ -56,54 +54,13 @@ namespace ExtraRolesMod
         public static CustomToggleOption jokerCanDieToOfficer = CustomOption.AddToggle("Joker Can Die To Officer", true);
         public static CustomNumberOption medicReportNameDuration = CustomOption.AddNumber("Time Where Medic Reports Will Have Name", 5, 0, 60, 2.5f);
         public static CustomNumberOption medicReportColorDuration = CustomOption.AddNumber("Time Where Medic Reports Will Have Color Type", 20, 0, 120, 2.5f);
-        public static CustomNumberOption medicSpawnChance = CustomOption.AddNumber("Medic Spawn Chance", 100, 1, 100, 5);
-        public static CustomNumberOption officerSpawnChance = CustomOption.AddNumber("Officer Spawn Chance", 100, 1, 100, 5);
-        public static CustomNumberOption engineerSpawnChance = CustomOption.AddNumber("Engineer Spawn Chance", 100, 1, 100, 5);
-        public static CustomNumberOption jokerSpawnChance = CustomOption.AddNumber("Joker Spawn Chance", 100, 1, 100, 5);
+        public static CustomNumberOption medicSpawnChance = CustomOption.AddNumber("Medic Spawn Chance", 100, 0, 100, 5);
+        public static CustomNumberOption officerSpawnChance = CustomOption.AddNumber("Officer Spawn Chance", 100, 0, 100, 5);
+        public static CustomNumberOption engineerSpawnChance = CustomOption.AddNumber("Engineer Spawn Chance", 100, 0, 100, 5);
+        public static CustomNumberOption jokerSpawnChance = CustomOption.AddNumber("Joker Spawn Chance", 100, 0, 100, 5);
 
         public override void Load()
         {
-            Ip = Config.Bind("Custom Server", "IP", "174.89.28.84");
-            Port = Config.Bind("Custom Server", "Port", (ushort)22023);
-
-            var defaultRegions = ServerManager.DefaultRegions.ToList();
-            var ip = Ip.Value;
-            if (Uri.CheckHostName(Ip.Value).ToString() == "Dns")
-            {
-                System.Console.WriteLine("Resolving " + ip + " ...");
-                try
-                {
-                    foreach (IPAddress address in Dns.GetHostAddresses(Ip.Value))
-                    {
-                        if (address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                        {
-                            ip = address.ToString(); break;
-                        }
-                    }
-                }
-                catch
-                {
-                    ConsoleTools.Error("Hostname could not be resolved" + ip);
-                }
-                ConsoleTools.Info("IP is " + ip);
-            }
-
-            var port = Port.Value;
-
-            var region = new RegionInfo(
-                "Custom", ip, new[]
-                {
-                    new ServerInfo($"Custom-Master-1", ip, port)
-                });
-
-            defaultRegions.Clear();
-            defaultRegions.Insert(0, region);
-            ServerManager.DefaultRegions = defaultRegions.ToArray();
-            ServerManager.Instance.ReselectRegion();
-            ServerManager.Instance.CurrentRegion = region;
-            ServerManager.Instance.CurrentServer = region.Servers.FirstOrDefault();
-            ServerManager.Instance.SaveServers();
-
             Harmony.PatchAll();
         }
     }

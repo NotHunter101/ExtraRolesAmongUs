@@ -45,18 +45,15 @@ namespace ExtraRolesMod
     {
         SetMedic = 43,
         SetProtected = 44,
-        MedicDead = 45,
+        ShieldBreak = 45,
         SetOfficer = 46,
         OfficerKill = 47,
         SetEngineer = 48,
         FixLights = 49,
         SetJoker = 50,
         ResetVaribles = 51,
-        MedicReport = 52,
-        JokerWin = 53,
-        SendMeAMessage = 54,
-        MeetingEnded = 55,
         SetLocalPlayers = 56,
+        JokerWin = 57,
     }
 
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
@@ -68,6 +65,11 @@ namespace ExtraRolesMod
             MessageReader reader = ALMCIJKELCP;
             switch (packetId)
             {
+                case (byte)CustomRPC.ShieldBreak:
+                    if (MedicSettings.Protected != null)
+                        MedicSettings.Protected.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
+                    MedicSettings.Protected = null;
+                    break;
                 case (byte)CustomRPC.FixLights:
                     SwitchSystem switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
                     switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
@@ -102,6 +104,7 @@ namespace ExtraRolesMod
                         OfficerSettings.SetConfigSettings();
                         EngineerSettings.SetConfigSettings();
                         JokerSettings.SetConfigSettings();
+                        killedPlayers.Clear();
                         break;
                     }
                 case (byte)CustomRPC.SetMedic:
@@ -177,64 +180,13 @@ namespace ExtraRolesMod
                         }
                         break;
                     }
-                case (byte)CustomRPC.MedicReport:
-                    {
-                        ConsoleTools.Info("Body Reported RPC!");
-                        byte reporterId = ALMCIJKELCP.ReadByte();
-                        byte killerId = ALMCIJKELCP.ReadByte();
-                        byte deathReason = ALMCIJKELCP.ReadByte();
-                        float killAge = ALMCIJKELCP.ReadSingle();
-                        if (reporterId == MedicSettings.Medic.PlayerId)
-                        {
-                            if (MedicSettings.Medic.PlayerId == PlayerControl.LocalPlayer.PlayerId)
-                            {
-                                BodyReport br = new BodyReport();
-                                br.Killer = PlayerTools.getPlayerById(killerId);
-                                br.Reporter = br.Killer = PlayerTools.getPlayerById(killerId);
-                                br.KillAge = killAge;
-                                br.DeathReason = deathReason;
-                                var reportMsg = BodyReport.ParseBodyReport(br);
-
-                                MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SendMeAMessage, Hazel.SendOption.None, -1);
-                                writer.Write(reportMsg);
-                                FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
-                            }
-                        }
-                        break;
-                    }
-                //player exiled
                 case (byte)CustomRPC.JokerWin:
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                     {
-                        //ConsoleTools.Info("Joker won!");
-                        var exiledId = ALMCIJKELCP.ReadByte();
-                        if (JokerSettings.Joker != null)
-                        {
-                            if (exiledId == JokerSettings.Joker.PlayerId)
-                            {
-                                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                                {
-                                    if (player != JokerSettings.Joker)
-                                    {
-                                        player.RemoveInfected();
-                                        player.Die(DeathReason.Exile);
-                                        player.Data.IsDead = true;
-                                    }
-                                    else
-                                    {
-                                        localPlayers.Add(player);
-                                        player.Revive();
-                                        player.Data.IsImpostor = true;
-                                    }
-                                }
-                            }
-                        }
-                        break;
+                        player.RemoveInfected();
                     }
-                case (byte)CustomRPC.MeetingEnded:
-                    {
-                        OfficerSettings.lastKilled = DateTime.UtcNow;
-                        break;
-                    }
+                    PlayerControl.LocalPlayer.SetInfected(new byte[] { JokerSettings.Joker.PlayerId });
+                    break;
             }
         }
     }

@@ -23,6 +23,7 @@ namespace ExtraRolesMod
             OfficerSettings.SetConfigSettings();
             EngineerSettings.SetConfigSettings();
             JokerSettings.SetConfigSettings();
+            killedPlayers.Clear();
             MessageWriter writer = FMLLKEACGIO.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.None, -1);
             FMLLKEACGIO.Instance.FinishRpcImmediately(writer);
 
