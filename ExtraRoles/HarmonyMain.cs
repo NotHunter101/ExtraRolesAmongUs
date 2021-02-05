@@ -58,9 +58,36 @@ namespace ExtraRolesMod
         public static CustomNumberOption officerSpawnChance = CustomOption.AddNumber("Officer Spawn Chance", 100, 0, 100, 5);
         public static CustomNumberOption engineerSpawnChance = CustomOption.AddNumber("Engineer Spawn Chance", 100, 0, 100, 5);
         public static CustomNumberOption jokerSpawnChance = CustomOption.AddNumber("Joker Spawn Chance", 100, 0, 100, 5);
+        
+        public ConfigEntry<string> Ip { get; set; }
+        public ConfigEntry<ushort> Port { get; set; }
 
         public override void Load()
         {
+            Ip = Config.Bind("Custom", "Ipv4 or Hostname", "127.0.0.1");
+            Port = Config.Bind("Custom", "Port", (ushort)22023);
+
+            var defaultRegions = ServerManager.DefaultRegions.ToList();
+            var ip = Ip.Value;
+            if (Uri.CheckHostName(Ip.Value).ToString() == "Dns")
+            {
+                foreach (IPAddress address in Dns.GetHostAddresses(Ip.Value))
+                {
+                    if (address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    {
+                        ip = address.ToString(); break;
+                    }
+                }
+            }
+
+            defaultRegions.Insert(0, new RegionInfo(
+                "Custom", ip, new[]
+                {
+                    new ServerInfo($"Custom-Server", ip, Port.Value)
+                })
+            );
+
+            ServerManager.DefaultRegions = defaultRegions.ToArray();
             Harmony.PatchAll();
         }
     }
