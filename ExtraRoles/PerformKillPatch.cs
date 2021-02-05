@@ -89,7 +89,7 @@ namespace ExtraRolesMod
                 else if (MedicSettings.Medic != null && PlayerControl.LocalPlayer == MedicSettings.Medic)
                 {
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetProtected, Hazel.SendOption.None, -1);
-                    MedicSettings.Protected = PlayerTools.closestPlayer;
+                    MedicSettings.Protected = target;
                     MedicSettings.shieldUsed = true;
                     byte ProtectedId = MedicSettings.Protected.PlayerId;
                     writer.Write(ProtectedId);
