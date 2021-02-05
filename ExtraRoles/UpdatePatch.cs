@@ -30,6 +30,21 @@ namespace ExtraRolesMod
                 KillButton = __instance.KillButton;
                 PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
                 DistLocalClosest = PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
+                if (MedicSettings.Protected != null && __instance.UseButton != null && MedicSettings.Protected.PlayerId == PlayerControl.LocalPlayer.PlayerId && __instance.UseButton.isActiveAndEnabled)
+                {
+                    if (rend == null)
+                    {
+                        rend = new GameObject("Shield Icon", new Il2CppSystem.Type[] { SpriteRenderer.Il2CppType });
+                        rend.GetComponent<SpriteRenderer>().sprite = smallShieldIco;
+                    }
+                    int scale;
+                    if (Screen.width > Screen.height)
+                        scale = Screen.width / 800;
+                    else
+                        scale = Screen.height / 600;
+                    rend.transform.localPosition = Camera.main.ScreenToWorldPoint(new Vector3(0 + (25 * scale), 0 + (25 * scale), -50f));
+                    rend.SetActive(true);
+                }
                 if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId && __instance.UseButton.isActiveAndEnabled)
                 {
                     KillButton.gameObject.SetActive(true);
@@ -149,21 +164,6 @@ namespace ExtraRolesMod
                         KillButton.SetTarget(null);
                         CurrentTarget = null;
                     }
-                }
-                if (MedicSettings.Protected != null && __instance.UseButton != null && MedicSettings.Protected.PlayerId == PlayerControl.LocalPlayer.PlayerId && __instance.UseButton.isActiveAndEnabled)
-                {
-                    if (rend == null)
-                    {
-                        rend = new GameObject("Shield Icon", new Il2CppSystem.Type[] { SpriteRenderer.Il2CppType });
-                        rend.GetComponent<SpriteRenderer>().sprite = smallShieldIco;
-                    }
-                    int scale;
-                    if (Screen.width > Screen.height)
-                        scale = Screen.width / 800;
-                    else
-                        scale = Screen.height / 600;
-                    rend.transform.localPosition = Camera.main.ScreenToWorldPoint(new Vector3(0 + (25 * scale), 0 + (25 * scale), -50f));
-                    rend.SetActive(true);
                 }
             }
         }
