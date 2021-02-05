@@ -112,18 +112,21 @@ namespace ExtraRolesMod
         {
             static void Postfix(MapBehaviour __instance)
             {
-                if (EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                if (EngineerSettings.Engineer != null)
                 {
-                    if (__instance.IsOpen)
+                    if (EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                     {
-                        __instance.ColorControl.baseColor = ModdedPalette.engineerColor;
-                        foreach (MapRoom room in __instance.infectedOverlay.rooms)
+                        if (__instance.IsOpen)
                         {
-                            if (room.door != null)
+                            __instance.ColorControl.baseColor = ModdedPalette.engineerColor;
+                            foreach (MapRoom room in __instance.infectedOverlay.rooms)
                             {
-                                room.door.enabled = false;
-                                room.door.gameObject.SetActive(false);
-                                room.door.gameObject.active = false;
+                                if (room.door != null)
+                                {
+                                    room.door.enabled = false;
+                                    room.door.gameObject.SetActive(false);
+                                    room.door.gameObject.active = false;
+                                }
                             }
                         }
                     }
@@ -136,30 +139,33 @@ namespace ExtraRolesMod
         {
             static void Postfix(MapBehaviour __instance)
             {
-                if (EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                if (EngineerSettings.Engineer != null)
                 {
-                    if (__instance.IsOpen && __instance.infectedOverlay.gameObject.active)
+                    if (EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                     {
-                        if (!EngineerSettings.sabotageActive)
-                            __instance.ColorControl.baseColor = Color.gray;
-                        else
-                            __instance.ColorControl.baseColor = ModdedPalette.engineerColor;
-                        float perc = EngineerSettings.repairUsed ? 1f : 0f;
-                        foreach (MapRoom room in __instance.infectedOverlay.rooms)
+                        if (__instance.IsOpen && __instance.infectedOverlay.gameObject.active)
                         {
-                            if (room.special != null)
+                            if (!EngineerSettings.sabotageActive)
+                                __instance.ColorControl.baseColor = Color.gray;
+                            else
+                                __instance.ColorControl.baseColor = ModdedPalette.engineerColor;
+                            float perc = EngineerSettings.repairUsed ? 1f : 0f;
+                            foreach (MapRoom room in __instance.infectedOverlay.rooms)
                             {
-                                if (!EngineerSettings.sabotageActive)
-                                    room.special.material.SetFloat("_Desat", 1f);
-                                else
-                                    room.special.material.SetFloat("_Desat", 0f);
-                                room.special.enabled = true;
-                                room.special.gameObject.SetActive(true);
-                                room.special.gameObject.active = true;
-                                if (!PlayerControl.LocalPlayer.Data.IsDead)
-                                    room.special.material.SetFloat("_Percent", perc);
-                                else
-                                    room.special.material.SetFloat("_Percent", 1f);
+                                if (room.special != null)
+                                {
+                                    if (!EngineerSettings.sabotageActive)
+                                        room.special.material.SetFloat("_Desat", 1f);
+                                    else
+                                        room.special.material.SetFloat("_Desat", 0f);
+                                    room.special.enabled = true;
+                                    room.special.gameObject.SetActive(true);
+                                    room.special.gameObject.active = true;
+                                    if (!PlayerControl.LocalPlayer.Data.IsDead)
+                                        room.special.material.SetFloat("_Percent", perc);
+                                    else
+                                        room.special.material.SetFloat("_Percent", 1f);
+                                }
                             }
                         }
                     }
@@ -172,9 +178,12 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance, float DCEFKAOFGOG)
             {
-                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                if (EngineerSettings.Engineer != null)
                 {
-                    return false;
+                    if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
