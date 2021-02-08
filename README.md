@@ -4,7 +4,7 @@ A BepInEx mod for Among Us that adds 4 new roles into the game.
 ![character infographic](./characterGraphic.png)
 
 # Notice
-This mod will work on Innersloth servers, but everybody in the lobby has to have the same version of the mod. For help with installing the mod, getting it to work, or fixing an issue, join the [Discord](https://discord.gg/j2MVs4r6ccg).
+This mod will work on Innersloth servers, but everybody in the lobby has to have the same version of the mod. For help with installing the mod, getting it to work, or fixing an issue, join the [Discord](https://discord.gg/j2MVs4r6cc).
 
 # What does the mod add?
 
