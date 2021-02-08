@@ -155,6 +155,7 @@ namespace ExtraRolesMod
             public static int medicKillerNameDuration { get; set; }
             public static int medicKillerColorDuration { get; set; }
             public static bool showMedic { get; set; }
+            public static bool showReport {get; set;}
             public static bool showProtected { get; set; }
             public static bool shieldKillAttemptIndicator { get; set; }
             public static void ClearSettings()
@@ -168,6 +169,7 @@ namespace ExtraRolesMod
             {
                 showMedic = HarmonyMain.showMedic.GetValue();
                 showProtected = HarmonyMain.showShieldedPlayer.GetValue();
+                showReport = HarmonyMain.medicReportSwitch.GetValue();
                 shieldKillAttemptIndicator = HarmonyMain.playerMurderIndicator.GetValue();
                 medicKillerNameDuration = (int)HarmonyMain.medicReportNameDuration.GetValue();
                 medicKillerColorDuration = (int)HarmonyMain.medicReportColorDuration.GetValue();
