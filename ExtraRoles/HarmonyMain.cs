@@ -52,6 +52,7 @@ namespace ExtraRolesMod
         public static CustomToggleOption showEngineer = CustomOption.AddToggle("Show Engineer", false);
         public static CustomToggleOption showJoker = CustomOption.AddToggle("Show Joker", false);
         public static CustomToggleOption jokerCanDieToOfficer = CustomOption.AddToggle("Joker Can Die To Officer", true);
+        public static CustomToggleOption medicReportSwitch = CustomOption.AddToggle("Medic Reports", true);
         public static CustomNumberOption medicReportNameDuration = CustomOption.AddNumber("Time Where Medic Reports Will Have Name", 5, 0, 60, 2.5f);
         public static CustomNumberOption medicReportColorDuration = CustomOption.AddNumber("Time Where Medic Reports Will Have Color Type", 20, 0, 120, 2.5f);
         public static CustomNumberOption medicSpawnChance = CustomOption.AddNumber("Medic Spawn Chance", 100, 0, 100, 5);
