@@ -4,7 +4,7 @@ A BepInEx mod for Among Us that adds 4 new roles into the game.
 ![character infographic](./characterGraphic.png)
 
 # Notice
-This mod will work on Innersloth servers, but everybody in the lobby has to have the same version of the mod. For help with installing the mod, getting it to work, or fixing an issue, join the [Discord](https://discord.gg/f8Yv2Tawcg).
+This mod will work on Innersloth servers, but everybody in the lobby has to have the same version of the mod. For help with installing the mod, getting it to work, or fixing an issue, join the [Discord](https://discord.gg/j2MVs4r6ccg).
 
 # What does the mod add?
 
@@ -117,7 +117,7 @@ Cyan is lighter.
 Lime is lighter.  
 
 # Bugs or feature suggestions
-If you ever need to talk to someone for help fixing an issue, want to report a bug, or suggest a feature, do not hesitate to join the mod [Discord Server](https://discord.gg/f8Yv2Tawcg).
+If you ever need to talk to someone for help fixing an issue, want to report a bug, or suggest a feature, do not hesitate to join the mod [Discord Server](https://discord.gg/j2MVs4r6cc).
  
 # Resources
 https://github.com/NuclearPowered/Reactor The framework the mod uses.  
