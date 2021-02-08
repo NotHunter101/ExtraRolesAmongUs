@@ -138,7 +138,7 @@ namespace ExtraRolesMod
         //renderer for the shield indicator
         public static SpriteRenderer shieldRenderer = null;
         //medic settings and values
-        public static string versionString = "v1.2.1";
+        public static string versionString = "v1.2.3";
         public static class ModdedPalette
         {
             public static Color medicColor = new Color(36f / 255f, 183f / 255f, 32f / 255f, 1);
@@ -278,7 +278,6 @@ namespace ExtraRolesMod
             public static void Postfix(ShipStatus __instance)
             {
                 ConsoleTools.Info("Game Started!");
-                OfficerSettings.lastKilled = DateTime.UtcNow.AddSeconds((OfficerSettings.OfficerCD * -1) + 15);
             }
         }
     }

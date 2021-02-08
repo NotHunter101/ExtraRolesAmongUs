@@ -13,7 +13,6 @@ namespace ExtraRoles
     {
         static void Postfix(MeetingHud __instance)
         {
-            OfficerSettings.lastKilled = DateTime.UtcNow;
             if (JokerSettings.Joker != null)
             {
                 if (__instance.exiledPlayer.PlayerId == JokerSettings.Joker.PlayerId)
@@ -41,6 +40,16 @@ namespace ExtraRoles
                     }
                 }
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(ExileController), nameof(ExileController.Begin))]
+    class MeetingEnd
+    {
+        static void Postfix(ExileController __instance)
+        {
+            System.Console.WriteLine("Meeting Ended!");
+            OfficerSettings.lastKilled = DateTime.UtcNow.AddMilliseconds(__instance.Duration);
         }
     }
 }
