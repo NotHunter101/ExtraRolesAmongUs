@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <Version>1.2.0</Version>
+        <Version>1.2.3</Version>
         <GameVersion>2020.12.9s</GameVersion>
         <Mappings>NuclearPowered/Mappings:0.1.0-alpha.2</Mappings>
 
