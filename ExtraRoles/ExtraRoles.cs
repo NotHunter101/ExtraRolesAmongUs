@@ -110,6 +110,7 @@ namespace ExtraRolesMod
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShieldBreak, Hazel.SendOption.None, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 MedicSettings.Protected.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
+                MedicSettings.Protected.myRend.material.SetFloat("_Outline", 0f);
                 MedicSettings.Protected = null;
             }
         }

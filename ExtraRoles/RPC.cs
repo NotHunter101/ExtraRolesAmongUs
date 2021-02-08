@@ -67,7 +67,10 @@ namespace ExtraRolesMod
             {
                 case (byte)CustomRPC.ShieldBreak:
                     if (MedicSettings.Protected != null)
+                    {
                         MedicSettings.Protected.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
+                        MedicSettings.Protected.myRend.material.SetFloat("_Outline", 0f);
+                    }    
                     MedicSettings.Protected = null;
                     break;
                 case (byte)CustomRPC.FixLights:

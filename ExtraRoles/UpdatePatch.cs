@@ -126,8 +126,15 @@ namespace ExtraRolesMod
                     }
                 }
                 if (MedicSettings.Protected != null)
+                {
                     if (MedicSettings.Protected == PlayerControl.LocalPlayer || MedicSettings.showProtected)
+                    {
                         MedicSettings.Protected.myRend.material.SetColor("_VisorColor", ModdedPalette.protectedColor);
+                        MedicSettings.Protected.myRend.material.SetFloat("_Outline", 1f);
+                        MedicSettings.Protected.myRend.material.SetColor("_OutlineColor", ModdedPalette.protectedColor);
+                    }
+                }
+                        
                 if (PlayerControl.LocalPlayer.Data.IsDead)
                 {
                     if (EngineerSettings.Engineer == null || EngineerSettings.Engineer.PlayerId != PlayerControl.LocalPlayer.PlayerId)
