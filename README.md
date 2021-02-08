@@ -117,7 +117,7 @@ Cyan is lighter.
 Lime is lighter.  
 
 # Bugs or feature suggestions
-If you ever need to talk to someone for help fixing an issue, want to report a bug, or suggest a feature, do not hesitate to join the mod [Discord Server](https://discord.gg/j2MVs4r6cc).
+If you ever need to talk to someone for help fixing an issue, want to report a bug, or suggest a feature, do not hesitate to join the mod [Discord Server](https://discord.gg/j2MVs4r6cc). 
  
 # Resources
 https://github.com/NuclearPowered/Reactor The framework the mod uses.  
