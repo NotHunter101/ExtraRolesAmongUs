@@ -14,7 +14,7 @@ namespace ExtraRolesMod
     [HarmonyPatch(typeof(KillButtonManager), nameof(KillButtonManager.PerformKill))]
     class PerformKillPatch
     {
-        static bool Prefix()
+        public static bool Prefix()
         {
             if (PlayerControl.LocalPlayer == EngineerSettings.Engineer)
             {

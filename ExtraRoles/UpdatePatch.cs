@@ -23,10 +23,16 @@ namespace ExtraRolesMod
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     class HudUpdateManager
     {
+        static bool lastQ = false;
         static void Postfix(HudManager __instance)
         {
             if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
             {
+                if (!PlayerControl.LocalPlayer.Data.IsImpostor && Input.GetKeyDown(KeyCode.Q) && !lastQ)
+                {
+                    PerformKillPatch.Prefix();
+                }
+                lastQ = Input.GetKeyUp(KeyCode.Q);
                 KillButton = __instance.KillButton;
                 PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
                 DistLocalClosest = PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
