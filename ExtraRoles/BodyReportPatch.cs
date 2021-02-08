@@ -17,30 +17,33 @@ namespace ExtraRoles
             byte reporterId = __instance.PlayerId;
             DeadPlayer killer = killedPlayers.Where(x => x.PlayerId == CAKODNGLPDF.PlayerId).FirstOrDefault();
 
-            if (MedicSettings.Medic != null && reporterId == MedicSettings.Medic.PlayerId)
+            if (killer != null)
             {
-                if (MedicSettings.Medic.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                if (MedicSettings.Medic != null && reporterId == MedicSettings.Medic.PlayerId)
                 {
-                    BodyReport br = new BodyReport();
-                    br.Killer = PlayerTools.getPlayerById(killer.KillerId);
-                    br.Reporter = br.Killer = PlayerTools.getPlayerById(killer.KillerId);
-                    br.KillAge = (float)(DateTime.UtcNow - killer.KillTime).TotalMilliseconds;
-                    br.DeathReason = killer.DeathReason;
-                    var reportMsg = BodyReport.ParseBodyReport(br);
-
-                    if (!string.IsNullOrWhiteSpace(reportMsg))
+                    if (MedicSettings.Medic.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                     {
-                        if (AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance)
+                        BodyReport br = new BodyReport();
+                        br.Killer = PlayerTools.getPlayerById(killer.KillerId);
+                        br.Reporter = br.Killer = PlayerTools.getPlayerById(killer.KillerId);
+                        br.KillAge = (float)(DateTime.UtcNow - killer.KillTime).TotalMilliseconds;
+                        br.DeathReason = killer.DeathReason;
+                        var reportMsg = BodyReport.ParseBodyReport(br);
+
+                        if (!string.IsNullOrWhiteSpace(reportMsg))
                         {
-                            DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, reportMsg);
-                        }
-                        if (reportMsg.IndexOf("who", StringComparison.OrdinalIgnoreCase) >= 0)
-                        {
-                            DestroyableSingleton<Telemetry>.Instance.SendWho();
+                            if (AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance)
+                            {
+                                DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, reportMsg);
+                            }
+                            if (reportMsg.IndexOf("who", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                DestroyableSingleton<Telemetry>.Instance.SendWho();
+                            }
                         }
                     }
                 }
-            }
+            }       
         }
     }
 }

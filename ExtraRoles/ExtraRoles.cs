@@ -276,7 +276,6 @@ namespace ExtraRolesMod
             public static void Postfix(ShipStatus __instance)
             {
                 ConsoleTools.Info("Game Started!");
-                OfficerSettings.lastKilled = DateTime.UtcNow.AddSeconds((OfficerSettings.OfficerCD * -1) + 15);
             }
         }
     }

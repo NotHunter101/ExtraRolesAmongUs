@@ -23,6 +23,7 @@ namespace ExtraRolesMod
 
         static void Postfix(IntroCutscene.CoBegin__d __instance)
         {
+            OfficerSettings.lastKilled = DateTime.UtcNow.AddSeconds((OfficerSettings.OfficerCD * -1) + 10 + __instance.timer_0);
             //change the name and titles accordingly
             if (PlayerControl.LocalPlayer == MedicSettings.Medic)
             {
