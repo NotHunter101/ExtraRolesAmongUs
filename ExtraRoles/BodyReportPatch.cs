@@ -16,7 +16,8 @@ namespace ExtraRoles
             System.Console.WriteLine("Report Body!");
             byte reporterId = __instance.PlayerId;
             DeadPlayer killer = killedPlayers.Where(x => x.PlayerId == CAKODNGLPDF.PlayerId).FirstOrDefault();
-            if(killer != null){
+            if (killer != null)
+            {
                 // If there is a Medic alive and Medic reported and reports are enabled
                 if (MedicSettings.Medic != null && reporterId == MedicSettings.Medic.PlayerId && MedicSettings.showReport)
                 {
