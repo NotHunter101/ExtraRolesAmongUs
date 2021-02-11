@@ -135,7 +135,7 @@ namespace ExtraRolesMod
             public static int medicKillerColorDuration { get; set; }
             public static bool showMedic { get; set; }
             public static bool showReport {get; set;}
-            public static bool showProtected { get; set; }
+            public static int  showProtected { get; set; }
             public static bool shieldKillAttemptIndicator { get; set; }
             public static void ClearSettings()
             {

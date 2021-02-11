@@ -120,7 +120,23 @@ namespace ExtraRolesMod
                 }
                 if (MedicSettings.Protected != null)
                 {
-                    if (MedicSettings.Protected == PlayerControl.LocalPlayer || MedicSettings.showProtected)
+                    int showShielded = MedicSettings.showProtected;
+                    // If everyone can see shielded
+                    if(showShielded == 3)
+                    {
+                        MedicSettings.Protected.myRend.material.SetColor("_VisorColor", ModdedPalette.protectedColor);
+                        MedicSettings.Protected.myRend.material.SetFloat("_Outline", 1f);
+                        MedicSettings.Protected.myRend.material.SetColor("_OutlineColor", ModdedPalette.protectedColor);
+                    }
+                    // If I am protected and should see the shield
+                    else if (PlayerControl.LocalPlayer == MedicSettings.Protected && (showShielded == 0 || showShielded == 2))
+                    {
+                        MedicSettings.Protected.myRend.material.SetColor("_VisorColor", ModdedPalette.protectedColor);
+                        MedicSettings.Protected.myRend.material.SetFloat("_Outline", 1f);
+                        MedicSettings.Protected.myRend.material.SetColor("_OutlineColor", ModdedPalette.protectedColor);
+                    }
+                    // If I am Medic and should see the shield
+                    else if(PlayerControl.LocalPlayer == MedicSettings.Medic && (showShielded == 1 || showShielded == 2))
                     {
                         MedicSettings.Protected.myRend.material.SetColor("_VisorColor", ModdedPalette.protectedColor);
                         MedicSettings.Protected.myRend.material.SetFloat("_Outline", 1f);
