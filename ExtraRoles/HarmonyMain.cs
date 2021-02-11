@@ -1,29 +1,11 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.IL2CPP;
-using BepInEx.IL2CPP.UnityEngine;
 using HarmonyLib;
-using Hazel;
-using Il2CppDumper;
-using InnerNet;
-using Steamworks;
 using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Text;
-using UnhollowerBaseLib;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Runtime.InteropServices;
-using System.IO;
-using static ExtraRolesMod.ExtraRoles;
 using Reactor;
-using ExtraRolesMod;
-using Essentials;
 using Essentials.CustomOptions;
 
 namespace ExtraRolesMod
@@ -45,7 +27,7 @@ namespace ExtraRolesMod
         //Hunter101#1337
 
         public static CustomToggleOption showMedic = CustomOption.AddToggle("Show Medic", false);
-        public static CustomToggleOption showShieldedPlayer = CustomOption.AddToggle("Show Shielded Player", true);
+        public static CustomStringOption showShieldedPlayer = CustomOption.AddString("Show Shielded Player", new string[] { "Self", "Medic", "Self+Medic", "Everyone" });
         public static CustomToggleOption playerMurderIndicator = CustomOption.AddToggle("Murder Attempt Indicator for Shielded Player", true);
         public static CustomToggleOption showOfficer = CustomOption.AddToggle("Show Officer", false);
         public static CustomNumberOption OfficerKillCooldown = CustomOption.AddNumber("Officer Kill Cooldown", 30f, 10f, 60f, 2.5f);
