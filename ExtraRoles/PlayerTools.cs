@@ -1,28 +1,6 @@
 ﻿using HarmonyLib;
-using Hazel;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnhollowerBaseLib;
-using UnityEngine;
-using BepInEx;
-using BepInEx.Configuration;
-using BepInEx.IL2CPP;
-using BepInEx.IL2CPP.UnityEngine;
-using Il2CppDumper;
-using InnerNet;
-using Steamworks;
-using System.CodeDom;
-using System.ComponentModel;
-using System.Net;
-using System.Reflection;
-using UnityEngine.SceneManagement;
-using System.Runtime.InteropServices;
-using System.IO;
-using Reactor;
-using ExtraRolesMod;
 
 namespace ExtraRolesMod
 {

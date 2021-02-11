@@ -1,29 +1,11 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.IL2CPP;
-using BepInEx.IL2CPP.UnityEngine;
 using HarmonyLib;
-using Hazel;
-using Il2CppDumper;
-using InnerNet;
-using Steamworks;
 using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Text;
-using UnhollowerBaseLib;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Runtime.InteropServices;
-using System.IO;
-using static ExtraRolesMod.ExtraRoles;
 using Reactor;
-using ExtraRolesMod;
-using Essentials;
 using Essentials.CustomOptions;
 
 namespace ExtraRolesMod

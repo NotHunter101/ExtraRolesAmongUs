@@ -1,32 +1,10 @@
 ﻿using HarmonyLib;
 using Hazel;
-using QRCoder;
-using QRCoder.Unity;
 using System;
 using System.Collections.Generic;
-using draw = System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using UnhollowerBaseLib;
 using UnityEngine;
-using BepInEx;
-using BepInEx.Configuration;
-using BepInEx.IL2CPP;
-using BepInEx.IL2CPP.UnityEngine;
-using Il2CppDumper;
-using InnerNet;
-using Steamworks;
-using System.CodeDom;
-using System.Net;
-using UnityEngine.SceneManagement;
-using System.Runtime.InteropServices;
-using Reactor;
-using ExtraRolesMod;
 using Reactor.Unstrip;
-using UnityEngine.Networking;
 using Reactor.Extensions;
 
 /*

@@ -1,13 +1,6 @@
 ﻿using HarmonyLib;
-using Reactor.Extensions;
-using Reactor.Unstrip;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using UnityEngine;
 using static ExtraRolesMod.ExtraRoles;
-using print = System.Console;
 
 namespace ExtraRolesMod
 {
