@@ -1,13 +1,8 @@
-﻿using ExtraRolesMod;
-using HarmonyLib;
+﻿using HarmonyLib;
 using Hazel;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using static ExtraRolesMod.ExtraRoles;
-using print = System.Console;
-using ExtraRolesMod;
 
 namespace ExtraRolesMod
 {

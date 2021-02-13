@@ -1,4 +1,4 @@
-﻿using ExtraRolesMod;
+using ExtraRolesMod;
 using HarmonyLib;
 using Hazel;
 using System;
