@@ -184,8 +184,13 @@ namespace ExtraRolesMod
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                     {
                         player.RemoveInfected();
+                        player.Die(DeathReason.Exile);
+                        player.Data.IsDead = true;
+                        player.Data.IsImpostor = false;
                     }
-                    PlayerControl.LocalPlayer.SetInfected(new byte[] { JokerSettings.Joker.PlayerId });
+                    JokerSettings.Joker.Revive();
+                    JokerSettings.Joker.Data.IsDead = false;
+                    JokerSettings.Joker.Data.IsImpostor = true;
                     break;
             }
         }
