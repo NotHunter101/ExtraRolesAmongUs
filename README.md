@@ -12,7 +12,7 @@ This mod will work on Innersloth servers, but everybody in the lobby has to have
 The Medic can give any player a shield that will make them immortal. Although, if The Medic dies, the shield will break.  
 The only exception is The Officer; they will still die if they try to kill a Crewmate.  
 The Medic's other feature shows when they find a corpse: they can get a report that contains clues to the killer's identity.  
-The type of information they get is based on a timer that can be configured inside the host's config file. 
+The type of information they get is based on a timer that can be configured inside the lobby.
   
 ## Officer
 The Officer is a class of Crewmate that is allowed to kill people, similar to Impostors.  
