@@ -21,7 +21,7 @@ namespace ExtraRoles
             {
                 if (JokerSettings.Joker != null)
                 {
-                    if (ExileController.Instance.Field_10.PlayerId == JokerSettings.Joker.PlayerId)
+                    if (ExileController.Instance.Field_10 != null && ExileController.Instance.Field_10.PlayerId == JokerSettings.Joker.PlayerId)
                     {
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.JokerWin, Hazel.SendOption.None, -1);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -59,23 +59,26 @@ namespace ExtraRoles
     {
         static void Postfix(ref string __result, StringNames HKOIECMDOKL, Il2CppReferenceArray<Il2CppSystem.Object> EBKIKEILMLF)
         {
-            if (HKOIECMDOKL == StringNames.ExileTextPN || HKOIECMDOKL == StringNames.ExileTextSN)
+            if (ExileController.Instance != null && ExileController.Instance.Field_10 != null)
             {
-                if (MedicSettings.Medic != null && ExileController.Instance.Field_10.Object.PlayerId == MedicSettings.Medic.PlayerId)
-                    __result = ExileController.Instance.Field_10.PlayerName + " was The Medic.";
-                else if (EngineerSettings.Engineer != null && ExileController.Instance.Field_10.Object.PlayerId == EngineerSettings.Engineer.PlayerId)
-                    __result = ExileController.Instance.Field_10.PlayerName + " was The Engineer.";
-                else if (OfficerSettings.Officer != null && ExileController.Instance.Field_10.Object.PlayerId == OfficerSettings.Officer.PlayerId)
-                    __result = ExileController.Instance.Field_10.PlayerName + " was The Officer.";
-                else if (JokerSettings.Joker != null && ExileController.Instance.Field_10.Object.PlayerId == JokerSettings.Joker.PlayerId)
-                    __result = ExileController.Instance.Field_10.PlayerName + " was The Joker.";
-                else
-                    __result = ExileController.Instance.Field_10.PlayerName + " was not The Impostor.";
-            }
-            if (HKOIECMDOKL == StringNames.ImpostorsRemainP || HKOIECMDOKL == StringNames.ImpostorsRemainS)
-            {
-                if (JokerSettings.Joker != null && ExileController.Instance.Field_10.Object.PlayerId == JokerSettings.Joker.PlayerId)
-                    __result = "";
+                if (HKOIECMDOKL == StringNames.ExileTextPN || HKOIECMDOKL == StringNames.ExileTextSN)
+                {
+                    if (MedicSettings.Medic != null && ExileController.Instance.Field_10.Object.PlayerId == MedicSettings.Medic.PlayerId)
+                        __result = ExileController.Instance.Field_10.PlayerName + " was The Medic.";
+                    else if (EngineerSettings.Engineer != null && ExileController.Instance.Field_10.Object.PlayerId == EngineerSettings.Engineer.PlayerId)
+                        __result = ExileController.Instance.Field_10.PlayerName + " was The Engineer.";
+                    else if (OfficerSettings.Officer != null && ExileController.Instance.Field_10.Object.PlayerId == OfficerSettings.Officer.PlayerId)
+                        __result = ExileController.Instance.Field_10.PlayerName + " was The Officer.";
+                    else if (JokerSettings.Joker != null && ExileController.Instance.Field_10.Object.PlayerId == JokerSettings.Joker.PlayerId)
+                        __result = ExileController.Instance.Field_10.PlayerName + " was The Joker.";
+                    else
+                        __result = ExileController.Instance.Field_10.PlayerName + " was not The Impostor.";
+                }
+                if (HKOIECMDOKL == StringNames.ImpostorsRemainP || HKOIECMDOKL == StringNames.ImpostorsRemainS)
+                {
+                    if (JokerSettings.Joker != null && ExileController.Instance.Field_10.Object.PlayerId == JokerSettings.Joker.PlayerId)
+                        __result = "";
+                }
             }
         }
     }
