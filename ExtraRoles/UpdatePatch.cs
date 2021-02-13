@@ -20,7 +20,7 @@ namespace ExtraRolesMod
         static bool lastQ = false;
         static void Postfix(HudManager __instance)
         {
-            if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started && !PlayerControl.LocalPlayer.Data.IsDead)
+            if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
             {
                 lastQ = Input.GetKeyUp(KeyCode.Q);
                 KillButton = __instance.KillButton;
@@ -150,8 +150,10 @@ namespace ExtraRolesMod
                     if (EngineerSettings.Engineer == null || EngineerSettings.Engineer.PlayerId != PlayerControl.LocalPlayer.PlayerId)
                     {
                         KillButton.gameObject.SetActive(false);
+                        KillButton.renderer.enabled = false;
                         KillButton.isActive = false;
                         KillButton.SetTarget(null);
+                        KillButton.enabled = false;
                         return;
                     }
                 }
