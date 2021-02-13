@@ -189,9 +189,9 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId && !PlayerControl.LocalPlayer.Data.IsDead)
+                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                 {
-                    if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive)
+                    if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive && !PlayerControl.LocalPlayer.Data.IsDead)
                     {
                         EngineerSettings.repairUsed = true;
                         ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 16);
@@ -207,9 +207,9 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId && !PlayerControl.LocalPlayer.Data.IsDead)
+                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                 {
-                    if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive)
+                    if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive && !PlayerControl.LocalPlayer.Data.IsDead)
                     {
                         EngineerSettings.repairUsed = true;
                         SwitchSystem switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
@@ -228,9 +228,9 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId && !PlayerControl.LocalPlayer.Data.IsDead)
+                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                 {
-                    if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive)
+                    if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive && !PlayerControl.LocalPlayer.Data.IsDead)
                     {
                         EngineerSettings.repairUsed = true;
                         ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 16 | 0);
@@ -247,9 +247,9 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId && !PlayerControl.LocalPlayer.Data.IsDead)
+                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                 {
-                    if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive)
+                    if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive && !PlayerControl.LocalPlayer.Data.IsDead)
                     {
                         EngineerSettings.repairUsed = true;
                         ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 0 | 64);
@@ -266,9 +266,9 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId && !PlayerControl.LocalPlayer.Data.IsDead)
+                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                 {
-                    if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive)
+                    if (!EngineerSettings.repairUsed && EngineerSettings.sabotageActive && !PlayerControl.LocalPlayer.Data.IsDead)
                     {
                         EngineerSettings.repairUsed = true;
                         ShipStatus.Instance.RpcRepairSystem(SystemTypes.Laboratory, 16);
