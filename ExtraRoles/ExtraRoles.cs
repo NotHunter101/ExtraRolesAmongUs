@@ -122,7 +122,7 @@ namespace ExtraRolesMod
         {
             public static Color medicColor = new Color(36f / 255f, 183f / 255f, 32f / 255f, 1);
             public static Color officerColor = new Color(0, 40f / 255f, 198f / 255f, 1);
-            public static Color engineerColor = new Color(151f / 255f, 46f / 255f, 0, 1);
+            public static Color engineerColor = new Color(255f / 255f, 165f / 255f, 10f / 255f, 1);
             public static Color jokerColor = new Color(138f / 255f, 138f / 255f, 138f / 255f, 1);
             public static Color protectedColor = new Color(0, 1, 1, 1);
         }

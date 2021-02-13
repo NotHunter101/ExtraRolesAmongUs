@@ -20,7 +20,6 @@ namespace ExtraRolesMod
         static bool lastQ = false;
         static void Postfix(HudManager __instance)
         {
-            System.Console.WriteLine(Directory.GetCurrentDirectory() + "\\Assets\\bundle");
             if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started && !PlayerControl.LocalPlayer.Data.IsDead)
             {
                 lastQ = Input.GetKeyUp(KeyCode.Q);
