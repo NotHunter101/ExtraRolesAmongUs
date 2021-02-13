@@ -26,17 +26,17 @@ namespace ExtraRolesMod
         static bool lastQ = false;
         static void Postfix(HudManager __instance)
         {
-            if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
+            if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started && !PlayerControl.LocalPlayer.Data.IsDead)
             {
-                if (!PlayerControl.LocalPlayer.Data.IsImpostor && Input.GetKeyDown(KeyCode.Q) && !lastQ)
-                {
-                    PerformKillPatch.Prefix();
-                }
                 lastQ = Input.GetKeyUp(KeyCode.Q);
                 KillButton = __instance.KillButton;
                 PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
                 DistLocalClosest = PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
-                if (MedicSettings.Protected != null && __instance.UseButton != null && MedicSettings.Protected.PlayerId == PlayerControl.LocalPlayer.PlayerId && __instance.UseButton.isActiveAndEnabled)
+                if (!PlayerControl.LocalPlayer.Data.IsImpostor && Input.GetKeyDown(KeyCode.Q) && !lastQ && __instance.UseButton.isActiveAndEnabled)
+                {
+                    PerformKillPatch.Prefix();
+                }
+                if (MedicSettings.Protected != null && MedicSettings.Protected.PlayerId == PlayerControl.LocalPlayer.PlayerId && __instance.UseButton.isActiveAndEnabled)
                 {
                     if (rend == null)
                     {
@@ -55,7 +55,7 @@ namespace ExtraRolesMod
                 {
                     KillButton.gameObject.SetActive(true);
                     KillButton.isActive = true;
-                    KillButton.SetCoolDown(0f, 30f);
+                    KillButton.SetCoolDown(0f, 0f);
                     KillButton.renderer.sprite = repairIco;
                     KillButton.renderer.color = Palette.EnabledColor;
                     KillButton.renderer.material.SetFloat("_Desat", 0f);
@@ -150,7 +150,7 @@ namespace ExtraRolesMod
                     KillButton.renderer.sprite = shieldIco;
                     KillButton.gameObject.SetActive(true);
                     KillButton.isActive = true;
-                    KillButton.SetCoolDown(0f, PlayerControl.GameOptions.KillCooldown + 15.0f);
+                    KillButton.SetCoolDown(0f, 0f);
                     if (DistLocalClosest < GameOptionsData.KillDistances[PlayerControl.GameOptions.KillDistance] && MedicSettings.shieldUsed == false)
                     {
                         KillButton.SetTarget(PlayerTools.closestPlayer);
