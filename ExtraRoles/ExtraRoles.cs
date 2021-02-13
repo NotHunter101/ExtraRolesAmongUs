@@ -75,11 +75,11 @@ namespace ExtraRolesMod
     [HarmonyPatch]
     public static class ExtraRoles
     {
-        public static AssetBundle bundle = AssetBundle.LoadFromFile(Directory.GetCurrentDirectory() + "\\Assets\\bundle");
-        public static AudioClip breakClip = bundle.LoadAsset<AudioClip>("SB").DontUnload();
-        public static Sprite repairIco = bundle.LoadAsset<Sprite>("RE").DontUnload();
-        public static Sprite shieldIco = bundle.LoadAsset<Sprite>("SA").DontUnload();
-        public static Sprite smallShieldIco = bundle.LoadAsset<Sprite>("RESmall").DontUnload();
+        public static AssetBundle bundle;
+        public static AudioClip breakClip;
+        public static Sprite repairIco;
+        public static Sprite shieldIco;
+        public static Sprite smallShieldIco;
 
         public static void BreakShield(bool flag)
         {

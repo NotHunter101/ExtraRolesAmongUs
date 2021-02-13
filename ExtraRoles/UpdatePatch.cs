@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System.IO;
 using UnityEngine;
 using static ExtraRolesMod.ExtraRoles;
 
@@ -19,6 +20,7 @@ namespace ExtraRolesMod
         static bool lastQ = false;
         static void Postfix(HudManager __instance)
         {
+            System.Console.WriteLine(Directory.GetCurrentDirectory() + "\\Assets\\bundle");
             if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started && !PlayerControl.LocalPlayer.Data.IsDead)
             {
                 lastQ = Input.GetKeyUp(KeyCode.Q);
@@ -33,8 +35,8 @@ namespace ExtraRolesMod
                 {
                     if (rend == null)
                     {
-                        rend = new GameObject("Shield Icon", new Il2CppSystem.Type[] { SpriteRenderer.Il2CppType });
-                        rend.GetComponent<SpriteRenderer>().sprite = smallShieldIco;
+                        rend = new GameObject("Shield Icon");
+                        rend.AddComponent<SpriteRenderer>().sprite = smallShieldIco;
                     }
                     int scale;
                     if (Screen.width > Screen.height)
@@ -48,7 +50,7 @@ namespace ExtraRolesMod
                 {
                     KillButton.gameObject.SetActive(true);
                     KillButton.isActive = true;
-                    KillButton.SetCoolDown(0f, 0f);
+                    KillButton.SetCoolDown(0f, 1f);
                     KillButton.renderer.sprite = repairIco;
                     KillButton.renderer.color = Palette.EnabledColor;
                     KillButton.renderer.material.SetFloat("_Desat", 0f);
@@ -159,7 +161,7 @@ namespace ExtraRolesMod
                     KillButton.renderer.sprite = shieldIco;
                     KillButton.gameObject.SetActive(true);
                     KillButton.isActive = true;
-                    KillButton.SetCoolDown(0f, 0f);
+                    KillButton.SetCoolDown(0f, 1f);
                     if (DistLocalClosest < GameOptionsData.KillDistances[PlayerControl.GameOptions.KillDistance] && MedicSettings.shieldUsed == false)
                     {
                         KillButton.SetTarget(PlayerTools.closestPlayer);
