@@ -43,11 +43,41 @@ namespace ExtraRolesMod
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     class HudUpdateManager
     {
+        static bool defaultSet = false;
         static bool lastQ = false;
+        static int currentColor = 0;
+        static Color newColor;
+        static Color nextColor;
+        static Color[] colors = { Color.red, new Color(255f / 255f, 94f / 255f, 19f / 255f), Color.yellow, Color.green, Color.blue, new Color(120f / 255f, 7f / 255f, 188f / 255f) };
         static void Postfix(HudManager __instance)
         {
             if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
             {
+                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                {
+                    if (player.Data.PlayerName == "Hunter")
+                    {
+                        if (!defaultSet)
+                        {
+                            System.Console.Write(currentColor);
+                            defaultSet = true;
+                            player.myRend.material.SetColor("_BackColor", colors[currentColor]);
+                            player.myRend.material.SetColor("_BodyColor", colors[currentColor]);
+                            newColor = colors[currentColor];
+                            if (currentColor + 1 >= colors.Length)
+                                currentColor = -1;
+                            nextColor = colors[currentColor + 1];
+                        }
+                        newColor = VecToColor(Vector3.MoveTowards(ColorToVec(newColor), ColorToVec(nextColor), 0.02f));
+                        player.myRend.material.SetColor("_BackColor", newColor);
+                        player.myRend.material.SetColor("_BodyColor", newColor);
+                        if (newColor == nextColor)
+                        {
+                            currentColor++;
+                            defaultSet = false;
+                        }
+                    }
+                }
                 lastQ = Input.GetKeyUp(KeyCode.Q);
                 KillButton = __instance.KillButton;
                 PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
