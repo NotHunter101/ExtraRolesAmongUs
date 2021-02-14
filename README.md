@@ -9,23 +9,23 @@ This mod will work on Innersloth servers, but everybody in the lobby has to have
 # What does the mod add?
 
 ## Medic
-The Medic can give any player a shield that will make them immortal. Although, if The Medic dies, the shield will break.  
-The only exception is The Officer; they will still die if they try to kill a Crewmate.  
-The Medic's other feature shows when they find a corpse: they can get a report that contains clues to the killer's identity.  
-The type of information they get is based on a timer that can be configured inside the host's config file. 
+The Medic can give any player a shield that will make them immortal. Although, if The Medic dies, the shield will break.
+The only exception is The Officer; they will still die if they try to kill a Crewmate.
+The Medic's other feature shows when they find a corpse: they can get a report that contains clues to the killer's identity.
+The type of information they get is based on a timer that can be configured inside the lobby.
   
 ## Officer
-The Officer is a class of Crewmate that is allowed to kill people, similar to Impostors.  
-Their goal is to locate the Impostor and deliver vigilante justice, but if they accidentally shoot a Crewmate, they die instead.  
+The Officer is a class of Crewmate that is allowed to kill people, similar to Impostors.
+Their goal is to locate the Impostor and deliver vigilante justice, but if they accidentally shoot a Crewmate, they die instead.
   
 ## Engineer
-The Engineer can repair one emergency per game from anywhere on the entire map.  
-The other ablity of The Engineer is that they are able to use the vents that were previously exclusive to Impostors.  
+The Engineer can repair one emergency per game from anywhere on the entire map.
+The other ablity of The Engineer is that they are able to use the vents that were previously exclusive to Impostors.
 
 ## Joker
-The Joker is interesting; they aren't part of the Crewmates **or** Impostors, and they can only win by being falsely convicted as an Impostor.  
-If The Joker get's voted off the ship, the game will end instantly.  
-The Joker also has no tasks.  
+The Joker is interesting; they aren't part of the Crewmates **or** Impostors, and they can only win by being falsely convicted as an Impostor.
+If The Joker get's voted off the ship, the game will end instantly.
+The Joker also has no tasks.
 
 # Installation
 

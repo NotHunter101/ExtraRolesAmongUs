@@ -83,6 +83,16 @@ namespace ExtraRolesMod
         public static Sprite shieldIco;
         public static Sprite smallShieldIco;
 
+        public static Color VecToColor(Vector3 vec)
+        {
+            return new Color(vec.x, vec.y, vec.z);
+        }
+
+        public static Vector3 ColorToVec(Color color)
+        {
+            return new Vector3(color.r, color.g, color.b);
+        }
+
         public static void BreakShield(bool flag)
         {
             if (flag)
@@ -119,7 +129,7 @@ namespace ExtraRolesMod
         //renderer for the shield indicator
         public static SpriteRenderer shieldRenderer = null;
         //medic settings and values
-        public static string versionString = "v1.2.5";
+        public static string versionString = "v1.3.1";
         public static class ModdedPalette
         {
             public static Color medicColor = new Color(36f / 255f, 183f / 255f, 32f / 255f, 1);
