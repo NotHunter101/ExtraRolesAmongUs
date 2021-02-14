@@ -40,6 +40,9 @@ namespace ExtraRolesMod
                             AmongUsClient.Instance.FinishRpcImmediately(writer);
                             PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer);
                             OfficerSettings.lastKilled = DateTime.UtcNow;
+                            writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.AttemptSound, Hazel.SendOption.None, -1);
+                            AmongUsClient.Instance.FinishRpcImmediately(writer);
+                            BreakShield(false);
                             return false;
                         }
                         //check if they're joker and the setting is configured
@@ -93,9 +96,14 @@ namespace ExtraRolesMod
                 }
             }
 
-            if (MedicSettings.Protected != null && PlayerTools.closestPlayer.PlayerId == MedicSettings.Protected.PlayerId)
+            if (MedicSettings.Protected != null && PlayerTools.closestPlayer == MedicSettings.Protected)
             {
-                //cancel the kill
+                if (KillButton.CurrentTarget == MedicSettings.Protected && KillButton.isActiveAndEnabled && !KillButton.isCoolingDown && HarmonyMain.playerMurderIndicator.GetValue())
+                {
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.AttemptSound, Hazel.SendOption.None, -1);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    BreakShield(false);
+                } 
                 return false;
             }
             //otherwise, continue the murder as normal

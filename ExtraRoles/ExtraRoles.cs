@@ -93,13 +93,16 @@ namespace ExtraRolesMod
 
         public static void BreakShield(bool flag)
         {
+            if (MedicSettings.Protected == PlayerControl.LocalPlayer)
+                SoundManager.Instance.PlaySound(breakClip, false, 100f);
             if (flag)
             {
-                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShieldBreak, Hazel.SendOption.None, -1);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-                MedicSettings.Protected.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
-                MedicSettings.Protected.myRend.material.SetFloat("_Outline", 0f);
-                MedicSettings.Protected = null;
+                if (MedicSettings.Protected != null)
+                {
+                    MedicSettings.Protected.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
+                    MedicSettings.Protected.myRend.material.SetFloat("_Outline", 0f);
+                    MedicSettings.Protected = null;
+                }
             }
         }
 
