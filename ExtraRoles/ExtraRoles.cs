@@ -116,7 +116,7 @@ namespace ExtraRolesMod
         public static List<PlayerControl> localPlayers = new List<PlayerControl>();
         //global rng
         public static System.Random rng = new System.Random();
-        //the kill button in the bottom rightฃ
+        //the kill button in the bottom right
         public static KillButtonManager KillButton;
       
         //the id of the targeted player
