@@ -77,6 +77,18 @@ namespace ExtraRolesMod
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
 
+            if (crewmates.Count > 0 && (rng.Next(1, 101) <= HarmonyMain.captainSpawnChance.GetValue()))
+            {
+                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetCaptain, Hazel.SendOption.None, -1);
+                var CaptainRandom = rng.Next(0, crewmates.Count);
+                ConsoleTools.Info(CaptainRandom.ToString());
+                CaptainSettings.Captain = crewmates[CaptainRandom];
+                crewmates.RemoveAt(CaptainRandom);
+                byte CaptainId = CaptainSettings.Captain.PlayerId;
+
+                writer.Write(CaptainId);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+            }
             localPlayers.Clear();
             localPlayer = PlayerControl.LocalPlayer;
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
