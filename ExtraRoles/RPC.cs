@@ -51,6 +51,7 @@ namespace ExtraRolesMod
         ResetVaribles = 51,
         SetLocalPlayers = 56,
         JokerWin = 57,
+        SetCaptain = 58,
     }
 
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]

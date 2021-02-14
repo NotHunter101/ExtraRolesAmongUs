@@ -175,6 +175,17 @@ namespace ExtraRolesMod
                                     player.NameText.Color = ModdedPalette.jokerColor;
                     }
                 }
+                if (CaptainSettings.Captain != null)
+                {
+                    if (CaptainSettings.Captain == PlayerControl.LocalPlayer || CaptainSettings.showCaptain)
+                    {
+                        CaptainSettings.Captain.nameText.Color = ModdedPalette.captainColor;
+                        if (MeetingHud.Instance != null)
+                            foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
+                                if (player.NameText != null && CaptainSettings.Captain.PlayerId == player.TargetPlayerId)
+                                    player.NameText.Color = ModdedPalette.captainColor;
+                    }
+                }
                 if (MedicSettings.Protected != null)
                 {
                     int showShielded = MedicSettings.showProtected;

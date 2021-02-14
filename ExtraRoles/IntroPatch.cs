@@ -51,6 +51,13 @@ namespace ExtraRolesMod
                 __instance.__this.ImpostorText.Text = "Get voted off of the ship to win";
                 __instance.__this.BackgroundBar.material.color = ModdedPalette.jokerColor;
             }
+            if (PlayerControl.LocalPlayer == CaptainSettings.Captain)
+            {
+                __instance.__this.Title.Text = "Captain";
+                __instance.__this.Title.Color = ModdedPalette.captainColor;
+                __instance.__this.ImpostorText.Text = "You are the leader of this ship";
+                __instance.__this.BackgroundBar.material.color = ModdedPalette.captainColor;
+            }
         }
     }
 }

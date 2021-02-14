@@ -116,8 +116,9 @@ namespace ExtraRolesMod
         public static List<PlayerControl> localPlayers = new List<PlayerControl>();
         //global rng
         public static System.Random rng = new System.Random();
-        //the kill button in the bottom right
+        //the kill button in the bottom rightฃ
         public static KillButtonManager KillButton;
+      
         //the id of the targeted player
         public static int KBTarget;
         //distance between the local player and closest player
@@ -134,6 +135,7 @@ namespace ExtraRolesMod
             public static Color officerColor = new Color(0, 40f / 255f, 198f / 255f, 1);
             public static Color engineerColor = new Color(255f / 255f, 165f / 255f, 10f / 255f, 1);
             public static Color jokerColor = new Color(138f / 255f, 138f / 255f, 138f / 255f, 1);
+            public static Color captainColor = new Color(56f / 255f, 54f / 255f, 253f / 255f, 1);
             public static Color protectedColor = new Color(0, 1, 1, 1);
         }
         public static class MedicSettings 
@@ -229,6 +231,20 @@ namespace ExtraRolesMod
             {
                 showJoker = HarmonyMain.showJoker.GetValue();
                 jokerCanDieToOfficer = HarmonyMain.jokerCanDieToOfficer.GetValue();
+            }
+        }
+
+        public static class CaptainSettings
+        {
+            public static PlayerControl Captain;
+            public static bool showCaptain = false;
+            public static void ClearSettings()
+            {
+                Captain = null;
+            }
+            public static void SetConfigSettings()
+            {
+                showCaptain = HarmonyMain.showCaptain.GetValue();
             }
         }
 

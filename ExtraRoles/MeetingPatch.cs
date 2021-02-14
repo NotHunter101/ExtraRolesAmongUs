@@ -71,6 +71,8 @@ namespace ExtraRoles
                         __result = ExileController.Instance.Field_10.PlayerName + " was The Officer.";
                     else if (JokerSettings.Joker != null && ExileController.Instance.Field_10.Object.PlayerId == JokerSettings.Joker.PlayerId)
                         __result = ExileController.Instance.Field_10.PlayerName + " was The Joker.";
+                    else if (CaptainSettings.Captain != null && ExileController.Instance.Field_10.Object.PlayerId == CaptainSettings.Captain.PlayerId)
+                        __result = ExileController.Instance.Field_10.PlayerName + " was The Captain.";
                     else
                         __result = ExileController.Instance.Field_10.PlayerName + " was not The Impostor.";
                 }
