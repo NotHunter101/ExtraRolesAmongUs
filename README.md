@@ -20,7 +20,7 @@ Their goal is to locate the Impostor and deliver vigilante justice, but if they 
   
 ## Engineer
 The Engineer can repair one emergency per game from anywhere on the entire map.
-The other ablity of The Engineer is that they are able to use the vents that were previously exclusive to Impostors.
+The other ability of The Engineer is that they are able to use the vents that were previously exclusive to Impostors.
 
 ## Joker
 The Joker is interesting; they aren't part of the Crewmates **or** Impostors, and they can only win by being falsely convicted as an Impostor.
@@ -30,14 +30,14 @@ The Joker also has no tasks.
 # Installation
 
 Here's a quick video if you can't be bothered to read the steps: https://youtu.be/gtuqYsdir_k  
-For the rest of you, here's the installation instructions.  
+For the rest of you, here are the installation instructions.  
   
 ## Instructions
   
 1) Download the latest release from the releases tab.
 2) If you do not have WinRar, install it from here: https://www.rarlab.com/
 3) Once WinRar is installed, open the .rar file you downloaded from the releases tab.
-4) Go to the Among Us install directory. On Steam, right click the game, hover over manage, and click "Browse Local Files"
+4) Go to the Among Us install directory. On Steam, right-click the game, hover over-manage, and click "Browse Local Files"
 4) Drag every single file inside the downloaded .rar into your Among Us directory. (The folder that contains Among Us.exe)
 5) Run the game. The mod will take pretty long to start the first time, but after that, it will start at about the same speed.
 6) To verify the mod is installed, look at the text in the top left of the menu screen.
@@ -47,7 +47,7 @@ For the rest of you, here's the installation instructions.
   
 ## Show Medic
 *Default: false*<br/>
-This is the game setting that toggles wether the Medic's name is lit up green for everybody in the game, or just themselves.
+This is the game setting that toggles whether the Medic's name is lit up green for everybody in the game, or just themselves.
   
 ## Show Shielded Player
 *Default: true*<br/>
@@ -75,7 +75,7 @@ If this setting is enabled, The Jokers's name will be lit up grey for everyone. 
   
 ## Joker Can Die To Officer
 *Default: true*<br/>
-If this setting is enabled, The Officer will be able to kill The Joker without reprecussion. If it's disabled, killing The Joker will execute as if they were a Crewmate.
+If this setting is enabled, The Officer will be able to kill The Joker without repercussion. If it's disabled, killing The Joker will execute as if they were a Crewmate.
   
 ### Time Where Medic Reports Will Have Name
 *Default: 5*<br/>
