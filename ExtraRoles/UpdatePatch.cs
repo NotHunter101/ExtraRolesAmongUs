@@ -4,6 +4,8 @@ using System.IO;
 using System.Net.Http;
 using UnityEngine;
 using static ExtraRolesMod.ExtraRoles;
+using Reactor.Extensions;
+using System.Collections.Generic;
 
 namespace ExtraRolesMod
 {
@@ -39,6 +41,29 @@ namespace ExtraRolesMod
         }
     }
 
+    [HarmonyPatch]
+    class GameOptionsMenuManger
+    {
+        static float defaultBounds = 0f;
+
+        [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Start))]
+        class Start
+        {
+            static void Postfix(ref GameOptionsMenu __instance)
+            {
+                defaultBounds = __instance.GetComponentInParent<Scroller>().YBounds.max;
+            }
+        }
+
+        [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Update))]
+        class Update
+        {
+            static void Postfix(ref GameOptionsMenu __instance)
+            {
+                __instance.GetComponentInParent<Scroller>().YBounds.max = 13.5f;
+            }
+        }
+    }
 
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     class HudUpdateManager
