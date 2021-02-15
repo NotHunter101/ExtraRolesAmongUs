@@ -35,7 +35,7 @@ namespace ExtraRolesMod
         public static CustomToggleOption showOfficer = CustomOption.AddToggle("Show Officer", false);
         public static CustomToggleOption showEngineer = CustomOption.AddToggle("Show Engineer", false);
         public static CustomToggleOption showJoker = CustomOption.AddToggle("Show Joker", false);
-        public static CustomStringOption showShieldedPlayer = CustomOption.AddString("Show Shielded Player", new string[] { "Self", "Medic", "Self+Medic", "Everyone" });
+        public static CustomStringOption showShieldedPlayer = CustomOption.AddString("Show Shielded Player", new[] { "Self", "Medic", "Self+Medic", "Everyone" });
         public static CustomNumberOption OfficerKillCooldown = CustomOption.AddNumber("Officer Kill Cooldown", 30f, 10f, 60f, 2.5f);
         public static CustomToggleOption playerMurderIndicator = CustomOption.AddToggle("Murder Attempt Indicator for Shielded Player", false);
         public static CustomToggleOption jokerCanDieToOfficer = CustomOption.AddToggle("Joker Can Die To Officer", true);
@@ -65,12 +65,12 @@ namespace ExtraRolesMod
             var ip = Ip.Value;
             if (Uri.CheckHostName(Ip.Value).ToString() == "Dns")
             {
-                foreach (IPAddress address in Dns.GetHostAddresses(Ip.Value))
+                foreach (var address in Dns.GetHostAddresses(Ip.Value))
                 {
-                    if (address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                    {
-                        ip = address.ToString(); break;
-                    }
+                    if (address.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork) 
+                        continue;
+                    ip = address.ToString();
+                    break;
                 }
             }
 

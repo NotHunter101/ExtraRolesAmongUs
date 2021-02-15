@@ -12,43 +12,45 @@ namespace ExtraRoles
         static void Postfix(PlayerControl __instance, GameData.PlayerInfo CAKODNGLPDF)
         {
             System.Console.WriteLine("Report Body!");
-            byte reporterId = __instance.PlayerId;
-            DeadPlayer killer = killedPlayers.Where(x => x.PlayerId == CAKODNGLPDF.PlayerId).FirstOrDefault();
-            if (killer != null)
-            {
-                // If there is a Medic alive and Medic reported and reports are enabled
-                if (MedicSettings.Medic != null && reporterId == MedicSettings.Medic.PlayerId && MedicSettings.showReport)
-                {
-                    // If the user is the medic
-                    if (MedicSettings.Medic.PlayerId == PlayerControl.LocalPlayer.PlayerId)
-                    {
-                        // Create Body Report
-                        BodyReport br = new BodyReport();
-                        br.Killer = PlayerTools.getPlayerById(killer.KillerId);
-                        br.Reporter = br.Killer = PlayerTools.getPlayerById(killer.KillerId);
-                        br.KillAge = (float)(DateTime.UtcNow - killer.KillTime).TotalMilliseconds;
-                        br.DeathReason = killer.DeathReason;
-                        // Generate message
-                        var reportMsg = BodyReport.ParseBodyReport(br);
+            var reporterId = __instance.PlayerId;
+            var killer = killedPlayers.FirstOrDefault(x => x.PlayerId == CAKODNGLPDF.PlayerId);
+            if (killer == null)
+                return;
 
-                        // If message is not empty
-                        if (!string.IsNullOrWhiteSpace(reportMsg))
-                        {   
-                            
-                            if (AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance)
-                            {
-                                // Send the message through chat only visible to the medic
-                                DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, reportMsg);
-                            }
-                            if (reportMsg.IndexOf("who", StringComparison.OrdinalIgnoreCase) >= 0)
-                            {
-                                // Really did not understand this
-                                DestroyableSingleton<Telemetry>.Instance.SendWho();
-                            }
-                        }
-                    }
-                }
-            }       
+            var hasMedicReported = MedicSettings.Medic != null && reporterId == MedicSettings.Medic.PlayerId;
+            if (!hasMedicReported || !MedicSettings.showReport)
+                return;
+
+            var isUserMedic = MedicSettings.Medic.PlayerId == PlayerControl.LocalPlayer.PlayerId;
+            if (!isUserMedic)
+                return;
+
+            // Create Body Report
+            var bodyReport = new BodyReport();
+            bodyReport.Killer = PlayerTools.getPlayerById(killer.KillerId);
+            bodyReport.Reporter = bodyReport.Killer = PlayerTools.getPlayerById(killer.KillerId);
+            bodyReport.KillAge = (float) (DateTime.UtcNow - killer.KillTime).TotalMilliseconds;
+            bodyReport.DeathReason = killer.DeathReason;
+            // Generate message
+            var reportMsg = BodyReport.ParseBodyReport(bodyReport);
+
+            // If message is not empty
+            var isMessageEmpty = string.IsNullOrWhiteSpace(reportMsg);
+            if (isMessageEmpty)
+                return;
+
+            if (AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance)
+            {
+                // Send the message through chat only visible to the medic
+                DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                    reportMsg);
+            }
+
+            if (reportMsg.IndexOf("who", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                // Really did not understand this
+                DestroyableSingleton<Telemetry>.Instance.SendWho();
+            }
         }
     }
 }

@@ -20,10 +20,7 @@ namespace ExtraRolesMod
 
         public static DateTime GetLastVent(byte player)
         {
-            if (allVentTimes.ContainsKey(player))
-                return allVentTimes[player];
-            else
-                return new DateTime(0);
+            return allVentTimes.ContainsKey(player) ? allVentTimes[player] : new DateTime(0);
         }
     }
 
@@ -32,8 +29,8 @@ namespace ExtraRolesMod
     {
         public static bool Prefix(Vent __instance, ref float __result, [HarmonyArgument(0)] GameData.PlayerInfo pc, [HarmonyArgument(1)] out bool canUse, [HarmonyArgument(2)] out bool couldUse)
         {
-            float num = float.MaxValue;
-            PlayerControl localPlayer = pc.Object;
+            var num = float.MaxValue;
+            var localPlayer = pc.Object;
             if (EngineerSettings.Engineer != null)
                 couldUse = (EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId || localPlayer.Data.IsImpostor) && !localPlayer.Data.IsDead;
             else

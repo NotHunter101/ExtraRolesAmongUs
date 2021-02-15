@@ -11,26 +11,20 @@ namespace ExtraRolesMod
         
         public static List<PlayerControl> getCrewMates()
         {
-            List<PlayerControl> CrewmateIds = new List<PlayerControl>();
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            var CrewmateIds = new List<PlayerControl>();
+            foreach (var player in PlayerControl.AllPlayerControls)
             {
-                bool isInfected = false;
                 if (player.Data.IsImpostor)
-                {
-                    isInfected = true;
                     break;
-                }
-                if (!isInfected)
-                {
-                    CrewmateIds.Add(player);
-                }
+                
+                CrewmateIds.Add(player);
             }
             return CrewmateIds;
         }
 
         public static PlayerControl getPlayerById(byte id)
         {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            foreach (var player in PlayerControl.AllPlayerControls)
             {
                 if (player.PlayerId == id)
                 {
@@ -46,43 +40,40 @@ namespace ExtraRolesMod
             {
                 return ExtraRoles.OfficerSettings.OfficerCD;
             }
-            DateTime now = DateTime.UtcNow;
-            TimeSpan diff = (TimeSpan)(now - ExtraRoles.OfficerSettings.lastKilled);
+            var now = DateTime.UtcNow;
+            var diff = (TimeSpan)(now - ExtraRoles.OfficerSettings.lastKilled);
 
             var KillCoolDown = ExtraRoles.OfficerSettings.OfficerCD * 1000.0f;
             if (KillCoolDown - (float)diff.TotalMilliseconds < 0) return 0;
-            else
-            {
-                return (KillCoolDown - (float)diff.TotalMilliseconds) / 1000.0f;
-            }
+            return (KillCoolDown - (float)diff.TotalMilliseconds) / 1000.0f;
         }
 
         public static PlayerControl getClosestPlayer(PlayerControl refplayer)
         {
-            double mindist = double.MaxValue;
-            PlayerControl closestplayer = null;
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            var mindist = double.MaxValue;
+            PlayerControl closestPlayer = null;
+            foreach (var player in PlayerControl.AllPlayerControls)
             {
-                if (player.Data.IsDead) continue;
-                if (player != refplayer)
-                {
-
-                    double dist = getDistBetweenPlayers(player, refplayer);
-                    if (dist < mindist)
-                    {
-                        mindist = dist;
-                        closestplayer = player;
-                    }
-
-                }
+                if (player.Data.IsDead) 
+                    continue;
+                if (player == refplayer)
+                    continue;
+                
+                var dist = getDistBetweenPlayers(player, refplayer);
+                
+                if (!(dist < mindist)) 
+                    continue;
+                
+                mindist = dist;
+                closestPlayer = player;
 
             }
-            return closestplayer;
+            return closestPlayer;
         }
 
         public static PlayerControl getPlayerFromId(byte id)
         {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            foreach (var player in PlayerControl.AllPlayerControls)
                 if (player.PlayerId == id)
                     return player;
             return null;

@@ -58,23 +58,23 @@ namespace ExtraRolesMod
     {
         static void Postfix(byte HKHMBLJFLMC, MessageReader ALMCIJKELCP)
         {
-            byte packetId = HKHMBLJFLMC;
-            MessageReader reader = ALMCIJKELCP;
+            var packetId = HKHMBLJFLMC;
+            var reader = ALMCIJKELCP;
             switch (packetId)
             {
                 case (byte)CustomRPC.AttemptSound:
                     BreakShield(false);
                     break;
                 case (byte)CustomRPC.FixLights:
-                    SwitchSystem switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
+                    var switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
                     switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
                     break;
                 case (byte)CustomRPC.SetLocalPlayers:
                     localPlayers.Clear();
                     localPlayer = PlayerControl.LocalPlayer;
                     var localPlayerBytes = ALMCIJKELCP.ReadBytesAndSize();
-                    foreach (byte id in localPlayerBytes)
-                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    foreach (var id in localPlayerBytes)
+                        foreach (var player in PlayerControl.AllPlayerControls)
                             if (player.PlayerId == id)
                                 localPlayers.Add(player);
                     break;
@@ -91,57 +91,57 @@ namespace ExtraRolesMod
                     break;
                 case (byte)CustomRPC.SetMedic:
                     ConsoleTools.Info("Medic Set Through RPC!");
-                    byte MedicId = ALMCIJKELCP.ReadByte();
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    var MedicId = ALMCIJKELCP.ReadByte();
+                    foreach (var player in PlayerControl.AllPlayerControls)
                         if (player.PlayerId == MedicId)
                             MedicSettings.Medic = player;
                     break;
                 case (byte)CustomRPC.SetProtected:
-                    byte ProtectedId = ALMCIJKELCP.ReadByte();
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    var ProtectedId = ALMCIJKELCP.ReadByte();
+                    foreach (var player in PlayerControl.AllPlayerControls)
                         if (player.PlayerId == ProtectedId)
                             MedicSettings.Protected = player;
                     break;
                 case (byte)CustomRPC.SetOfficer:
                     ConsoleTools.Info("Officer Set Through RPC!");
-                    byte OfficerId = ALMCIJKELCP.ReadByte();
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    var OfficerId = ALMCIJKELCP.ReadByte();
+                    foreach (var player in PlayerControl.AllPlayerControls)
                         if (player.PlayerId == OfficerId)
                             OfficerSettings.Officer = player;
                     break;
                 case (byte)CustomRPC.OfficerKill:
                     var killerid = ALMCIJKELCP.ReadByte();
                     var targetid = ALMCIJKELCP.ReadByte();
-                    PlayerControl killer = PlayerTools.getPlayerById(killerid);
-                    PlayerControl target = PlayerTools.getPlayerById(targetid);
+                    var killer = PlayerTools.getPlayerById(killerid);
+                    var target = PlayerTools.getPlayerById(targetid);
                     killer.MurderPlayer(target);
                     if (target == MedicSettings.Protected)
                         BreakShield(false);
                     break;
                 case (byte)CustomRPC.SetEngineer:
                     ConsoleTools.Info("Engineer Set Through RPC!");
-                    byte EngineerId = ALMCIJKELCP.ReadByte();
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    var EngineerId = ALMCIJKELCP.ReadByte();
+                    foreach (var player in PlayerControl.AllPlayerControls)
                         if (player.PlayerId == EngineerId)
                             EngineerSettings.Engineer = player;
                     break;
                 case (byte)CustomRPC.SetJoker:
                     ConsoleTools.Info("Joker Set Through RPC!");
-                    byte JokerId = ALMCIJKELCP.ReadByte();
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    var JokerId = ALMCIJKELCP.ReadByte();
+                    foreach (var player in PlayerControl.AllPlayerControls)
                         if (player.PlayerId == JokerId)
                             JokerSettings.Joker = player;
                     break;
                 case (byte)CustomRPC.JokerWin:
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    foreach (var player in PlayerControl.AllPlayerControls)
                     {
-                        if (player != JokerSettings.Joker)
-                        {
-                            player.RemoveInfected();
-                            player.Die(DeathReason.Exile);
-                            player.Data.IsDead = true;
-                            player.Data.IsImpostor = false;
-                        }
+                        if (player == JokerSettings.Joker)
+                            continue;
+                        
+                        player.RemoveInfected();
+                        player.Die(DeathReason.Exile);
+                        player.Data.IsDead = true;
+                        player.Data.IsImpostor = false;
                     }
                     JokerSettings.Joker.Revive();
                     JokerSettings.Joker.Data.IsDead = false;

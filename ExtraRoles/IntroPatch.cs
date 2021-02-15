@@ -9,20 +9,19 @@ namespace ExtraRolesMod
     {
         static bool Prefix(IntroCutscene.CoBegin__d __instance)
         {
-            if (PlayerControl.LocalPlayer == JokerSettings.Joker)
-            {
-                var jokerTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                jokerTeam.Add(PlayerControl.LocalPlayer);
-                __instance.yourTeam = jokerTeam;
+            if (PlayerControl.LocalPlayer != JokerSettings.Joker) 
                 return true;
-            }
+            
+            var jokerTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+            jokerTeam.Add(PlayerControl.LocalPlayer);
+            __instance.yourTeam = jokerTeam;
             return true;
         }
 
         static void Postfix(IntroCutscene.CoBegin__d __instance)
         {
             OfficerSettings.lastKilled = DateTime.UtcNow.AddSeconds((OfficerSettings.OfficerCD * -1) + 10 + __instance.timer_0);
-            //change the name and titles accordingly
+            // Change the name and titles accordingly
             if (PlayerControl.LocalPlayer == MedicSettings.Medic)
             {
                 __instance.__this.Title.Text = "Medic";

@@ -11,37 +11,38 @@ using System.Collections;
 
 namespace ExtraRoles
 {
-
-    [HarmonyPatch(typeof(UnityEngine.Object), nameof(UnityEngine.Object.Destroy), new Type[] { typeof(UnityEngine.Object) })]
+    [HarmonyPatch(typeof(UnityEngine.Object), nameof(UnityEngine.Object.Destroy),
+        new Type[] {typeof(UnityEngine.Object)})]
     class MeetingExiledEnd
     {
         static void Prefix(UnityEngine.Object obj)
         {
-            if (ExileController.Instance != null && obj == ExileController.Instance.gameObject)
-            {
-                if (JokerSettings.Joker != null)
-                {
-                    if (ExileController.Instance.Field_10 != null && ExileController.Instance.Field_10.PlayerId == JokerSettings.Joker.PlayerId)
-                    {
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.JokerWin, Hazel.SendOption.None, -1);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+            if (ExileController.Instance == null || obj != ExileController.Instance.gameObject)
+                return;
+            if (JokerSettings.Joker == null)
+                return;
+            if (ExileController.Instance.Field_10 == null ||
+                ExileController.Instance.Field_10.PlayerId != JokerSettings.Joker.PlayerId)
+                return;
+            
+            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte) CustomRPC.JokerWin, Hazel.SendOption.None, -1);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
 
-                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                        {
-                            if (player != JokerSettings.Joker)
-                            {
-                                player.RemoveInfected();
-                                player.Die(DeathReason.Exile);
-                                player.Data.IsDead = true;
-                                player.Data.IsImpostor = false;
-                            }
-                        }
-                        JokerSettings.Joker.Revive();
-                        JokerSettings.Joker.Data.IsDead = false;
-                        JokerSettings.Joker.Data.IsImpostor = true;
-                    }
-                }
+            foreach (var player in PlayerControl.AllPlayerControls)
+            {
+                if (player == JokerSettings.Joker)
+                    continue;
+                
+                player.RemoveInfected();
+                player.Die(DeathReason.Exile);
+                player.Data.IsDead = true;
+                player.Data.IsImpostor = false;
             }
+
+            JokerSettings.Joker.Revive();
+            JokerSettings.Joker.Data.IsDead = false;
+            JokerSettings.Joker.Data.IsImpostor = true;
         }
     }
 
@@ -54,30 +55,42 @@ namespace ExtraRoles
         }
     }
 
-    [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString), new Type[] { typeof(StringNames), typeof(Il2CppReferenceArray<Il2CppSystem.Object>) })]
+    [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString),
+        new Type[] {typeof(StringNames), typeof(Il2CppReferenceArray<Il2CppSystem.Object>)})]
     class TranslationPatch
     {
-        static void Postfix(ref string __result, StringNames HKOIECMDOKL, Il2CppReferenceArray<Il2CppSystem.Object> EBKIKEILMLF)
+        static void Postfix(ref string __result, StringNames HKOIECMDOKL,
+            Il2CppReferenceArray<Il2CppSystem.Object> EBKIKEILMLF)
         {
-            if (ExileController.Instance != null && ExileController.Instance.Field_10 != null)
+            if (ExileController.Instance == null || ExileController.Instance.Field_10 == null) return;
+            switch (HKOIECMDOKL)
             {
-                if (HKOIECMDOKL == StringNames.ExileTextPN || HKOIECMDOKL == StringNames.ExileTextSN)
+                case StringNames.ExileTextPN:
+                case StringNames.ExileTextSN:
                 {
-                    if (MedicSettings.Medic != null && ExileController.Instance.Field_10.Object.PlayerId == MedicSettings.Medic.PlayerId)
+                    if (MedicSettings.Medic != null && ExileController.Instance.Field_10.Object.PlayerId ==
+                        MedicSettings.Medic.PlayerId)
                         __result = ExileController.Instance.Field_10.PlayerName + " was The Medic.";
-                    else if (EngineerSettings.Engineer != null && ExileController.Instance.Field_10.Object.PlayerId == EngineerSettings.Engineer.PlayerId)
+                    else if (EngineerSettings.Engineer != null && ExileController.Instance.Field_10.Object.PlayerId ==
+                        EngineerSettings.Engineer.PlayerId)
                         __result = ExileController.Instance.Field_10.PlayerName + " was The Engineer.";
-                    else if (OfficerSettings.Officer != null && ExileController.Instance.Field_10.Object.PlayerId == OfficerSettings.Officer.PlayerId)
+                    else if (OfficerSettings.Officer != null && ExileController.Instance.Field_10.Object.PlayerId ==
+                        OfficerSettings.Officer.PlayerId)
                         __result = ExileController.Instance.Field_10.PlayerName + " was The Officer.";
-                    else if (JokerSettings.Joker != null && ExileController.Instance.Field_10.Object.PlayerId == JokerSettings.Joker.PlayerId)
+                    else if (JokerSettings.Joker != null && ExileController.Instance.Field_10.Object.PlayerId ==
+                        JokerSettings.Joker.PlayerId)
                         __result = ExileController.Instance.Field_10.PlayerName + " was The Joker.";
                     else
                         __result = ExileController.Instance.Field_10.PlayerName + " was not The Impostor.";
+                    break;
                 }
-                if (HKOIECMDOKL == StringNames.ImpostorsRemainP || HKOIECMDOKL == StringNames.ImpostorsRemainS)
+                case StringNames.ImpostorsRemainP:
+                case StringNames.ImpostorsRemainS:
                 {
-                    if (JokerSettings.Joker != null && ExileController.Instance.Field_10.Object.PlayerId == JokerSettings.Joker.PlayerId)
+                    if (JokerSettings.Joker != null && ExileController.Instance.Field_10.Object.PlayerId ==
+                        JokerSettings.Joker.PlayerId)
                         __result = "";
+                    break;
                 }
             }
         }
