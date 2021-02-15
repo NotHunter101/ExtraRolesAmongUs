@@ -122,7 +122,7 @@ If you ever need to talk to someone for help fixing an issue, want to report a b
 # Resources
 https://github.com/NuclearPowered/Reactor The framework the mod uses.  
 https://github.com/BepInEx For hooking game functions.  
-https://github.com/Impostor/Impostor For running a non-official server. (if you wish)  
+https://github.com/Impostor/Impostor For running a non-official server. (currently, the anti-cheat breaks some features of the mod)  
 https://github.com/DorCoMaNdO/Reactor-Essentials For creating custom game options easily.  
 https://github.com/Woodi-dev/Among-Us-Sheriff-Mod For code snippets.  
 https://github.com/tomozbot/SweeperMod For code snippets.  
