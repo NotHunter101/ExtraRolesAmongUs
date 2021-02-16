@@ -34,7 +34,7 @@ For the rest of you, here are the installation instructions.
   
 ## Instructions
   
-1) Download the latest release from the releases tab.
+1) Download the latest release from the [releases](https://github.com/NotHunter101/ExtraRolesAmongUs/releases) tab.
 2) If you do not have WinRar, install it from here: https://www.rarlab.com/
 3) Once WinRar is installed, open the .rar file you downloaded from the releases tab.
 4) Go to the Among Us install directory. On Steam, right-click the game, hover over "Manage", and click "Browse Local Files"
