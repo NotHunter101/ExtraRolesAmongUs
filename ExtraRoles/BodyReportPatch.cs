@@ -1,31 +1,36 @@
 ﻿using ExtraRolesMod;
 using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using static ExtraRolesMod.ExtraRoles;
 
 namespace ExtraRoles
 {
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.LocalPlayer.CmdReportDeadBody))]
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
     class BodyReportPatch
     {
         static void Postfix(PlayerControl __instance, GameData.PlayerInfo CAKODNGLPDF)
         {
             System.Console.WriteLine("Report Body!");
-            byte reporterId = __instance.PlayerId;
-            DeadPlayer killer = killedPlayers.Where(x => x.PlayerId == CAKODNGLPDF.PlayerId).FirstOrDefault();
+            DeadPlayer[] matches = killedPlayers.Where(x => x.PlayerId == CAKODNGLPDF.PlayerId).ToArray();
+            DeadPlayer killer = null;
+
+            if (matches.Length > 0)
+                killer = matches[0];
+
             if (killer != null)
             {
                 // If there is a Medic alive and Medic reported and reports are enabled
-                if (MedicSettings.Medic != null && reporterId == MedicSettings.Medic.PlayerId && MedicSettings.showReport)
+                if (__instance.isPlayerRole("Medic") && Main.Config.showReport)
                 {
                     // If the user is the medic
-                    if (MedicSettings.Medic.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                    if (PlayerControl.LocalPlayer.isPlayerRole("Medic"))
                     {
                         // Create Body Report
                         BodyReport br = new BodyReport();
                         br.Killer = PlayerTools.getPlayerById(killer.KillerId);
-                        br.Reporter = br.Killer = PlayerTools.getPlayerById(killer.KillerId);
+                        br.Reporter = __instance;
                         br.KillAge = (float)(DateTime.UtcNow - killer.KillTime).TotalMilliseconds;
                         br.DeathReason = killer.DeathReason;
                         // Generate message

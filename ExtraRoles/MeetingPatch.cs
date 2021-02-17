@@ -2,12 +2,8 @@ using ExtraRolesMod;
 using HarmonyLib;
 using Hazel;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
 using static ExtraRolesMod.ExtraRoles;
 using UnhollowerBaseLib;
-using System.Collections;
 
 namespace ExtraRoles
 {
@@ -19,38 +15,30 @@ namespace ExtraRoles
         {
             if (ExileController.Instance != null && obj == ExileController.Instance.gameObject)
             {
-                if (JokerSettings.Joker != null)
+                ModPlayerControl Officer = Main.Logic.getRolePlayer("Officer");
+                if (Officer != null)
+                    Officer.LastAbilityTime = DateTime.UtcNow;
+                if (ExileController.Instance.Field_10 != null && ExileController.Instance.Field_10._object.isPlayerRole("Joker"))
                 {
-                    if (ExileController.Instance.Field_10 != null && ExileController.Instance.Field_10.PlayerId == JokerSettings.Joker.PlayerId)
-                    {
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.JokerWin, Hazel.SendOption.None, -1);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.JokerWin, Hazel.SendOption.None, -1);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
 
-                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    {
+                        if (!player.isPlayerRole("Joker"))
                         {
-                            if (player != JokerSettings.Joker)
-                            {
-                                player.RemoveInfected();
-                                player.Die(DeathReason.Exile);
-                                player.Data.IsDead = true;
-                                player.Data.IsImpostor = false;
-                            }
+                            player.RemoveInfected();
+                            player.Die(DeathReason.Exile);
+                            player.Data.IsDead = true;
+                            player.Data.IsImpostor = false;
                         }
-                        JokerSettings.Joker.Revive();
-                        JokerSettings.Joker.Data.IsDead = false;
-                        JokerSettings.Joker.Data.IsImpostor = true;
                     }
+                    PlayerControl joker = Main.Logic.getRolePlayer("Joker").PlayerControl;
+                    joker.Revive();
+                    joker.Data.IsDead = false;
+                    joker.Data.IsImpostor = true;
                 }
             }
-        }
-    }
-
-    [HarmonyPatch(typeof(ExileController), nameof(ExileController.Begin))]
-    class MeetingEnd
-    {
-        static void Postfix(ExileController __instance)
-        {
-            OfficerSettings.lastKilled = DateTime.UtcNow.AddMilliseconds(__instance.Duration);
         }
     }
 
@@ -63,20 +51,20 @@ namespace ExtraRoles
             {
                 if (HKOIECMDOKL == StringNames.ExileTextPN || HKOIECMDOKL == StringNames.ExileTextSN)
                 {
-                    if (MedicSettings.Medic != null && ExileController.Instance.Field_10.Object.PlayerId == MedicSettings.Medic.PlayerId)
+                    if (ExileController.Instance.Field_10.Object.isPlayerRole("Medic"))
                         __result = ExileController.Instance.Field_10.PlayerName + " was The Medic.";
-                    else if (EngineerSettings.Engineer != null && ExileController.Instance.Field_10.Object.PlayerId == EngineerSettings.Engineer.PlayerId)
+                    else if (ExileController.Instance.Field_10.Object.isPlayerRole("Engineer"))
                         __result = ExileController.Instance.Field_10.PlayerName + " was The Engineer.";
-                    else if (OfficerSettings.Officer != null && ExileController.Instance.Field_10.Object.PlayerId == OfficerSettings.Officer.PlayerId)
+                    else if (ExileController.Instance.Field_10.Object.isPlayerRole("Officer"))
                         __result = ExileController.Instance.Field_10.PlayerName + " was The Officer.";
-                    else if (JokerSettings.Joker != null && ExileController.Instance.Field_10.Object.PlayerId == JokerSettings.Joker.PlayerId)
+                    else if (ExileController.Instance.Field_10.Object.isPlayerRole("Joker"))
                         __result = ExileController.Instance.Field_10.PlayerName + " was The Joker.";
                     else
                         __result = ExileController.Instance.Field_10.PlayerName + " was not The Impostor.";
                 }
                 if (HKOIECMDOKL == StringNames.ImpostorsRemainP || HKOIECMDOKL == StringNames.ImpostorsRemainS)
                 {
-                    if (JokerSettings.Joker != null && ExileController.Instance.Field_10.Object.PlayerId == JokerSettings.Joker.PlayerId)
+                    if (ExileController.Instance.Field_10.Object.isPlayerRole("Joker"))
                         __result = "";
                 }
             }

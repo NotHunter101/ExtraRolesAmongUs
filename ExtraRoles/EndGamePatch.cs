@@ -8,7 +8,7 @@ namespace ExtraRolesMod
     [HarmonyPatch(typeof(EndGameManager), "SetEverythingUp")]
     public static class EndGamePatch
     {
-        public static bool Prefix(EndGameManager __instance)
+        public static bool Prefix()
         {
             if (TempData.winners.Count > 1 && TempData.DidHumansWin(TempData.EndReason))
             {
@@ -21,9 +21,7 @@ namespace ExtraRolesMod
                     if (player.PlayerId != localPlayer.PlayerId)
                         orderLocalPlayers.Add(player);
                 foreach (PlayerControl winner in orderLocalPlayers)
-                {
                     TempData.winners.Add(new WinningPlayerData(winner.Data));
-                }
             }
             return true;
         }

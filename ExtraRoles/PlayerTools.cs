@@ -42,14 +42,14 @@ namespace ExtraRolesMod
 
         public static float GetOfficerKD()
         {
-            if (ExtraRoles.OfficerSettings.lastKilled == null)
+            if (ExtraRoles.Main.Logic.getRolePlayer("Officer").LastAbilityTime == null)
             {
-                return ExtraRoles.OfficerSettings.OfficerCD;
+                return ExtraRoles.Main.Config.OfficerCD;
             }
             DateTime now = DateTime.UtcNow;
-            TimeSpan diff = (TimeSpan)(now - ExtraRoles.OfficerSettings.lastKilled);
+            TimeSpan diff = (TimeSpan)(now - ExtraRoles.Main.Logic.getRolePlayer("Officer").LastAbilityTime);
 
-            var KillCoolDown = ExtraRoles.OfficerSettings.OfficerCD * 1000.0f;
+            var KillCoolDown = ExtraRoles.Main.Config.OfficerCD * 1000.0f;
             if (KillCoolDown - (float)diff.TotalMilliseconds < 0) return 0;
             else
             {

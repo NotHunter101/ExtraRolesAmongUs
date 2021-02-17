@@ -55,11 +55,11 @@ namespace ExtraRolesMod
             Ip = Config.Bind("Custom", "Ipv4 or Hostname", "127.0.0.1");
             Port = Config.Bind("Custom", "Port", (ushort)22023);
 
-            bundle = AssetBundle.LoadFromFile(Directory.GetCurrentDirectory() + "\\Assets\\bundle");
-            breakClip = bundle.LoadAsset<AudioClip>("SB").DontUnload();
-            repairIco = bundle.LoadAsset<Sprite>("RE").DontUnload();
-            shieldIco = bundle.LoadAsset<Sprite>("SA").DontUnload();
-            smallShieldIco = bundle.LoadAsset<Sprite>("RESmall").DontUnload();
+            Main.Assets.bundle = AssetBundle.LoadFromFile(Directory.GetCurrentDirectory() + "\\Assets\\bundle");
+            Main.Assets.breakClip = Main.Assets.bundle.LoadAsset<AudioClip>("SB").DontUnload();
+            Main.Assets.repairIco = Main.Assets.bundle.LoadAsset<Sprite>("RE").DontUnload();
+            Main.Assets.shieldIco = Main.Assets.bundle.LoadAsset<Sprite>("SA").DontUnload();
+            Main.Assets.smallShieldIco = Main.Assets.bundle.LoadAsset<Sprite>("RESmall").DontUnload();
 
             var defaultRegions = ServerManager.DefaultRegions.ToList();
             var ip = Ip.Value;

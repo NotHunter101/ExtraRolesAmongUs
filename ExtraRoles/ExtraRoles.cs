@@ -1,19 +1,9 @@
 ﻿using HarmonyLib;
-using Hazel;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using Reactor.Unstrip;
-using Reactor.Extensions;
-
-/*
-Hex colors for extra roles
-Engineer: 972e00
-Joker: 838383
-Medic: 24b720
-Officer: 0028c6
-*/
+using static ExtraRolesMod.ExtraRoles;
 
 namespace ExtraRolesMod
 {
@@ -24,6 +14,7 @@ namespace ExtraRolesMod
         public DateTime KillTime { get; set; }
         public DeathReason DeathReason { get; set; }
     }
+
     //body report class for when medic reports a body
     public class BodyReport
     {
@@ -35,22 +26,20 @@ namespace ExtraRolesMod
         public static string ParseBodyReport(BodyReport br)
         {
             System.Console.WriteLine(br.KillAge);
-            if (br.KillAge > ExtraRoles.MedicSettings.medicKillerColorDuration * 1000)
+            if (br.KillAge > Main.Config.medicKillerColorDuration * 1000)
             {
                 return $"Body Report: The corpse is too old to gain information from. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
             else if (br.DeathReason == (DeathReason)3)
             {
                 return $"Body Report (Officer): The cause of death appears to be suicide! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
-
             }
-            else if (br.KillAge < ExtraRoles.MedicSettings.medicKillerNameDuration * 1000)
+            else if (br.KillAge < Main.Config.medicKillerNameDuration * 1000)
             {
-                return $"Body Report: The killer appears to be {br.Killer.name}! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
+                return $"Body Report: The killer appears to be {br.Killer.Data.PlayerName}! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
             else
             {
-                //TODO (make the type of color be written to chat
                 var colors = new Dictionary<byte, string>()
                 {
                     {0, "darker"},
@@ -72,14 +61,70 @@ namespace ExtraRolesMod
         }
     }
 
-    [HarmonyPatch]
-    public static class ExtraRoles
+    public static class Extensions
     {
-        public static AssetBundle bundle;
-        public static AudioClip breakClip;
-        public static Sprite repairIco;
-        public static Sprite shieldIco;
-        public static Sprite smallShieldIco;
+        public static bool isPlayerRole(this PlayerControl plr, string roleName)
+        {
+            if (plr.getModdedControl() != null)
+                return plr.getModdedControl().Role == roleName;
+            else
+                return false;
+        }
+
+        public static bool isPlayerImmortal(this PlayerControl plr)
+        {
+            if (plr.getModdedControl() != null)
+                return plr.getModdedControl().Immortal;
+            else
+                return false;
+        }
+
+        public static ModPlayerControl getModdedControl(this PlayerControl plr)
+        {
+            return Main.Logic.AllModPlayerControl.Find(x => x.PlayerControl == plr);
+        }
+    }
+
+    [HarmonyPatch]
+    public class ExtraRoles
+    {
+        public static class Main
+        {
+            public static Assets Assets = new Assets();
+            public static ModdedPalette Palette = new ModdedPalette();
+            public static ModdedConfig Config = new ModdedConfig();
+            public static ModdedLogic Logic = new ModdedLogic();
+        }
+
+        public class ModdedLogic
+        {
+            public ModPlayerControl getRolePlayer(string roleName)
+            {
+                return Main.Logic.AllModPlayerControl.Find(x => x.Role == roleName);
+            }
+
+            public ModPlayerControl getImmortalPlayer()
+            {
+                return Main.Logic.AllModPlayerControl.Find(x => x.Immortal);
+            }
+
+            public bool anyPlayerImmortal()
+            {
+                return Main.Logic.AllModPlayerControl.FindAll(x => x.Immortal).Count > 0;
+            }
+
+            public List<ModPlayerControl> AllModPlayerControl = new List<ModPlayerControl>();
+            public bool sabotageActive { get; set; }
+        }
+
+        public class Assets
+        {
+            public AssetBundle bundle;
+            public AudioClip breakClip;
+            public Sprite repairIco;
+            public Sprite shieldIco;
+            public Sprite smallShieldIco;
+        }
 
         public static Color VecToColor(Vector3 vec)
         {
@@ -93,149 +138,89 @@ namespace ExtraRolesMod
 
         public static void BreakShield(bool flag)
         {
-            if (MedicSettings.Protected == PlayerControl.LocalPlayer)
-                SoundManager.Instance.PlaySound(breakClip, false, 100f);
+            if (PlayerControl.LocalPlayer.isPlayerImmortal())
+                SoundManager.Instance.PlaySound(Main.Assets.breakClip, false, 100f);
             if (flag)
             {
-                if (MedicSettings.Protected != null)
+                if (Main.Logic.anyPlayerImmortal())
                 {
-                    MedicSettings.Protected.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
-                    MedicSettings.Protected.myRend.material.SetFloat("_Outline", 0f);
-                    MedicSettings.Protected = null;
+                    ModPlayerControl immortal = Main.Logic.getImmortalPlayer();
+                    immortal.PlayerControl.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
+                    immortal.PlayerControl.myRend.material.SetFloat("_Outline", 0f);
+                    immortal.Immortal = false;
                 }
             }
         }
 
         public static GameObject rend;
-        //rudimentary array to convert a byte setting from config into true/false
-        public static bool[] byteBool =
-        {
-            false,
-            true
-        };
         public static List<DeadPlayer> killedPlayers = new List<DeadPlayer>();
         public static PlayerControl CurrentTarget = null;
         public static PlayerControl localPlayer = null;
         public static List<PlayerControl> localPlayers = new List<PlayerControl>();
-        //global rng
         public static System.Random rng = new System.Random();
-        //the kill button in the bottom right
         public static KillButtonManager KillButton;
-        //the id of the targeted player
         public static int KBTarget;
-        //distance between the local player and closest player
         public static double DistLocalClosest;
-        //shield indicator sprite (placeholder)
         public static GameObject shieldIndicator = null;
-        //renderer for the shield indicator
         public static SpriteRenderer shieldRenderer = null;
-        //medic settings and values
-        public static string versionString = "v1.3.2";
-        public static class ModdedPalette
+        public static string versionString = "v1.4.3b";
+
+        public class ModdedPalette
         {
-            public static Color medicColor = new Color(36f / 255f, 183f / 255f, 32f / 255f, 1);
-            public static Color officerColor = new Color(0, 40f / 255f, 198f / 255f, 1);
-            public static Color engineerColor = new Color(255f / 255f, 165f / 255f, 10f / 255f, 1);
-            public static Color jokerColor = new Color(138f / 255f, 138f / 255f, 138f / 255f, 1);
-            public static Color protectedColor = new Color(0, 1, 1, 1);
+            public Color medicColor = new Color(36f / 255f, 183f / 255f, 32f / 255f, 1);
+            public Color officerColor = new Color(0, 40f / 255f, 198f / 255f, 1);
+            public Color engineerColor = new Color(255f / 255f, 165f / 255f, 10f / 255f, 1);
+            public Color jokerColor = new Color(138f / 255f, 138f / 255f, 138f / 255f, 1);
+            public Color protectedColor = new Color(0, 1, 1, 1);
         }
-        public static class MedicSettings 
-        {
-            public static PlayerControl Medic { get; set; }
-            public static PlayerControl Protected { get; set; }
-            public static bool shieldUsed { get; set; }
-            public static int medicKillerNameDuration { get; set; }
-            public static int medicKillerColorDuration { get; set; }
-            public static bool showMedic { get; set; }
-            public static bool showReport {get; set;}
-            public static int  showProtected { get; set; }
-            public static bool shieldKillAttemptIndicator { get; set; }
-            public static void ClearSettings()
-            {
-                Medic = null;
-                Protected = null;
-                shieldUsed = false;
-            }
 
-            public static void SetConfigSettings()
-            {
-                showMedic = HarmonyMain.showMedic.GetValue();
-                showProtected = HarmonyMain.showShieldedPlayer.GetValue();
-                showReport = HarmonyMain.medicReportSwitch.GetValue();
-                shieldKillAttemptIndicator = HarmonyMain.playerMurderIndicator.GetValue();
-                medicKillerNameDuration = (int)HarmonyMain.medicReportNameDuration.GetValue();
-                medicKillerColorDuration = (int)HarmonyMain.medicReportColorDuration.GetValue();
-            }
+        public class ModPlayerControl
+        {
+            public PlayerControl PlayerControl { get; set; }
+            public string Role { get; set; }
+            public DateTime? LastAbilityTime { get; set; }
+            public bool UsedAbility { get; set; }
+            public bool Immortal { get; set; }
         }
-        //officer settings and values
-        public static class OfficerSettings
+
+        public class ModdedConfig
         {
-            public static PlayerControl Officer { get; set; }
-            public static float OfficerCD { get; set; }
-            public static bool showOfficer { get; set; }
-            public static DateTime? lastKilled { get; set; }
+            public float medicKillerNameDuration { get; set; }
+            public float medicKillerColorDuration { get; set; }
+            public bool showMedic { get; set; }
+            public bool showReport { get; set; }
+            public float showProtected { get; set; }
+            public bool shieldKillAttemptIndicator { get; set; }
+            public float OfficerCD { get; set; }
+            public bool showOfficer { get; set; }
+            public bool showEngineer { get; set; }
+            public bool showJoker { get; set; }
+            public bool jokerCanDieToOfficer { get; set; }
+            public float medicSpawnChance { get; set; }
+            public float engineerSpawnChance { get; set; }
+            public float officerSpawnChance { get; set; }
+            public float jokerSpawnChance { get; set; }
 
-            public static void ClearSettings()
+            public void SetConfigSettings()
             {
-                Officer = null;
-                lastKilled = null;
-            }
-
-            public static void SetConfigSettings()
-            {
-                showOfficer = HarmonyMain.showOfficer.GetValue();
-                OfficerCD = HarmonyMain.OfficerKillCooldown.GetValue();
-            }
-        }
-        //engineer settings and values
-        public static class EngineerSettings
-        {
-            public static PlayerControl Engineer;
-            public static bool repairUsed = false;
-            public static bool showEngineer = false;
-            public static bool sabotageActive { get; set; }
-            public static void ClearSettings()
-            {
-                Engineer = null;
-                repairUsed = false;
-            }
-
-            public static void SetConfigSettings()
-            {
-                showEngineer = HarmonyMain.showEngineer.GetValue();
+                this.showMedic = HarmonyMain.showMedic.GetValue();
+                this.showProtected = HarmonyMain.showShieldedPlayer.GetValue();
+                this.showReport = HarmonyMain.medicReportSwitch.GetValue();
+                this.shieldKillAttemptIndicator = HarmonyMain.playerMurderIndicator.GetValue();
+                this.medicKillerNameDuration = HarmonyMain.medicReportNameDuration.GetValue();
+                this.medicKillerColorDuration = HarmonyMain.medicReportColorDuration.GetValue();
+                this.showOfficer = HarmonyMain.showOfficer.GetValue();
+                this.OfficerCD = HarmonyMain.OfficerKillCooldown.GetValue();
+                this.showEngineer = HarmonyMain.showEngineer.GetValue();
+                this.showJoker = HarmonyMain.showJoker.GetValue();
+                this.jokerCanDieToOfficer = HarmonyMain.jokerCanDieToOfficer.GetValue();
+                this.medicSpawnChance = HarmonyMain.medicSpawnChance.GetValue();
+                this.engineerSpawnChance = HarmonyMain.engineerSpawnChance.GetValue();
+                this.officerSpawnChance = HarmonyMain.officerSpawnChance.GetValue();
+                this.jokerSpawnChance = HarmonyMain.jokerSpawnChance.GetValue();
             }
         }
 
-        //joker settings and values
-        public static class JokerSettings
-        {
-            public static PlayerControl Joker;
-            public static bool showJoker = false;
-            public static bool jokerCanDieToOfficer = false;
-
-            public static void ClearSettings()
-            {
-                Joker = null;
-            }
-
-            public static void ClearTasks()
-            {
-                var removeTask = new List<PlayerTask>();
-                foreach (PlayerTask task in JokerSettings.Joker.myTasks)
-                    if (task.TaskType != TaskTypes.FixComms && task.TaskType != TaskTypes.FixLights && task.TaskType != TaskTypes.ResetReactor && task.TaskType != TaskTypes.ResetSeismic && task.TaskType != TaskTypes.RestoreOxy)
-                        removeTask.Add(task);
-                foreach (PlayerTask task in removeTask)
-                    JokerSettings.Joker.RemoveTask(task);
-            }
-
-            public static void SetConfigSettings()
-            {
-                showJoker = HarmonyMain.showJoker.GetValue();
-                jokerCanDieToOfficer = HarmonyMain.jokerCanDieToOfficer.GetValue();
-            }
-        }
-
-        //function called on start of game. write version text on menu
         [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
         public static class VersionStartPatch
         {
@@ -261,15 +246,6 @@ namespace ExtraRolesMod
             {
                 __instance.text.Text += "\nextraroles.net";
                 __instance.text.Text += "\nExtraRoles " + versionString;
-            }
-        }
-
-        [HarmonyPatch(typeof(ShipStatus), "GetSpawnLocation")]
-        public static class StartGamePatch
-        {
-            public static void Postfix(ShipStatus __instance)
-            {
-                ConsoleTools.Info("Game Started!");
             }
         }
     }

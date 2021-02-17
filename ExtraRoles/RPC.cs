@@ -1,5 +1,7 @@
 ﻿using HarmonyLib;
 using Hazel;
+using System.Collections.Generic;
+using System.Linq;
 using static ExtraRolesMod.ExtraRoles;
 
 namespace ExtraRolesMod
@@ -79,35 +81,33 @@ namespace ExtraRolesMod
                                 localPlayers.Add(player);
                     break;
                 case (byte)CustomRPC.ResetVaribles:
-                    MedicSettings.ClearSettings();
-                    OfficerSettings.ClearSettings();
-                    EngineerSettings.ClearSettings();
-                    JokerSettings.ClearSettings();
-                    MedicSettings.SetConfigSettings();
-                    OfficerSettings.SetConfigSettings();
-                    EngineerSettings.SetConfigSettings();
-                    JokerSettings.SetConfigSettings();
+                    Main.Config.SetConfigSettings();
+                    Main.Logic.AllModPlayerControl.Clear();
                     killedPlayers.Clear();
+                    List<PlayerControl> crewmates = PlayerControl.AllPlayerControls.ToArray().ToList();
+                    foreach (PlayerControl plr in crewmates)
+                        Main.Logic.AllModPlayerControl.Add(new ModPlayerControl { PlayerControl = plr, Role = "Impostor", UsedAbility = false, LastAbilityTime = null, Immortal = false });
+                    crewmates.RemoveAll(x => x.Data.IsImpostor);
+                    foreach (PlayerControl plr in crewmates)
+                        plr.getModdedControl().Role = "Crewmate";
                     break;
                 case (byte)CustomRPC.SetMedic:
-                    ConsoleTools.Info("Medic Set Through RPC!");
                     byte MedicId = ALMCIJKELCP.ReadByte();
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                         if (player.PlayerId == MedicId)
-                            MedicSettings.Medic = player;
+                            player.getModdedControl().Role = "Medic";
                     break;
                 case (byte)CustomRPC.SetProtected:
                     byte ProtectedId = ALMCIJKELCP.ReadByte();
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                         if (player.PlayerId == ProtectedId)
-                            MedicSettings.Protected = player;
+                            player.getModdedControl().Immortal = true;
                     break;
                 case (byte)CustomRPC.SetOfficer:
-                    ConsoleTools.Info("Officer Set Through RPC!");
                     byte OfficerId = ALMCIJKELCP.ReadByte();
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                         if (player.PlayerId == OfficerId)
-                            OfficerSettings.Officer = player;
+                            player.getModdedControl().Role = "Officer";
                     break;
                 case (byte)CustomRPC.OfficerKill:
                     var killerid = ALMCIJKELCP.ReadByte();
@@ -115,27 +115,25 @@ namespace ExtraRolesMod
                     PlayerControl killer = PlayerTools.getPlayerById(killerid);
                     PlayerControl target = PlayerTools.getPlayerById(targetid);
                     killer.MurderPlayer(target);
-                    if (target == MedicSettings.Protected)
+                    if (target.isPlayerImmortal())
                         BreakShield(false);
                     break;
                 case (byte)CustomRPC.SetEngineer:
-                    ConsoleTools.Info("Engineer Set Through RPC!");
                     byte EngineerId = ALMCIJKELCP.ReadByte();
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                         if (player.PlayerId == EngineerId)
-                            EngineerSettings.Engineer = player;
+                            player.getModdedControl().Role = "Engineer";
                     break;
                 case (byte)CustomRPC.SetJoker:
-                    ConsoleTools.Info("Joker Set Through RPC!");
                     byte JokerId = ALMCIJKELCP.ReadByte();
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                         if (player.PlayerId == JokerId)
-                            JokerSettings.Joker = player;
+                            player.getModdedControl().Role = "Joker";
                     break;
                 case (byte)CustomRPC.JokerWin:
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                     {
-                        if (player != JokerSettings.Joker)
+                        if (!player.isPlayerRole("Joker"))
                         {
                             player.RemoveInfected();
                             player.Die(DeathReason.Exile);
@@ -143,9 +141,10 @@ namespace ExtraRolesMod
                             player.Data.IsImpostor = false;
                         }
                     }
-                    JokerSettings.Joker.Revive();
-                    JokerSettings.Joker.Data.IsDead = false;
-                    JokerSettings.Joker.Data.IsImpostor = true;
+                    PlayerControl joker = Main.Logic.getRolePlayer("Joker").PlayerControl;
+                    joker.Revive();
+                    joker.Data.IsDead = false;
+                    joker.Data.IsImpostor = true;
                     break;
             }
         }

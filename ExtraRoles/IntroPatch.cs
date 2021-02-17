@@ -9,7 +9,7 @@ namespace ExtraRolesMod
     {
         static bool Prefix(IntroCutscene.CoBegin__d __instance)
         {
-            if (PlayerControl.LocalPlayer == JokerSettings.Joker)
+            if (PlayerControl.LocalPlayer.isPlayerRole("Joker"))
             {
                 var jokerTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                 jokerTeam.Add(PlayerControl.LocalPlayer);
@@ -21,35 +21,36 @@ namespace ExtraRolesMod
 
         static void Postfix(IntroCutscene.CoBegin__d __instance)
         {
-            OfficerSettings.lastKilled = DateTime.UtcNow.AddSeconds((OfficerSettings.OfficerCD * -1) + 10 + __instance.timer_0);
-            //change the name and titles accordingly
-            if (PlayerControl.LocalPlayer == MedicSettings.Medic)
+            ModPlayerControl Officer = Main.Logic.getRolePlayer("Officer");
+            if (Officer != null)
+                Officer.LastAbilityTime = DateTime.UtcNow;
+            if (PlayerControl.LocalPlayer.isPlayerRole("Medic"))
             {
                 __instance.__this.Title.Text = "Medic";
-                __instance.__this.Title.Color = ModdedPalette.medicColor;
+                __instance.__this.Title.Color = Main.Palette.medicColor;
                 __instance.__this.ImpostorText.Text = "Create a shield to protect a [8DFFFF]Crewmate";
-                __instance.__this.BackgroundBar.material.color = ModdedPalette.medicColor;
+                __instance.__this.BackgroundBar.material.color = Main.Palette.medicColor;
             }
-            if (PlayerControl.LocalPlayer == OfficerSettings.Officer)
+            if (PlayerControl.LocalPlayer.isPlayerRole("Officer"))
             {
                 __instance.__this.Title.Text = "Officer";
-                __instance.__this.Title.Color = ModdedPalette.officerColor;
+                __instance.__this.Title.Color = Main.Palette.officerColor;
                 __instance.__this.ImpostorText.Text = "Shoot the [FF0000FF]Impostor";
-                __instance.__this.BackgroundBar.material.color = ModdedPalette.officerColor;
+                __instance.__this.BackgroundBar.material.color = Main.Palette.officerColor;
             }
-            if (PlayerControl.LocalPlayer == EngineerSettings.Engineer)
+            if (PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
             {
                 __instance.__this.Title.Text = "Engineer";
-                __instance.__this.Title.Color = ModdedPalette.engineerColor;
+                __instance.__this.Title.Color = Main.Palette.engineerColor;
                 __instance.__this.ImpostorText.Text = "Maintain important systems on the ship";
-                __instance.__this.BackgroundBar.material.color = ModdedPalette.engineerColor;
+                __instance.__this.BackgroundBar.material.color = Main.Palette.engineerColor;
             }
-            if (PlayerControl.LocalPlayer == JokerSettings.Joker)
+            if (PlayerControl.LocalPlayer.isPlayerRole("Joker"))
             {
                 __instance.__this.Title.Text = "Joker";
-                __instance.__this.Title.Color = ModdedPalette.jokerColor;
+                __instance.__this.Title.Color = Main.Palette.jokerColor;
                 __instance.__this.ImpostorText.Text = "Get voted off of the ship to win";
-                __instance.__this.BackgroundBar.material.color = ModdedPalette.jokerColor;
+                __instance.__this.BackgroundBar.material.color = Main.Palette.jokerColor;
             }
         }
     }

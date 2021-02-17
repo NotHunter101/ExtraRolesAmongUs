@@ -12,67 +12,76 @@ namespace ExtraRolesMod
     {
         public static void Postfix(Il2CppReferenceArray<GameData.PlayerInfo> JPGEIBIBJPJ)
         {
-            MedicSettings.ClearSettings();
-            OfficerSettings.ClearSettings();
-            EngineerSettings.ClearSettings();
-            JokerSettings.ClearSettings();
-            MedicSettings.SetConfigSettings();
-            OfficerSettings.SetConfigSettings();
-            EngineerSettings.SetConfigSettings();
-            JokerSettings.SetConfigSettings();
+            Main.Config.SetConfigSettings();
+            Main.Logic.AllModPlayerControl.Clear();
             killedPlayers.Clear();
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.None, -1);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
 
             List<PlayerControl> crewmates = PlayerControl.AllPlayerControls.ToArray().ToList();
+            foreach (PlayerControl plr in crewmates)
+                Main.Logic.AllModPlayerControl.Add(new ModPlayerControl { PlayerControl = plr, Role = "Impostor", UsedAbility = false, LastAbilityTime = null, Immortal = false });
             crewmates.RemoveAll(x => x.Data.IsImpostor);
+            foreach (PlayerControl plr in crewmates)
+                plr.getModdedControl().Role = "Crewmate";
 
-            if (crewmates.Count > 0 && (rng.Next(1, 101) <= HarmonyMain.medicSpawnChance.GetValue()))
+            System.Console.WriteLine(HarmonyMain.medicSpawnChance.GetValue());
+            System.Console.WriteLine(HarmonyMain.officerSpawnChance.GetValue());
+            System.Console.WriteLine(HarmonyMain.engineerSpawnChance.GetValue());
+            System.Console.WriteLine(HarmonyMain.jokerSpawnChance.GetValue());
+
+            if (crewmates.Count > 0 && (rng.Next(0, 100) <= HarmonyMain.medicSpawnChance.GetValue()))
             {
-                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetMedic, Hazel.SendOption.None, -1);
                 var MedicRandom = rng.Next(0, crewmates.Count);
-                MedicSettings.Medic = crewmates[MedicRandom];
+                crewmates[MedicRandom].getModdedControl().Role = "Medic";
+                byte MedicId = crewmates[MedicRandom].PlayerId;
                 crewmates.RemoveAt(MedicRandom);
-                byte MedicId = MedicSettings.Medic.PlayerId;
 
+                System.Console.WriteLine("Spawning Medic with PlayerID = " + MedicId);
+
+                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetMedic, Hazel.SendOption.None, -1);
                 writer.Write(MedicId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
 
-            if (crewmates.Count > 0 && (rng.Next(1, 101) <= HarmonyMain.officerSpawnChance.GetValue()))
+            if (crewmates.Count > 0 && (rng.Next(0, 100) <= HarmonyMain.officerSpawnChance.GetValue()))
             {
-                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetOfficer, Hazel.SendOption.None, -1);
-
                 var OfficerRandom = rng.Next(0, crewmates.Count);
-                OfficerSettings.Officer = crewmates[OfficerRandom];
+                crewmates[OfficerRandom].getModdedControl().Role = "Officer";
+                byte OfficerId = crewmates[OfficerRandom].PlayerId;
                 crewmates.RemoveAt(OfficerRandom);
-                byte OfficerId = OfficerSettings.Officer.PlayerId;
 
+                System.Console.WriteLine("Spawning Officer with PlayerID = " + OfficerId);
+
+                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetOfficer, Hazel.SendOption.None, -1);
                 writer.Write(OfficerId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
 
-            if (crewmates.Count > 0 && (rng.Next(1, 101) <= HarmonyMain.engineerSpawnChance.GetValue()))
+            if (crewmates.Count > 0 && (rng.Next(0, 100) <= HarmonyMain.engineerSpawnChance.GetValue()))
             {
-                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetEngineer, Hazel.SendOption.None, -1);
                 var EngineerRandom = rng.Next(0, crewmates.Count);
-                EngineerSettings.Engineer = crewmates[EngineerRandom];
+                crewmates[EngineerRandom].getModdedControl().Role = "Engineer";
+                byte EngineerId = crewmates[EngineerRandom].PlayerId;
                 crewmates.RemoveAt(EngineerRandom);
-                byte EngineerId = EngineerSettings.Engineer.PlayerId;
 
+                System.Console.WriteLine("Spawning Engineer with PlayerID = " + EngineerId);
+
+                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetEngineer, Hazel.SendOption.None, -1);
                 writer.Write(EngineerId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
 
-            if (crewmates.Count > 0 && (rng.Next(1, 101) <= HarmonyMain.jokerSpawnChance.GetValue()))
+            if (crewmates.Count > 0 && (rng.Next(0, 100) <= HarmonyMain.jokerSpawnChance.GetValue()))
             {
-                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetJoker, Hazel.SendOption.None, -1);
                 var JokerRandom = rng.Next(0, crewmates.Count);
-                ConsoleTools.Info(JokerRandom.ToString());
-                JokerSettings.Joker = crewmates[JokerRandom];
+                crewmates[JokerRandom].getModdedControl().Role = "Joker";
+                byte JokerId = crewmates[JokerRandom].PlayerId;
                 crewmates.RemoveAt(JokerRandom);
-                byte JokerId = JokerSettings.Joker.PlayerId;
 
+                System.Console.WriteLine("Spawning Joker with PlayerID = " + JokerId);
+
+                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetJoker, Hazel.SendOption.None, -1);
                 writer.Write(JokerId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
@@ -83,7 +92,7 @@ namespace ExtraRolesMod
             {
                 if (player.Data.IsImpostor)
                     continue;
-                if (JokerSettings.Joker != null && player.PlayerId == JokerSettings.Joker.PlayerId)
+                if (player.isPlayerRole("Joker"))
                     continue;
                 else
                     localPlayers.Add(player);
@@ -96,36 +105,6 @@ namespace ExtraRolesMod
             writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetLocalPlayers, Hazel.SendOption.None, -1);
             writer.WriteBytesAndSize(localPlayerBytes.ToArray());
             AmongUsClient.Instance.FinishRpcImmediately(writer);
-        }
-        public static bool Prefix(Il2CppReferenceArray<GameData.PlayerInfo> JPGEIBIBJPJ)
-        {
-            var debugImpostors = false;
-            if (debugImpostors)
-            {
-                var infected = new byte[] { 0, 0 };
-
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                {
-                    if (player.Data.PlayerName == "Impostor")
-                    {
-                        infected[0] = player.PlayerId;
-                    }
-                    if (player.Data.PlayerName == "Pretender")
-                    {
-                        infected[1] = player.PlayerId;
-                    }
-                }
-
-                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)RPC.SetInfected, Hazel.SendOption.None, -1);
-                writer.WritePacked((uint)2);
-                writer.WriteBytesAndSize(infected);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-
-                PlayerControl.LocalPlayer.SetInfected(infected);
-
-                return false;
-            }
-            return true;
         }
     }
 }
