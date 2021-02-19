@@ -277,7 +277,6 @@ namespace ExtraRolesMod
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
         public static class MurderPlayerPatch
         {
-            public static bool orgDead = false;
 
             public static bool Prefix(PlayerControl __instance, PlayerControl CAKODNGLPDF)
             {
@@ -286,9 +285,6 @@ namespace ExtraRolesMod
                 {
                     //if so, set them to impostor for one frame so they aren't banned for anti-cheat
                     __instance.Data.IsImpostor = true;
-                    //code that allows Impostor and Officer to trade in very specific circumstances
-                    orgDead = __instance.Data.IsDead;
-                    __instance.Data.IsDead = false;
                 }
                 return true;
             }
@@ -304,7 +300,6 @@ namespace ExtraRolesMod
                 if (__instance.isPlayerRole("Officer"))
                 {
                     __instance.Data.IsImpostor = false;
-                    __instance.Data.IsDead = orgDead;
                 }
                 if (__instance.PlayerId == CAKODNGLPDF.PlayerId)
                 {
