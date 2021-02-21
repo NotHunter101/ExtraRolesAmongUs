@@ -117,7 +117,7 @@ namespace ExtraRolesMod
                     KillButton.renderer.color = Palette.EnabledColor;
                     KillButton.renderer.material.SetFloat("_Desat", 0f);
                 }
-                //CLEAR JOKER TASKS!
+                Main.Logic.clearJokerTasks();
                 if (rend != null)
                     rend.SetActive(false);
                 bool sabotageActive = false;
