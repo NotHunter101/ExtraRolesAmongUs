@@ -115,21 +115,18 @@ namespace ExtraRolesMod
 
             public void clearJokerTasks()
             {
-                var jokerControl = Main.Logic.getRolePlayer("Joker").PlayerControl;
-                if (jokerControl == null)
-                {
+                var joker = Main.Logic.getRolePlayer("Joker");
+                if (joker == null)
                     return;
-                }
-
+                var jokerControl = joker.PlayerControl;
+                var removeTask = new List<PlayerTask>();
                 foreach (var task in jokerControl.myTasks)
-                {
                     if (task.TaskType != TaskTypes.FixComms && task.TaskType != TaskTypes.FixLights &&
                         task.TaskType != TaskTypes.ResetReactor && task.TaskType != TaskTypes.ResetSeismic &&
                         task.TaskType != TaskTypes.RestoreOxy)
-                    {
-                        jokerControl.RemoveTask(task);
-                    }
-                }
+                        removeTask.Add(task);
+                foreach (var task in removeTask)
+                    jokerControl.RemoveTask(task);
             }
 
             public List<ModPlayerControl> AllModPlayerControl = new List<ModPlayerControl>();
