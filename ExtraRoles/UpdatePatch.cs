@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using UnityEngine;
 using static ExtraRolesMod.ExtraRoles;
@@ -130,49 +131,38 @@ namespace ExtraRolesMod
                     BreakShield(true);
                 if (Main.Logic.getRolePlayer("Medic") == null && Main.Logic.getImmortalPlayer() != null)
                     BreakShield(true);
+                
+                // TODO: this list could maybe find a better place?
+                //       It is only meant for looping through role "name", "color" and "show" simultaneously
+                var roles = new List<(string roleName, Color roleColor, bool showRole)>()
+                {
+                    ("Medic", Main.Palette.medicColor, Main.Config.showMedic),
+                    ("Officer", Main.Palette.officerColor, Main.Config.showOfficer),
+                    ("Engineer", Main.Palette.engineerColor, Main.Config.showEngineer),
+                    ("Joker", Main.Palette.jokerColor, Main.Config.showJoker),
+                };
+                
+                // Color of imposters and crewmates
                 foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                    player.nameText.Color = Color.white;
-                if (PlayerControl.LocalPlayer.Data.IsImpostor)
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                        if (player.Data.IsImpostor)
-                            player.nameText.Color = Color.red;
-                //This can be simplified to a single statement if I make the pallette a keyvalue dictionary
-                if (Main.Logic.getRolePlayer("Medic") != null && (PlayerControl.LocalPlayer.isPlayerRole("Medic") || Main.Config.showMedic))
+                        player.nameText.Color = player.Data.IsImpostor && PlayerControl.LocalPlayer.Data.IsImpostor ? Color.red : Color.white;
+
+                // Color of roles (always see yourself, and depending on setting, others may see the role too)
+                foreach (var (roleName, roleColor, showRole) in roles)
                 {
-                    PlayerControl medic = Main.Logic.getRolePlayer("Medic").PlayerControl;
-                    medic.nameText.Color = Main.Palette.medicColor;
-                    if (MeetingHud.Instance != null)
-                        foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                            if (player.NameText != null && medic.PlayerId == player.TargetPlayerId)
-                                player.NameText.Color = Main.Palette.medicColor;
+                    var role = Main.Logic.getRolePlayer(roleName);
+                    if (role == null)
+                        continue;
+                    if (PlayerControl.LocalPlayer.isPlayerRole(roleName) || showRole)
+                        role.PlayerControl.nameText.Color = roleColor;
                 }
-                if (Main.Logic.getRolePlayer("Officer") != null && (PlayerControl.LocalPlayer.isPlayerRole("Officer") || Main.Config.showOfficer))
-                {
-                    PlayerControl officer = Main.Logic.getRolePlayer("Officer").PlayerControl;
-                    officer.nameText.Color = Main.Palette.officerColor;
+                
+                //Color of name plates in the voting hub should be the same as in-game
+                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                     if (MeetingHud.Instance != null)
-                        foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                            if (player.NameText != null && officer.PlayerId == player.TargetPlayerId)
-                                player.NameText.Color = Main.Palette.officerColor;
-                }
-                if (Main.Logic.getRolePlayer("Engineer") != null && (PlayerControl.LocalPlayer.isPlayerRole("Engineer") || Main.Config.showEngineer))
-                {
-                    PlayerControl engineer = Main.Logic.getRolePlayer("Engineer").PlayerControl;
-                    engineer.nameText.Color = Main.Palette.engineerColor;
-                    if (MeetingHud.Instance != null)
-                        foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                            if (player.NameText != null && engineer.PlayerId == player.TargetPlayerId)
-                                player.NameText.Color = Main.Palette.engineerColor;
-                }
-                if (Main.Logic.getRolePlayer("Joker") != null && (PlayerControl.LocalPlayer.isPlayerRole("Joker") || Main.Config.showJoker))
-                {
-                    PlayerControl joker = Main.Logic.getRolePlayer("Joker").PlayerControl;
-                    joker.nameText.Color = Main.Palette.jokerColor;
-                    if (MeetingHud.Instance != null)
-                        foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                            if (player.NameText != null && joker.PlayerId == player.TargetPlayerId)
-                                player.NameText.Color = Main.Palette.jokerColor;
-                }
+                        foreach (PlayerVoteArea playerVoteArea in MeetingHud.Instance.playerStates)
+                            if (playerVoteArea.NameText != null && player.PlayerId == playerVoteArea.TargetPlayerId)
+                                playerVoteArea.NameText.Color = player.nameText.Color;
+               
                 if (Main.Logic.anyPlayerImmortal())
                 {
                     float showShielded = Main.Config.showProtected;
