@@ -24,12 +24,7 @@ namespace ExtraRolesMod
 
         public Harmony Harmony { get; } = new Harmony(Id);
 
-        //This section uses the https://github.com/DorCoMaNdO/Reactor-Essentials framework, but I disabled the watermark.
-        //The code said that you were allowed, as long as you provided credit elsewhere. 
-        //I added a link in the Credits of the GitHub page, and I'm also mentioning it here.
-        //If the owner of this library has any problems with this, just message me on discord and we'll find a solution
-
-        //Hunter101#1337
+        //This section uses the https://github.com/DorCoMaNdO/Reactor-Essentials framework
 
         public static CustomToggleOption showMedic = CustomOption.AddToggle("Show Medic", false);
         public static CustomToggleOption showOfficer = CustomOption.AddToggle("Show Officer", false);
@@ -60,6 +55,14 @@ namespace ExtraRolesMod
             Main.Assets.repairIco = Main.Assets.bundle.LoadAsset<Sprite>("RE").DontUnload();
             Main.Assets.shieldIco = Main.Assets.bundle.LoadAsset<Sprite>("SA").DontUnload();
             Main.Assets.smallShieldIco = Main.Assets.bundle.LoadAsset<Sprite>("RESmall").DontUnload();
+            
+            //Disable the https://github.com/DorCoMaNdO/Reactor-Essentials watermark.
+            //The code said that you were allowed, as long as you provided credit elsewhere. 
+            //I added a link in the Credits of the GitHub page, and I'm also mentioning it here.
+            //If the owner of this library has any problems with this, just message me on discord and we'll find a solution
+
+            //Hunter101#1337
+            CustomOption.ShamelessPlug = false;
 
             var defaultRegions = ServerManager.DefaultRegions.ToList();
             var ip = Ip.Value;
