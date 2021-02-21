@@ -63,6 +63,13 @@ namespace ExtraRolesMod
         public static CustomNumberOption
             jokerSpawnChance = CustomOption.AddNumber("Joker Spawn Chance", 100, 0, 100, 5);
 
+        public static CustomToggleOption
+            jokerCanVent = CustomOption.AddToggle("Joker Can Vent", true);
+        public static CustomToggleOption
+            jokerCanSeeImposters = CustomOption.AddToggle("Joker Can See Imposters", true);
+        public static CustomToggleOption
+            jokerCanSeeRoles = CustomOption.AddToggle("Joker Can See Roles", true);
+
         public ConfigEntry<string> Ip { get; set; }
         public ConfigEntry<ushort> Port { get; set; }
 

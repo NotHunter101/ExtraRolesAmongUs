@@ -65,7 +65,7 @@ namespace ExtraRolesMod
         {
             static void Postfix(ref GameOptionsMenu __instance)
             {
-                __instance.GetComponentInParent<Scroller>().YBounds.max = 13.5f;
+                __instance.GetComponentInParent<Scroller>().YBounds.max = 15.5f;
             }
         }
     }
