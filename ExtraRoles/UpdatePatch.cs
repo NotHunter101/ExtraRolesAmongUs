@@ -167,9 +167,9 @@ namespace ExtraRolesMod
             // Color of imposters and crewmates
             foreach (var player in PlayerControl.AllPlayerControls)
             {
-                bool iAmImposter = PlayerControl.LocalPlayer.Data.IsImpostor;
+                bool iAmImpostor = PlayerControl.LocalPlayer.Data.IsImpostor;
                 bool iAmJoker = PlayerControl.LocalPlayer.isPlayerRole("Joker");
-                player.nameText.Color = player.Data.IsImpostor && (iAmImposter || iAmJoker && Main.Config.jokerCanSeeImpostors) ? Color.red : Color.white;
+                player.nameText.Color = player.Data.IsImpostor && (iAmImpostor || iAmJoker && Main.Config.jokerCanSeeImpostors) ? Color.red : Color.white;
             }
 
             // Color of roles (always see yourself, and depending on setting, others may see the role too)

@@ -226,7 +226,7 @@ namespace ExtraRolesMod
             public float officerSpawnChance { get; set; }
             public float jokerSpawnChance { get; set; }
             public bool jokerCanVent { get; set; }
-            public bool jokerCanSeeImposters { get; set; }
+            public bool jokerCanSeeImpostors { get; set; }
             public bool jokerCanSeeRoles { get; set; }
 
             public void SetConfigSettings()
@@ -247,7 +247,7 @@ namespace ExtraRolesMod
                 this.officerSpawnChance = HarmonyMain.officerSpawnChance.GetValue();
                 this.jokerSpawnChance = HarmonyMain.jokerSpawnChance.GetValue();
                 this.jokerCanVent = HarmonyMain.jokerCanVent.GetValue();
-                this.jokerCanSeeImposters = HarmonyMain.jokerCanSeeImposters.GetValue();
+                this.jokerCanSeeImpostors = HarmonyMain.jokerCanSeeImpostors.GetValue();
                 this.jokerCanSeeRoles = HarmonyMain.jokerCanSeeRoles.GetValue();
             }
         }
