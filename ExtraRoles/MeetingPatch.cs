@@ -8,7 +8,7 @@ using UnhollowerBaseLib;
 namespace ExtraRoles
 {
     [HarmonyPatch(typeof(UnityEngine.Object), nameof(UnityEngine.Object.Destroy),
-        new Type[] {typeof(UnityEngine.Object)})]
+        new[] {typeof(UnityEngine.Object)})]
     class MeetingExiledEnd
     {
         static void Prefix(UnityEngine.Object obj)
@@ -45,7 +45,7 @@ namespace ExtraRoles
     }
 
     [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString),
-        new Type[] {typeof(StringNames), typeof(Il2CppReferenceArray<Il2CppSystem.Object>)})]
+        new[] {typeof(StringNames), typeof(Il2CppReferenceArray<Il2CppSystem.Object>)})]
     class TranslationPatch
     {
         static void Postfix(ref string __result, StringNames HKOIECMDOKL,

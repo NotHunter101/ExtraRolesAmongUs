@@ -207,7 +207,7 @@ namespace ExtraRolesMod
             public float medicKillerColorDuration { get; set; }
             public bool showMedic { get; set; }
             public bool showReport { get; set; }
-            public float showProtected { get; set; }
+            public int showProtected { get; set; }
             public bool shieldKillAttemptIndicator { get; set; }
             public float OfficerCD { get; set; }
             public bool showOfficer { get; set; }

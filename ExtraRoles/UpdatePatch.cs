@@ -7,6 +7,14 @@ using static ExtraRolesMod.ExtraRoles;
 
 namespace ExtraRolesMod
 {
+    enum ShieldOptions
+    {
+        Self = 0,
+        Medic = 1,
+        SelfAndMedic = 2,
+        Everyone = 3,
+    }
+    
     [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.Method_24))]
     class GameOptionsData_ToHudString
     {
@@ -15,7 +23,6 @@ namespace ExtraRolesMod
             DestroyableSingleton<HudManager>.Instance.GameSettings.scale = 0.5f;
         }
     }
-
 
     //This is a class that sends a ping to my public api so people can see a player counter. Go to http://computable.us:5001/api/playercount to view the people currently playing.
     //No sensitive information is logged, viewed, or used in any way.
@@ -183,20 +190,20 @@ namespace ExtraRolesMod
             {
                 var showShielded = Main.Config.showProtected;
                 var shieldedPlayer = Main.Logic.getImmortalPlayer().PlayerControl;
-                if (showShielded == 3)
+                if (showShielded == (int) ShieldOptions.Everyone)
                 {
                     shieldedPlayer.myRend.material.SetColor("_VisorColor", Main.Palette.protectedColor);
                     shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
                     shieldedPlayer.myRend.material.SetColor("_OutlineColor", Main.Palette.protectedColor);
                 }
-                else if (PlayerControl.LocalPlayer.isPlayerImmortal() && (showShielded == 0 || showShielded == 2))
+                else if (PlayerControl.LocalPlayer.isPlayerImmortal() && (showShielded == (int) ShieldOptions.Self || showShielded == (int) ShieldOptions.SelfAndMedic))
                 {
                     shieldedPlayer.myRend.material.SetColor("_VisorColor", Main.Palette.protectedColor);
                     shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
                     shieldedPlayer.myRend.material.SetColor("_OutlineColor", Main.Palette.protectedColor);
                 }
                 else if (PlayerControl.LocalPlayer.isPlayerRole("Medic") &&
-                         (showShielded == 1 || showShielded == 2))
+                         (showShielded == (int) ShieldOptions.Medic || showShielded == (int) ShieldOptions.SelfAndMedic))
                 {
                     shieldedPlayer.myRend.material.SetColor("_VisorColor", Main.Palette.protectedColor);
                     shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);

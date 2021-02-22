@@ -32,7 +32,7 @@ namespace ExtraRolesMod
         public static CustomToggleOption showJoker = CustomOption.AddToggle("Show Joker", false);
 
         public static CustomStringOption showShieldedPlayer = CustomOption.AddString("Show Shielded Player",
-            new string[] {"Self", "Medic", "Self+Medic", "Everyone"});
+            new[] {"Self", "Medic", "Self+Medic", "Everyone"});
 
         public static CustomNumberOption OfficerKillCooldown =
             CustomOption.AddNumber("Officer Kill Cooldown", 30f, 10f, 60f, 2.5f);
