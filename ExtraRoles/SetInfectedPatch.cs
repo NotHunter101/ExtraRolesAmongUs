@@ -35,7 +35,7 @@ namespace ExtraRolesMod
             System.Console.WriteLine(HarmonyMain.engineerSpawnChance.GetValue());
             System.Console.WriteLine(HarmonyMain.jokerSpawnChance.GetValue());
 
-            if (crewmates.Count > 0 && (rng.Next(0, 100) <= HarmonyMain.medicSpawnChance.GetValue()))
+            if (crewmates.Count > 0 && rng.Next(0, 100) <= HarmonyMain.medicSpawnChance.GetValue())
             {
                 var medicRandom = rng.Next(0, crewmates.Count);
                 crewmates[medicRandom].getModdedControl().Role = "Medic";
@@ -50,7 +50,7 @@ namespace ExtraRolesMod
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
 
-            if (crewmates.Count > 0 && (rng.Next(0, 100) <= HarmonyMain.officerSpawnChance.GetValue()))
+            if (crewmates.Count > 0 && rng.Next(0, 100) <= HarmonyMain.officerSpawnChance.GetValue())
             {
                 var OfficerRandom = rng.Next(0, crewmates.Count);
                 crewmates[OfficerRandom].getModdedControl().Role = "Officer";
@@ -65,7 +65,7 @@ namespace ExtraRolesMod
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
 
-            if (crewmates.Count > 0 && (rng.Next(0, 100) <= HarmonyMain.engineerSpawnChance.GetValue()))
+            if (crewmates.Count > 0 && rng.Next(0, 100) <= HarmonyMain.engineerSpawnChance.GetValue())
             {
                 var EngineerRandom = rng.Next(0, crewmates.Count);
                 crewmates[EngineerRandom].getModdedControl().Role = "Engineer";
@@ -80,7 +80,7 @@ namespace ExtraRolesMod
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
 
-            if (crewmates.Count > 0 && (rng.Next(0, 100) <= HarmonyMain.jokerSpawnChance.GetValue()))
+            if (crewmates.Count > 0 && rng.Next(0, 100) <= HarmonyMain.jokerSpawnChance.GetValue())
             {
                 var JokerRandom = rng.Next(0, crewmates.Count);
                 crewmates[JokerRandom].getModdedControl().Role = "Joker";
@@ -99,11 +99,11 @@ namespace ExtraRolesMod
             localPlayer = PlayerControl.LocalPlayer;
             foreach (var player in PlayerControl.AllPlayerControls)
             {
-                if (player.Data.IsImpostor)
-                    continue;
-                if (player.isPlayerRole("Joker"))
-                    continue;
-                localPlayers.Add(player);
+                var shouldAddPlayer = !player.Data.IsImpostor && !player.isPlayerRole("Joker");
+                if (shouldAddPlayer)
+                {
+                    localPlayers.Add(player);
+                }
             }
 
             writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
