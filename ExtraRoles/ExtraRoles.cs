@@ -28,36 +28,40 @@ namespace ExtraRolesMod
             System.Console.WriteLine(br.KillAge);
             if (br.KillAge > Main.Config.medicKillerColorDuration * 1000)
             {
-                return $"Body Report: The corpse is too old to gain information from. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
+                return
+                    $"Body Report: The corpse is too old to gain information from. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
-            else if (br.DeathReason == (DeathReason)3)
+
+            if (br.DeathReason == (DeathReason) 3)
             {
-                return $"Body Report (Officer): The cause of death appears to be suicide! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
+                return
+                    $"Body Report (Officer): The cause of death appears to be suicide! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
-            else if (br.KillAge < Main.Config.medicKillerNameDuration * 1000)
+
+            if (br.KillAge < Main.Config.medicKillerNameDuration * 1000)
             {
-                return $"Body Report: The killer appears to be {br.Killer.Data.PlayerName}! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
+                return
+                    $"Body Report: The killer appears to be {br.Killer.Data.PlayerName}! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
-            else
+
+            var colors = new Dictionary<byte, string>()
             {
-                var colors = new Dictionary<byte, string>()
-                {
-                    {0, "darker"},
-                    {1, "darker"},
-                    {2, "darker"},
-                    {3, "lighter"},
-                    {4, "lighter"},
-                    {5, "lighter"},
-                    {6, "darker"},
-                    {7, "lighter"},
-                    {8, "darker"},
-                    {9, "darker"},
-                    {10, "lighter"},
-                    {11, "lighter"},
-                };
-                var typeOfColor = colors[br.Killer.Data.ColorId];
-                return $"Body Report: The killer appears to be a {typeOfColor} color. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
-            }
+                {0, "darker"},
+                {1, "darker"},
+                {2, "darker"},
+                {3, "lighter"},
+                {4, "lighter"},
+                {5, "lighter"},
+                {6, "darker"},
+                {7, "lighter"},
+                {8, "darker"},
+                {9, "darker"},
+                {10, "lighter"},
+                {11, "lighter"},
+            };
+            var typeOfColor = colors[br.Killer.Data.ColorId];
+            return
+                $"Body Report: The killer appears to be a {typeOfColor} color. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
         }
     }
 
@@ -65,18 +69,15 @@ namespace ExtraRolesMod
     {
         public static bool isPlayerRole(this PlayerControl plr, string roleName)
         {
-            if (plr.getModdedControl() != null)
-                return plr.getModdedControl().Role == roleName;
-            else
-                return false;
+            return plr.getModdedControl() != null && plr.getModdedControl().Role == roleName;
         }
 
+        /// <summary>
+        /// Returns true if the player is shielded by the medic, false otherwise
+        /// </summary>
         public static bool isPlayerImmortal(this PlayerControl plr)
         {
-            if (plr.getModdedControl() != null)
-                return plr.getModdedControl().Immortal;
-            else
-                return false;
+            return plr.getModdedControl() != null && plr.getModdedControl().Immortal;
         }
 
         public static ModPlayerControl getModdedControl(this PlayerControl plr)
@@ -120,11 +121,11 @@ namespace ExtraRolesMod
                     return;
                 var jokerControl = joker.PlayerControl;
                 var removeTask = new List<PlayerTask>();
+
                 foreach (var task in jokerControl.myTasks)
-                    if (task.TaskType != TaskTypes.FixComms && task.TaskType != TaskTypes.FixLights &&
-                        task.TaskType != TaskTypes.ResetReactor && task.TaskType != TaskTypes.ResetSeismic &&
-                        task.TaskType != TaskTypes.RestoreOxy)
+                    if (!PlayerTools.sabotageTasks.Contains(task.TaskType))
                         removeTask.Add(task);
+
                 foreach (var task in removeTask)
                     jokerControl.RemoveTask(task);
             }
@@ -156,16 +157,17 @@ namespace ExtraRolesMod
         {
             if (PlayerControl.LocalPlayer.isPlayerImmortal())
                 SoundManager.Instance.PlaySound(Main.Assets.breakClip, false, 100f);
-            if (flag)
-            {
-                if (Main.Logic.anyPlayerImmortal())
-                {
-                    ModPlayerControl immortal = Main.Logic.getImmortalPlayer();
-                    immortal.PlayerControl.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
-                    immortal.PlayerControl.myRend.material.SetFloat("_Outline", 0f);
-                    immortal.Immortal = false;
-                }
-            }
+
+            if (!flag)
+                return;
+
+            if (!Main.Logic.anyPlayerImmortal())
+                return;
+
+            var immortal = Main.Logic.getImmortalPlayer();
+            immortal.PlayerControl.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
+            immortal.PlayerControl.myRend.material.SetFloat("_Outline", 0f);
+            immortal.Immortal = false;
         }
 
         public static GameObject rend;
@@ -242,7 +244,8 @@ namespace ExtraRolesMod
         {
             static void Postfix(VersionShower __instance)
             {
-                __instance.text.Text = __instance.text.Text + "   Extra Roles " + versionString + " Loaded. (http://www.extraroles.net/)";
+                __instance.text.Text = __instance.text.Text + "   Extra Roles " + versionString +
+                                       " Loaded. (http://www.extraroles.net/)";
             }
         }
 

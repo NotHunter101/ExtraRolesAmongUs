@@ -15,14 +15,19 @@ namespace ExtraRolesMod
             Main.Config.SetConfigSettings();
             Main.Logic.AllModPlayerControl.Clear();
             killedPlayers.Clear();
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.None, -1);
+            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte) CustomRPC.ResetVaribles, Hazel.SendOption.None, -1);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
 
-            List<PlayerControl> crewmates = PlayerControl.AllPlayerControls.ToArray().ToList();
-            foreach (PlayerControl plr in crewmates)
-                Main.Logic.AllModPlayerControl.Add(new ModPlayerControl { PlayerControl = plr, Role = "Impostor", UsedAbility = false, LastAbilityTime = null, Immortal = false });
+            var crewmates = PlayerControl.AllPlayerControls.ToArray().ToList();
+            foreach (var plr in crewmates)
+                Main.Logic.AllModPlayerControl.Add(new ModPlayerControl
+                {
+                    PlayerControl = plr, Role = "Impostor", UsedAbility = false, LastAbilityTime = null,
+                    Immortal = false
+                });
             crewmates.RemoveAll(x => x.Data.IsImpostor);
-            foreach (PlayerControl plr in crewmates)
+            foreach (var plr in crewmates)
                 plr.getModdedControl().Role = "Crewmate";
 
             System.Console.WriteLine(HarmonyMain.medicSpawnChance.GetValue());
@@ -32,15 +37,16 @@ namespace ExtraRolesMod
 
             if (crewmates.Count > 0 && (rng.Next(0, 100) <= HarmonyMain.medicSpawnChance.GetValue()))
             {
-                var MedicRandom = rng.Next(0, crewmates.Count);
-                crewmates[MedicRandom].getModdedControl().Role = "Medic";
-                byte MedicId = crewmates[MedicRandom].PlayerId;
-                crewmates.RemoveAt(MedicRandom);
+                var medicRandom = rng.Next(0, crewmates.Count);
+                crewmates[medicRandom].getModdedControl().Role = "Medic";
+                var medicId = crewmates[medicRandom].PlayerId;
+                crewmates.RemoveAt(medicRandom);
 
-                System.Console.WriteLine("Spawning Medic with PlayerID = " + MedicId);
+                System.Console.WriteLine("Spawning Medic with PlayerID = " + medicId);
 
-                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetMedic, Hazel.SendOption.None, -1);
-                writer.Write(MedicId);
+                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                    (byte) CustomRPC.SetMedic, Hazel.SendOption.None, -1);
+                writer.Write(medicId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
 
@@ -48,12 +54,13 @@ namespace ExtraRolesMod
             {
                 var OfficerRandom = rng.Next(0, crewmates.Count);
                 crewmates[OfficerRandom].getModdedControl().Role = "Officer";
-                byte OfficerId = crewmates[OfficerRandom].PlayerId;
+                var OfficerId = crewmates[OfficerRandom].PlayerId;
                 crewmates.RemoveAt(OfficerRandom);
 
                 System.Console.WriteLine("Spawning Officer with PlayerID = " + OfficerId);
 
-                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetOfficer, Hazel.SendOption.None, -1);
+                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                    (byte) CustomRPC.SetOfficer, Hazel.SendOption.None, -1);
                 writer.Write(OfficerId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
@@ -62,12 +69,13 @@ namespace ExtraRolesMod
             {
                 var EngineerRandom = rng.Next(0, crewmates.Count);
                 crewmates[EngineerRandom].getModdedControl().Role = "Engineer";
-                byte EngineerId = crewmates[EngineerRandom].PlayerId;
+                var EngineerId = crewmates[EngineerRandom].PlayerId;
                 crewmates.RemoveAt(EngineerRandom);
 
                 System.Console.WriteLine("Spawning Engineer with PlayerID = " + EngineerId);
 
-                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetEngineer, Hazel.SendOption.None, -1);
+                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                    (byte) CustomRPC.SetEngineer, Hazel.SendOption.None, -1);
                 writer.Write(EngineerId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
@@ -76,34 +84,31 @@ namespace ExtraRolesMod
             {
                 var JokerRandom = rng.Next(0, crewmates.Count);
                 crewmates[JokerRandom].getModdedControl().Role = "Joker";
-                byte JokerId = crewmates[JokerRandom].PlayerId;
+                var JokerId = crewmates[JokerRandom].PlayerId;
                 crewmates.RemoveAt(JokerRandom);
 
                 System.Console.WriteLine("Spawning Joker with PlayerID = " + JokerId);
 
-                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetJoker, Hazel.SendOption.None, -1);
+                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                    (byte) CustomRPC.SetJoker, Hazel.SendOption.None, -1);
                 writer.Write(JokerId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
 
             localPlayers.Clear();
             localPlayer = PlayerControl.LocalPlayer;
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            foreach (var player in PlayerControl.AllPlayerControls)
             {
                 if (player.Data.IsImpostor)
                     continue;
                 if (player.isPlayerRole("Joker"))
                     continue;
-                else
-                    localPlayers.Add(player);
+                localPlayers.Add(player);
             }
-            var localPlayerBytes = new List<byte>();
-            foreach (PlayerControl player in localPlayers)
-            {
-                localPlayerBytes.Add(player.PlayerId);
-            }
-            writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetLocalPlayers, Hazel.SendOption.None, -1);
-            writer.WriteBytesAndSize(localPlayerBytes.ToArray());
+
+            writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte) CustomRPC.SetLocalPlayers, Hazel.SendOption.None, -1);
+            writer.WriteBytesAndSize(localPlayers.Select(player => player.PlayerId).ToArray());
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
     }

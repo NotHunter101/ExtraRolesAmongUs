@@ -9,83 +9,88 @@ namespace ExtraRolesMod
     {
         public static PlayerControl closestPlayer = null;
         
-        public static List<PlayerControl> getCrewMates()
+        public static List<TaskTypes> sabotageTasks = new List<TaskTypes>
         {
-            List<PlayerControl> CrewmateIds = new List<PlayerControl>();
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-            {
-                bool isInfected = false;
-                if (player.Data.IsImpostor)
-                {
-                    isInfected = true;
-                    break;
-                }
-                if (!isInfected)
-                {
-                    CrewmateIds.Add(player);
-                }
-            }
-            return CrewmateIds;
-        }
+            TaskTypes.FixComms,
+            TaskTypes.FixLights,
+            TaskTypes.ResetReactor,
+            TaskTypes.ResetSeismic,
+            TaskTypes.RestoreOxy
+        };
 
         public static PlayerControl getPlayerById(byte id)
         {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            foreach (var player in PlayerControl.AllPlayerControls)
             {
                 if (player.PlayerId == id)
                 {
                     return player;
                 }
             }
+
             return null;
         }
 
-        public static float GetOfficerKD()
+        /// <summary>
+        /// Returns the cooldown of the officer in seconds. Zero means the officer can kill again.
+        /// </summary>
+        public static float getOfficerCD()
         {
-            if (ExtraRoles.Main.Logic.getRolePlayer("Officer").LastAbilityTime == null)
+            var lastAbilityTime = ExtraRoles.Main.Logic.getRolePlayer("Officer").LastAbilityTime;
+            if (lastAbilityTime == null)
             {
                 return ExtraRoles.Main.Config.OfficerCD;
             }
-            DateTime now = DateTime.UtcNow;
-            TimeSpan diff = (TimeSpan)(now - ExtraRoles.Main.Logic.getRolePlayer("Officer").LastAbilityTime);
 
-            var KillCoolDown = ExtraRoles.Main.Config.OfficerCD * 1000.0f;
-            if (KillCoolDown - (float)diff.TotalMilliseconds < 0) return 0;
-            else
+            var now = DateTime.UtcNow;
+            var diff = (TimeSpan) (now - lastAbilityTime);
+
+            var killCooldown = ExtraRoles.Main.Config.OfficerCD * 1000.0f;
+            if (killCooldown - (float) diff.TotalMilliseconds < 0)
+                return 0;
+
+            return (killCooldown - (float) diff.TotalMilliseconds) / 1000.0f;
+        }
+
+        public static bool canEngineerUseAbility()
+        {
+            if (PlayerControl.LocalPlayer.getModdedControl().UsedAbility)
             {
-                return (KillCoolDown - (float)diff.TotalMilliseconds) / 1000.0f;
+                return false;
             }
+
+            if (!ExtraRoles.Main.Logic.sabotageActive)
+            {
+                return false;
+            }
+
+            if (PlayerControl.LocalPlayer.Data.IsDead)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public static PlayerControl getClosestPlayer(PlayerControl refplayer)
         {
-            double mindist = double.MaxValue;
+            var mindist = double.MaxValue;
             PlayerControl closestplayer = null;
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            foreach (var player in PlayerControl.AllPlayerControls)
             {
-                if (player.Data.IsDead) continue;
-                if (player != refplayer)
-                {
+                if (player.Data.IsDead)
+                    continue;
+                if (player == refplayer)
+                    continue;
+                var dist = getDistBetweenPlayers(player, refplayer);
+                if (dist >= mindist)
+                    continue;
 
-                    double dist = getDistBetweenPlayers(player, refplayer);
-                    if (dist < mindist)
-                    {
-                        mindist = dist;
-                        closestplayer = player;
-                    }
-
-                }
-
+                mindist = dist;
+                closestplayer = player;
             }
-            return closestplayer;
-        }
 
-        public static PlayerControl getPlayerFromId(byte id)
-        {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                if (player.PlayerId == id)
-                    return player;
-            return null;
+            return closestplayer;
         }
 
         public static double getDistBetweenPlayers(PlayerControl player, PlayerControl refplayer)
@@ -93,7 +98,8 @@ namespace ExtraRolesMod
             var refpos = refplayer.GetTruePosition();
             var playerpos = player.GetTruePosition();
 
-            return Math.Sqrt((refpos[0] - playerpos[0]) * (refpos[0] - playerpos[0]) + (refpos[1] - playerpos[1]) * (refpos[1] - playerpos[1]));
+            return Math.Sqrt((refpos[0] - playerpos[0]) * (refpos[0] - playerpos[0]) +
+                             (refpos[1] - playerpos[1]) * (refpos[1] - playerpos[1]));
         }
     }
 }
