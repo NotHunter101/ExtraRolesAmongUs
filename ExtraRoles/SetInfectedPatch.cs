@@ -90,11 +90,7 @@ namespace ExtraRolesMod
             localPlayer = PlayerControl.LocalPlayer;
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
             {
-                if (player.Data.IsImpostor)
-                    continue;
-                if (player.isPlayerRole("Joker"))
-                    continue;
-                else
+                if (!(player.Data.IsImpostor || player.isPlayerRole("Joker")))
                     localPlayers.Add(player);
             }
             var localPlayerBytes = new List<byte>();

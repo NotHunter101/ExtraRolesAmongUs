@@ -61,7 +61,6 @@ namespace ExtraRolesMod
         static void Postfix(byte HKHMBLJFLMC, MessageReader ALMCIJKELCP)
         {
             byte packetId = HKHMBLJFLMC;
-            MessageReader reader = ALMCIJKELCP;
             switch (packetId)
             {
                 case (byte)CustomRPC.AttemptSound:

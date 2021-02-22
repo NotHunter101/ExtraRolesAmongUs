@@ -80,7 +80,7 @@ namespace ExtraRolesMod
             defaultRegions.Insert(0, new RegionInfo(
                 "Custom", ip, new[]
                 {
-                    new ServerInfo($"Custom-Server", ip, Port.Value)
+                    new ServerInfo("Custom-Server", ip, Port.Value)
                 })
             );
 

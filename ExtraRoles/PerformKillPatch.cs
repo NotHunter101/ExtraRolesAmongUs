@@ -43,7 +43,6 @@ namespace ExtraRolesMod
                             writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.AttemptSound, Hazel.SendOption.None, -1);
                             AmongUsClient.Instance.FinishRpcImmediately(writer);
                             BreakShield(false);
-                            return false;
                         }
                         //check if they're joker and the setting is configured
                         else if (Main.Config.jokerCanDieToOfficer && target.isPlayerRole("Joker"))
@@ -66,7 +65,6 @@ namespace ExtraRolesMod
                             AmongUsClient.Instance.FinishRpcImmediately(writer);
                             PlayerControl.LocalPlayer.MurderPlayer(target);
                             PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
-                            return false;
                         }
                         //else, they're innocent and not shielded
                         else
@@ -78,9 +76,7 @@ namespace ExtraRolesMod
                             AmongUsClient.Instance.FinishRpcImmediately(writer);
                             PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer);
                             PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
-                            return false;
                         }
-                        return false;
                     }
                     return false;
                 }

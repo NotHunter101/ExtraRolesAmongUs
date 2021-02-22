@@ -30,34 +30,31 @@ namespace ExtraRolesMod
             {
                 return $"Body Report: The corpse is too old to gain information from. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
-            else if (br.DeathReason == (DeathReason)3)
+            if (br.DeathReason == (DeathReason)3)
             {
                 return $"Body Report (Officer): The cause of death appears to be suicide! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
-            else if (br.KillAge < Main.Config.medicKillerNameDuration * 1000)
+            if (br.KillAge < Main.Config.medicKillerNameDuration * 1000)
             {
                 return $"Body Report: The killer appears to be {br.Killer.Data.PlayerName}! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
-            else
+            var colors = new Dictionary<byte, string>()
             {
-                var colors = new Dictionary<byte, string>()
-                {
-                    {0, "darker"},
-                    {1, "darker"},
-                    {2, "darker"},
-                    {3, "lighter"},
-                    {4, "lighter"},
-                    {5, "lighter"},
-                    {6, "darker"},
-                    {7, "lighter"},
-                    {8, "darker"},
-                    {9, "darker"},
-                    {10, "lighter"},
-                    {11, "lighter"},
-                };
-                var typeOfColor = colors[br.Killer.Data.ColorId];
-                return $"Body Report: The killer appears to be a {typeOfColor} color. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
-            }
+                {0, "darker"},
+                {1, "darker"},
+                {2, "darker"},
+                {3, "lighter"},
+                {4, "lighter"},
+                {5, "lighter"},
+                {6, "darker"},
+                {7, "lighter"},
+                {8, "darker"},
+                {9, "darker"},
+                {10, "lighter"},
+                {11, "lighter"},
+            };
+            var typeOfColor = colors[br.Killer.Data.ColorId];
+            return $"Body Report: The killer appears to be a {typeOfColor} color. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
         }
     }
 
@@ -65,10 +62,7 @@ namespace ExtraRolesMod
     {
         public static bool isPlayerRole(this PlayerControl plr, string roleName)
         {
-            if (plr.getModdedControl() != null)
-                return plr.getModdedControl().Role == roleName;
-            else
-                return false;
+            return plr.getModdedControl() != null && plr.getModdedControl() == roleName;
         }
 
         public static bool isPlayerImmortal(this PlayerControl plr)
