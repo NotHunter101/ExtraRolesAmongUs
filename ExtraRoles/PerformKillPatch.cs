@@ -13,80 +13,89 @@ namespace ExtraRolesMod
         {
             if (PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
             {
-                DestroyableSingleton<HudManager>.Instance.ShowMap((Action<MapBehaviour>)delegate (MapBehaviour m)
+                DestroyableSingleton<HudManager>.Instance.ShowMap((Action<MapBehaviour>) delegate(MapBehaviour m)
                 {
                     m.ShowInfectedMap();
                     m.ColorControl.baseColor = Main.Logic.sabotageActive ? Color.gray : Main.Palette.engineerColor;
                 });
                 return false;
             }
+
             if (PlayerControl.LocalPlayer.Data.IsDead)
                 return false;
+
+            MessageWriter writer;
             if (CurrentTarget != null)
             {
-                PlayerControl target = CurrentTarget;
+                var target = CurrentTarget;
                 //code that handles the ability button presses
                 if (PlayerControl.LocalPlayer.isPlayerRole("Officer"))
                 {
-                    if (PlayerTools.GetOfficerKD() == 0)
+                    if (PlayerTools.getOfficerCD() != 0)
+                        return false;
+
+                    if (target.isPlayerImmortal())
                     {
-                        //check if they're shielded by medic
-                        if (target.isPlayerImmortal())
-                        {
-                            //officer suicide packet
-                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                            writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                            writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                            AmongUsClient.Instance.FinishRpcImmediately(writer);
-                            PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer);
-                            PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
-                            writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.AttemptSound, Hazel.SendOption.None, -1);
-                            AmongUsClient.Instance.FinishRpcImmediately(writer);
-                            BreakShield(false);
-                            return false;
-                        }
-                        //check if they're joker and the setting is configured
-                        else if (Main.Config.jokerCanDieToOfficer && target.isPlayerRole("Joker"))
-                        {
-                            //officer joker murder packet
-                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                            writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                            writer.Write(target.PlayerId);
-                            AmongUsClient.Instance.FinishRpcImmediately(writer);
-                            PlayerControl.LocalPlayer.MurderPlayer(target);
-                            PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
-                        }
-                        //check if they're an impostor
-                        else if (target.Data.IsImpostor)
-                        {
-                            //officer impostor murder packet
-                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                            writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                            writer.Write(target.PlayerId);
-                            AmongUsClient.Instance.FinishRpcImmediately(writer);
-                            PlayerControl.LocalPlayer.MurderPlayer(target);
-                            PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
-                            return false;
-                        }
-                        //else, they're innocent and not shielded
-                        else
-                        {
-                            //officer suicide packet
-                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                            writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                            writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                            AmongUsClient.Instance.FinishRpcImmediately(writer);
-                            PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer);
-                            PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
-                            return false;
-                        }
+                        // officer suicide packet
+                        writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                            (byte) CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                        writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                        writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer);
+                        PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
+                        writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                            (byte) CustomRPC.AttemptSound, Hazel.SendOption.None, -1);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        BreakShield(false);
                         return false;
                     }
+
+                    var isPlayerJokerAndCanDieToOfficer =
+                        Main.Config.jokerCanDieToOfficer && target.isPlayerRole("Joker");
+
+                    if (isPlayerJokerAndCanDieToOfficer)
+                    {
+                        //officer joker murder packet
+                        writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                            (byte) CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                        writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                        writer.Write(target.PlayerId);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        PlayerControl.LocalPlayer.MurderPlayer(target);
+                        PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
+                        return false;
+                    }
+
+                    if (target.Data.IsImpostor)
+                    {
+                        //officer impostor murder packet
+                        writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                            (byte) CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                        writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                        writer.Write(target.PlayerId);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        PlayerControl.LocalPlayer.MurderPlayer(target);
+                        PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
+                        return false;
+                    }
+
+                    // Else they're innocent and not shielded
+                    // officer suicide packet
+                    writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                        (byte) CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                    writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                    writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer);
+                    PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
                     return false;
                 }
-                else if (PlayerControl.LocalPlayer.isPlayerRole("Medic"))
+
+                if (PlayerControl.LocalPlayer.isPlayerRole("Medic"))
                 {
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetProtected, Hazel.SendOption.None, -1);
+                    writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                        (byte) CustomRPC.SetProtected, Hazel.SendOption.None, -1);
                     target.getModdedControl().Immortal = true;
                     PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
                     writer.Write(target.PlayerId);
@@ -95,18 +104,23 @@ namespace ExtraRolesMod
                 }
             }
 
-            if (KillButton.CurrentTarget.isPlayerImmortal())
-            {
-                if (KillButton.CurrentTarget.isPlayerImmortal() && KillButton.isActiveAndEnabled && !KillButton.isCoolingDown && Main.Config.shieldKillAttemptIndicator)
-                {
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.AttemptSound, Hazel.SendOption.None, -1);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    BreakShield(false);
-                } 
+            // continue the murder as normal
+            if (!KillButton.CurrentTarget.isPlayerImmortal())
+                return true;
+
+            // play shield break sound
+            var shouldPlayShieldBreakSound = KillButton.CurrentTarget.isPlayerImmortal() &&
+                                             KillButton.isActiveAndEnabled &&
+                                             !KillButton.isCoolingDown && Main.Config.shieldKillAttemptIndicator;
+            if (!shouldPlayShieldBreakSound)
                 return false;
-            }
-            //otherwise, continue the murder as normal
-            return true;
+
+            writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte) CustomRPC.AttemptSound, Hazel.SendOption.None, -1);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            BreakShield(false);
+
+            return false;
         }
 
         [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.ShowInfectedMap))]
@@ -114,21 +128,20 @@ namespace ExtraRolesMod
         {
             static void Postfix(MapBehaviour __instance)
             {
-                if (PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
+                if (!PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
+                    return;
+                if (!__instance.IsOpen)
+                    return;
+
+                __instance.ColorControl.baseColor = Main.Palette.engineerColor;
+                foreach (var room in __instance.infectedOverlay.rooms)
                 {
-                    if (__instance.IsOpen)
-                    {
-                        __instance.ColorControl.baseColor = Main.Palette.engineerColor;
-                        foreach (MapRoom room in __instance.infectedOverlay.rooms)
-                        {
-                            if (room.door != null)
-                            {
-                                room.door.enabled = false;
-                                room.door.gameObject.SetActive(false);
-                                room.door.gameObject.active = false;
-                            }
-                        }
-                    }
+                    if (room.door == null)
+                        continue;
+
+                    room.door.enabled = false;
+                    room.door.gameObject.SetActive(false);
+                    room.door.gameObject.active = false;
                 }
             }
         }
@@ -138,34 +151,25 @@ namespace ExtraRolesMod
         {
             static void Postfix(MapBehaviour __instance)
             {
-                if (PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
-                {
-                    if (__instance.IsOpen && __instance.infectedOverlay.gameObject.active)
-                    {
-                        if (!Main.Logic.sabotageActive)
-                            __instance.ColorControl.baseColor = Color.gray;
-                        else
-                            __instance.ColorControl.baseColor = Main.Palette.engineerColor;
-                        float perc = Main.Logic.getRolePlayer("Engineer").UsedAbility ? 1f : 0f;
-                        foreach (MapRoom room in __instance.infectedOverlay.rooms)
-                        {
-                            if (room.special != null)
-                            {
-                                if (!Main.Logic.sabotageActive)
-                                    room.special.material.SetFloat("_Desat", 1f);
-                                else
-                                    room.special.material.SetFloat("_Desat", 0f);
+                if (!PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
+                    return;
+                if (!__instance.IsOpen || !__instance.infectedOverlay.gameObject.active)
+                    return;
+                __instance.ColorControl.baseColor =
+                    !Main.Logic.sabotageActive ? Color.gray : Main.Palette.engineerColor;
 
-                                room.special.enabled = true;
-                                room.special.gameObject.SetActive(true);
-                                room.special.gameObject.active = true;
-                                if (!PlayerControl.LocalPlayer.Data.IsDead)
-                                    room.special.material.SetFloat("_Percent", perc);
-                                else
-                                    room.special.material.SetFloat("_Percent", 1f);
-                            }
-                        }
-                    }
+                var perc = Main.Logic.getRolePlayer("Engineer").UsedAbility ? 1f : 0f;
+
+                foreach (var room in __instance.infectedOverlay.rooms)
+                {
+                    if (room.special == null)
+                        continue;
+                    room.special.material.SetFloat("_Desat", !Main.Logic.sabotageActive ? 1f : 0f);
+
+                    room.special.enabled = true;
+                    room.special.gameObject.SetActive(true);
+                    room.special.gameObject.active = true;
+                    room.special.material.SetFloat("_Percent", !PlayerControl.LocalPlayer.Data.IsDead ? perc : 1f);
                 }
             }
         }
@@ -184,16 +188,16 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
-                {
-                    if (!PlayerControl.LocalPlayer.getModdedControl().UsedAbility && Main.Logic.sabotageActive && !PlayerControl.LocalPlayer.Data.IsDead)
-                    {
-                        PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
-                        ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 16);
-                    }
+                if (!PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
+                    return true;
+
+                if (!PlayerTools.canEngineerUseAbility())
                     return false;
-                }
-                return true;
+
+                PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
+                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 16);
+
+                return false;
             }
         }
 
@@ -202,19 +206,19 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
-                {
-                    if (!PlayerControl.LocalPlayer.getModdedControl().UsedAbility && Main.Logic.sabotageActive && !PlayerControl.LocalPlayer.Data.IsDead)
-                    {
-                        PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
-                        SwitchSystem switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
-                        switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.FixLights, Hazel.SendOption.None, -1);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    }
+                if (!PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
+                    return true;
+                if (!PlayerTools.canEngineerUseAbility())
                     return false;
-                }
-                return true;
+
+                PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
+                var switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
+                switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
+                var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                    (byte) CustomRPC.FixLights, Hazel.SendOption.None, -1);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+
+                return false;
             }
         }
 
@@ -223,17 +227,16 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
-                {
-                    if (!PlayerControl.LocalPlayer.getModdedControl().UsedAbility && Main.Logic.sabotageActive && !PlayerControl.LocalPlayer.Data.IsDead)
-                    {
-                        PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
-                        ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 16 | 0);
-                        ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 16 | 1);
-                    }
+                if (!PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
+                    return true;
+                if (!PlayerTools.canEngineerUseAbility())
                     return false;
-                }
-                return true;
+
+                PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
+                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 16 | 0);
+                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 16 | 1);
+
+                return false;
             }
         }
 
@@ -242,17 +245,17 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
-                {
-                    if (!PlayerControl.LocalPlayer.getModdedControl().UsedAbility && Main.Logic.sabotageActive && !PlayerControl.LocalPlayer.Data.IsDead)
-                    {
-                        PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
-                        ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 0 | 64);
-                        ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 1 | 64);
-                    }
+                if (!PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
+                    return true;
+
+                if (!PlayerTools.canEngineerUseAbility())
                     return false;
-                }
-                return true;
+
+                PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
+                ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 0 | 64);
+                ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 1 | 64);
+
+                return false;
             }
         }
 
@@ -261,23 +264,22 @@ namespace ExtraRolesMod
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
-                {
-                    if (!PlayerControl.LocalPlayer.getModdedControl().UsedAbility && Main.Logic.sabotageActive && !PlayerControl.LocalPlayer.Data.IsDead)
-                    {
-                        PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
-                        ShipStatus.Instance.RpcRepairSystem(SystemTypes.Laboratory, 16);
-                    }
+                if (!PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
+                    return true;
+
+                if (!PlayerTools.canEngineerUseAbility())
                     return false;
-                }
-                return true;
+
+                PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
+                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Laboratory, 16);
+
+                return false;
             }
         }
 
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
         public static class MurderPlayerPatch
         {
-
             public static bool Prefix(PlayerControl __instance, PlayerControl CAKODNGLPDF)
             {
                 //check if the player is an officer
@@ -286,25 +288,31 @@ namespace ExtraRolesMod
                     //if so, set them to impostor for one frame so they aren't banned for anti-cheat
                     __instance.Data.IsImpostor = true;
                 }
+
                 return true;
             }
 
             //handle the murder after it's ran
             public static void Postfix(PlayerControl __instance, PlayerControl CAKODNGLPDF)
             {
-                var deadBody = new DeadPlayer();
-                deadBody.PlayerId = CAKODNGLPDF.PlayerId;
-                deadBody.KillerId = __instance.PlayerId;
-                deadBody.KillTime = DateTime.UtcNow;
-                deadBody.DeathReason = DeathReason.Kill;
+                var deadBody = new DeadPlayer
+                {
+                    PlayerId = CAKODNGLPDF.PlayerId,
+                    KillerId = __instance.PlayerId,
+                    KillTime = DateTime.UtcNow,
+                    DeathReason = DeathReason.Kill
+                };
+
                 if (__instance.isPlayerRole("Officer"))
                 {
                     __instance.Data.IsImpostor = false;
                 }
+
                 if (__instance.PlayerId == CAKODNGLPDF.PlayerId)
                 {
-                    deadBody.DeathReason = (DeathReason)3;
+                    deadBody.DeathReason = (DeathReason) 3;
                 }
+
                 killedPlayers.Add(deadBody);
             }
         }
