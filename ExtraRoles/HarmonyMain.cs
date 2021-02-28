@@ -43,6 +43,9 @@ namespace ExtraRolesMod
         public static CustomToggleOption
             jokerCanDieToOfficer = CustomOption.AddToggle("Joker Can Die To Officer", true);
 
+        public static CustomToggleOption
+            crewCanDieToOfficer = CustomOption.AddToggle("Crew Can Die To Officer", false);
+
         public static CustomToggleOption medicReportSwitch = CustomOption.AddToggle("Show Medic Reports", true);
 
         public static CustomNumberOption medicReportNameDuration =

@@ -214,6 +214,7 @@ namespace ExtraRolesMod
             public bool showEngineer { get; set; }
             public bool showJoker { get; set; }
             public bool jokerCanDieToOfficer { get; set; }
+            public bool crewCanDieToOfficer { get; set; }
             public float medicSpawnChance { get; set; }
             public float engineerSpawnChance { get; set; }
             public float officerSpawnChance { get; set; }
@@ -232,6 +233,7 @@ namespace ExtraRolesMod
                 this.showEngineer = HarmonyMain.showEngineer.GetValue();
                 this.showJoker = HarmonyMain.showJoker.GetValue();
                 this.jokerCanDieToOfficer = HarmonyMain.jokerCanDieToOfficer.GetValue();
+                this.crewCanDieToOfficer = HarmonyMain.crewCanDieToOfficer.GetValue();
                 this.medicSpawnChance = HarmonyMain.medicSpawnChance.GetValue();
                 this.engineerSpawnChance = HarmonyMain.engineerSpawnChance.GetValue();
                 this.officerSpawnChance = HarmonyMain.officerSpawnChance.GetValue();

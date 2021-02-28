@@ -80,6 +80,18 @@ namespace ExtraRolesMod
                         return false;
                     }
 
+                    if (Main.Config.crewCanDieToOfficer)
+                    {
+                        //officer impostor murder packet
+                        writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                            (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                        writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                        writer.Write(target.PlayerId);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        PlayerControl.LocalPlayer.MurderPlayer(target);
+                        PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
+                    }
+
                     // Else they're innocent and not shielded
                     // officer suicide packet
                     writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
