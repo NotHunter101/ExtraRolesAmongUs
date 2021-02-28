@@ -33,62 +33,29 @@ namespace ExtraRolesMod
                 {
                     if (PlayerTools.getOfficerCD() != 0)
                         return false;
+                    
+                    var isPlayerJokerAndCanDieToOfficer =
+                        Main.Config.jokerCanDieToOfficer && target.isPlayerRole("Joker");
+                    
+                    writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                        (byte) CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+                    writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                    writer.Write(!target.isPlayerImmortal() &&
+                        (isPlayerJokerAndCanDieToOfficer || target.Data.IsImpostor) ?
+                        target.PlayerId : PlayerControl.LocalPlayer.PlayerId); // kill target or suicide
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    PlayerControl.LocalPlayer.MurderPlayer(target);
+                    PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
 
+                    // attempted to kill shielded player
                     if (target.isPlayerImmortal())
                     {
-                        // officer suicide packet
-                        writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                            (byte) CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                        writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                        writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer);
-                        PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
                         writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                             (byte) CustomRPC.AttemptSound, Hazel.SendOption.None, -1);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         BreakShield(false);
-                        return false;
                     }
-
-                    var isPlayerJokerAndCanDieToOfficer =
-                        Main.Config.jokerCanDieToOfficer && target.isPlayerRole("Joker");
-
-                    if (isPlayerJokerAndCanDieToOfficer)
-                    {
-                        //officer joker murder packet
-                        writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                            (byte) CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                        writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                        writer.Write(target.PlayerId);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        PlayerControl.LocalPlayer.MurderPlayer(target);
-                        PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
-                        return false;
-                    }
-
-                    if (target.Data.IsImpostor)
-                    {
-                        //officer impostor murder packet
-                        writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                            (byte) CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                        writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                        writer.Write(target.PlayerId);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        PlayerControl.LocalPlayer.MurderPlayer(target);
-                        PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
-                        return false;
-                    }
-
-                    // Else they're innocent and not shielded
-                    // officer suicide packet
-                    writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                        (byte) CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                    writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                    writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer);
-                    PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
+                    
                     return false;
                 }
 
