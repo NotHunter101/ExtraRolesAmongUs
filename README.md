@@ -74,6 +74,10 @@ If this setting is enabled, The Engineer's name will be lit up orange for everyo
 If this setting is enabled, The Jokers's name will be lit up grey for everyone. If it isn't, it will only be lit for themselves.
   
 ## Joker Can Die To Officer
+*Default: false*<br/>
+If this setting is enabled, The Officer will be able to kill the target. The Officer will still die.
+
+## Joker Can Die To Officer
 *Default: true*<br/>
 If this setting is enabled, The Officer will be able to kill The Joker without repercussion. If it's disabled, killing The Joker will execute as if they were a Crewmate.
   
