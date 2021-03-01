@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using ExtraRoles.Officer;
+using HarmonyLib;
 using Hazel;
 using System;
 using UnityEngine;
@@ -9,6 +10,30 @@ namespace ExtraRolesMod
     [HarmonyPatch(typeof(KillButtonManager), nameof(KillButtonManager.PerformKill))]
     class PerformKillPatch
     {
+        private static void WriteKillRpc(PlayerControl killer, PlayerControl target)
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                      (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
+            writer.Write(PlayerControl.LocalPlayer.PlayerId);
+            writer.Write(target.PlayerId); // kill target or suicide
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            PlayerControl.LocalPlayer.MurderPlayer(target);
+            PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
+            writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte)CustomRPC.AttemptSound, Hazel.SendOption.None, -1);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+
+        private static void WriteGiveShieldRpc(PlayerControl medic, PlayerControl target)
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte)CustomRPC.SetProtected, Hazel.SendOption.None, -1);
+            target.getModdedControl().Immortal = true;
+            PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
+            writer.Write(target.PlayerId);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+
         public static bool Prefix()
         {
             if (PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
@@ -24,49 +49,88 @@ namespace ExtraRolesMod
             if (PlayerControl.LocalPlayer.Data.IsDead)
                 return false;
 
-            MessageWriter writer;
             if (CurrentTarget != null)
             {
                 var target = CurrentTarget;
                 //code that handles the ability button presses
                 if (PlayerControl.LocalPlayer.isPlayerRole("Officer"))
                 {
-                    if (PlayerTools.getOfficerCD() != 0)
+                    if (PlayerTools.getOfficerCD() > 0)
+                    {
                         return false;
-                    
-                    var isPlayerJokerAndCanDieToOfficer =
-                        Main.Config.jokerCanDieToOfficer && target.isPlayerRole("Joker");
-                    
-                    writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                        (byte) CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
-                    writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                    writer.Write(!target.isPlayerImmortal() &&
-                        (isPlayerJokerAndCanDieToOfficer || target.Data.IsImpostor) ?
-                        target.PlayerId : PlayerControl.LocalPlayer.PlayerId); // kill target or suicide
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    PlayerControl.LocalPlayer.MurderPlayer(target);
-                    PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
+                    }
 
                     // attempted to kill shielded player
                     if (target.isPlayerImmortal())
                     {
-                        writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                            (byte) CustomRPC.AttemptSound, Hazel.SendOption.None, -1);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        // suicide packet
+                        WriteKillRpc(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
                         BreakShield(false);
+                        return false;
                     }
-                    
+
+                    var officerKillSetting = (OfficerKillBehaviour) Main.Config.officerKillBehaviour;
+                    if (officerKillSetting == OfficerKillBehaviour.OfficerSurvives)
+                    {
+                        // kill the target without consequences
+                        WriteKillRpc(PlayerControl.LocalPlayer, target);
+                        return false;
+                    }
+
+
+                    var isTargetJoker = target.isPlayerRole("Joker");
+                    var isTargetImpostor = target.Data.IsImpostor;
+                    if (officerKillSetting == OfficerKillBehaviour.ImpostorAndJester)
+                    {
+                        if (isTargetImpostor || isTargetJoker)
+                        {
+                            // kill the target without consequences
+                            WriteKillRpc(PlayerControl.LocalPlayer, target);
+                        }
+                        else
+                        {
+                            // kill the officer, let the crew live
+                            WriteKillRpc(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
+                        }
+                        return false;
+                    }
+
+                    if (officerKillSetting == OfficerKillBehaviour.CrewDie)
+                    {
+                        // kill the target the officer attacked
+                        WriteKillRpc(PlayerControl.LocalPlayer, target);
+                     
+                        if (!(isTargetImpostor || isTargetJoker))
+                        {
+                            // kill the officer
+                            WriteKillRpc(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
+
+                        }
+                        return false;
+                    }
+
+                    if (officerKillSetting == OfficerKillBehaviour.Impostor) {
+
+                        if (isTargetImpostor)
+                        {
+                            // kill the target without consequences
+                            WriteKillRpc(PlayerControl.LocalPlayer, target);
+                        }
+                        else
+                        {
+                            // kill the officer, let the crew live
+                            WriteKillRpc(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
+                        }
+                        return false;
+                    }
+
+                    System.Console.WriteLine("Error: There is an undhandled setting case: {0}", officerKillSetting);
                     return false;
                 }
 
                 if (PlayerControl.LocalPlayer.isPlayerRole("Medic"))
                 {
-                    writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                        (byte) CustomRPC.SetProtected, Hazel.SendOption.None, -1);
-                    target.getModdedControl().Immortal = true;
-                    PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
-                    writer.Write(target.PlayerId);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    WriteGiveShieldRpc(PlayerControl.LocalPlayer, target);
                     return false;
                 }
             }
@@ -82,7 +146,8 @@ namespace ExtraRolesMod
             if (!shouldPlayShieldBreakSound)
                 return false;
 
-            writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+            // Send Play Shield Break RPC
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                 (byte) CustomRPC.AttemptSound, Hazel.SendOption.None, -1);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             BreakShield(false);

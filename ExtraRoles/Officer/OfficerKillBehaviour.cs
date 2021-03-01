@@ -8,7 +8,7 @@ namespace ExtraRoles.Officer
     {
         Impostor = 0,
         ImpostorAndJester = 1,
-        CrewSurvive = 2,
-        CrewDie = 3
+        CrewDie = 2,
+        OfficerSurvives = 3
     }
 }
