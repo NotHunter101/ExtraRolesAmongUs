@@ -40,11 +40,8 @@ namespace ExtraRolesMod
         public static CustomToggleOption playerMurderIndicator =
             CustomOption.AddToggle("Murder Attempt Indicator for Shielded Player", false);
 
-        public static CustomToggleOption
-            jokerCanDieToOfficer = CustomOption.AddToggle("Joker Can Die To Officer", true);
-
-        public static CustomToggleOption
-            crewCanDieToOfficer = CustomOption.AddToggle("Crew Can Die To Officer", false);
+        public static CustomStringOption
+            officerKillBehaviour = CustomOption.AddString("Officer kill behaviour", new[] { "Impostor", "Impostor+Jester", "Crew Survives", "Crew Dies", "Officer Survives" });
 
         public static CustomToggleOption medicReportSwitch = CustomOption.AddToggle("Show Medic Reports", true);
 
