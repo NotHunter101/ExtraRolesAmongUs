@@ -41,7 +41,7 @@ namespace ExtraRolesMod
             CustomOption.AddToggle("Murder Attempt Indicator for Shielded Player", false);
 
         public static CustomStringOption
-            officerKillBehaviour = CustomOption.AddString("Officer kill behaviour", new[] { "Impostor", "Jester", "Crew Die", "Anyone" });
+            officerKillBehaviour = CustomOption.AddString("Officer Kill Behaviour", new[] { "Impostor", "Joker", "Crew Die", "Anyone" });
 
         public static CustomToggleOption medicReportSwitch = CustomOption.AddToggle("Show Medic Reports", true);
 
