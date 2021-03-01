@@ -49,12 +49,6 @@ namespace ExtraRoles
                 // Send the message through chat only visible to the medic
                 DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, reportMsg);
             }
-
-            if (reportMsg.IndexOf("who", StringComparison.OrdinalIgnoreCase) >= 0)
-            {
-                // Really did not understand this
-                DestroyableSingleton<Telemetry>.Instance.SendWho();
-            }
         }
     }
 }
