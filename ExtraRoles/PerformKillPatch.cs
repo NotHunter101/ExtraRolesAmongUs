@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using ExtraRoles.Medic;
+using HarmonyLib;
 using Hazel;
 using System;
 using UnityEngine;
@@ -96,7 +97,7 @@ namespace ExtraRolesMod
                 {
                     writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                         (byte) CustomRPC.SetProtected, Hazel.SendOption.None, -1);
-                    target.getModdedControl().Immortal = true;
+                    target.getModdedControl().Immortal = ShieldState.Intact;
                     PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
                     writer.Write(target.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
