@@ -7,7 +7,7 @@ namespace ExtraRoles.Officer
     public enum OfficerKillBehaviour
     {
         Impostor = 0,
-        ImpostorAndJester = 1,
+        Joker = 1,
         CrewDie = 2,
         OfficerSurvives = 3
     }

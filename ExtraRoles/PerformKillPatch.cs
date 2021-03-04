@@ -80,7 +80,7 @@ namespace ExtraRolesMod
 
                     var isTargetJoker = target.isPlayerRole("Joker");
                     var isTargetImpostor = target.Data.IsImpostor;
-                    if (officerKillSetting == OfficerKillBehaviour.ImpostorAndJester)
+                    if (officerKillSetting == OfficerKillBehaviour.Joker)
                     {
                         if (isTargetImpostor || isTargetJoker)
                         {
