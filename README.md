@@ -87,7 +87,11 @@ The amount of time (in seconds) that The Medic will have to report the body sinc
 *Default: 20*<br/>
 The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's color type.  
 "color type" means either "lighter" or "darker", and a full list of colors and their types are included at the bottom of the page.  
-  
+
+## Minimum Crewmate Count
+*Default: 0*<br />
+The minimum number of crewmates there should be, roles are set in a random order.
+
 ## Medic Spawn Chance
 *Default: 100*<br/>
 The percentage chance that anybody in the game will become The Medic.  
