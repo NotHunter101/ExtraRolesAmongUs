@@ -48,7 +48,7 @@ namespace ExtraRolesMod
                 // Randomize order of role setting
                 var roleIndex = rng.Next(0, roles.Count);
                 var (roleName, spawnChance, rpc) = roles[roleIndex];
-                var shouldSpawn =  rng.Next(0, 100) <= spawnChance;
+                var shouldSpawn = rng.Next(0, 100) <= spawnChance;
 
                 if (shouldSpawn)
                 {
