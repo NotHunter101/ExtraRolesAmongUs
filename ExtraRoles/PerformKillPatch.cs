@@ -60,68 +60,31 @@ namespace ExtraRolesMod
                         return false;
                     }
 
-                    // attempted to kill shielded player
+                    var isTargetJoker = target.isPlayerRole("Joker");
+                    var isTargetImpostor = target.Data.IsImpostor;
+                    var officerKillSetting = (OfficerKillBehaviour) Main.Config.officerKillBehaviour;
                     if (target.isPlayerImmortal())
                     {
                         // suicide packet
                         WriteKillRpc(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
                         BreakShield(false);
-                        return false;
                     }
-
-                    var officerKillSetting = (OfficerKillBehaviour) Main.Config.officerKillBehaviour;
-                    if (officerKillSetting == OfficerKillBehaviour.OfficerSurvives)
+                    else if ((officerKillSetting == OfficerKillBehaviour.OfficerSurvives // don't care who it is, kill them
+                        || isTargetImpostor // impostors always die
+                        || officerKillSetting == OfficerKillBehaviour.Joker && isTargetJoker)) // joker can die and target is joker
                     {
-                        // kill the target without consequences
+                        // kill target
                         WriteKillRpc(PlayerControl.LocalPlayer, target);
-                        return false;
                     }
-
-
-                    var isTargetJoker = target.isPlayerRole("Joker");
-                    var isTargetImpostor = target.Data.IsImpostor;
-                    if (officerKillSetting == OfficerKillBehaviour.Joker)
+                    else // officer dies
                     {
-                        if (isTargetImpostor || isTargetJoker)
+                        if (officerKillSetting == OfficerKillBehaviour.CrewDie)
                         {
-                            // kill the target without consequences
+                            // kill target too
                             WriteKillRpc(PlayerControl.LocalPlayer, target);
                         }
-                        else
-                        {
-                            // kill the officer, let the crew live
-                            WriteKillRpc(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
-                        }
-                        return false;
-                    }
-
-                    if (officerKillSetting == OfficerKillBehaviour.CrewDie)
-                    {
-                        // kill the target the officer attacked
-                        WriteKillRpc(PlayerControl.LocalPlayer, target);
-                     
-                        if (!(isTargetImpostor || isTargetJoker))
-                        {
-                            // kill the officer
-                            WriteKillRpc(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
-
-                        }
-                        return false;
-                    }
-
-                    if (officerKillSetting == OfficerKillBehaviour.Impostor) {
-
-                        if (isTargetImpostor)
-                        {
-                            // kill the target without consequences
-                            WriteKillRpc(PlayerControl.LocalPlayer, target);
-                        }
-                        else
-                        {
-                            // kill the officer, let the crew live
-                            WriteKillRpc(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
-                        }
-                        return false;
+                        // kill officer
+                        WriteKillRpc(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
                     }
 
                     System.Console.WriteLine("Error: There is an undhandled setting case: {0}", officerKillSetting);
