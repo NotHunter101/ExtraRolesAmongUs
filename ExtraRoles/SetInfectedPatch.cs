@@ -43,23 +43,28 @@ namespace ExtraRolesMod
                 ("Joker", HarmonyMain.jokerSpawnChance.GetValue(), CustomRPC.SetJoker),
             };
 
-            foreach (var (roleName, spawnChance, rpc) in roles)
+            while (roles.Count > 0 && crewmates.Count > HarmonyMain.minimumCrewmateCount.GetValue())
             {
-                var shouldSpawn = crewmates.Count > 0 && rng.Next(0, 100) <= spawnChance;
-                if (!shouldSpawn)
-                    continue;
-                
-                var randomCrewmateIndex = rng.Next(0, crewmates.Count);
-                crewmates[randomCrewmateIndex].getModdedControl().Role = roleName;
-                var playerIdForRole = crewmates[randomCrewmateIndex].PlayerId;
-                crewmates.RemoveAt(randomCrewmateIndex);
+                // Randomize order of role setting
+                var roleIndex = rng.Next(0, roles.Count);
+                var (roleName, spawnChance, rpc) = roles[roleIndex];
+                var shouldSpawn =  rng.Next(0, 100) <= spawnChance;
 
-                System.Console.WriteLine($"Spawning {roleName} with PlayerID = {playerIdForRole}");
+                if (shouldSpawn)
+                {
+                    var randomCrewmateIndex = rng.Next(0, crewmates.Count);
+                    crewmates[randomCrewmateIndex].getModdedControl().Role = roleName;
+                    var playerIdForRole = crewmates[randomCrewmateIndex].PlayerId;
+                    crewmates.RemoveAt(randomCrewmateIndex);
 
-                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                    (byte) rpc, Hazel.SendOption.None, -1);
-                writer.Write(playerIdForRole);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    System.Console.WriteLine($"Spawning {roleName} with PlayerID = {playerIdForRole}");
+
+                    writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                        (byte)rpc, Hazel.SendOption.None, -1);
+                    writer.Write(playerIdForRole);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                }
+                roles.RemoveAt(roleIndex);
             }
 
             localPlayers.Clear();
