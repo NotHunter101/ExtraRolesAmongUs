@@ -80,8 +80,8 @@ If this setting is enabled, The Jokers's name will be lit up grey for everyone. 
 ## Officer Kill Behaviour
 *Default: Impostor*<br/>
 This settings control what will happen when The Officer attempts to kill someone in the game.
-- Impostor: The Sheriff can only kill the impostor. If The Officer attacks a Crewmate or The Joker The Officer will die. 
-- Joker: The Impostor and The Joker both can die to The Officer. If The Officer attacks a Crewmate The Officer will die 
+- Impostor: The Officer can only kill the impostor. If The Officer attacks a Crewmate or The Joker The Officer will die. 
+- Joker: The Officer can kill either Impostor(s) or the Joker. If The Officer attacks a Crewmate The Officer will die 
 - Crew Die: The Officer can kill both The Joker And Impostors without consequences. If The Officer attacks a Crewmate both the officer and the Crewmate die.
 - Anyone: The Officer can kill anyone without consequences.
   
