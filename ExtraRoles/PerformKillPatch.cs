@@ -15,7 +15,7 @@ namespace ExtraRolesMod
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                       (byte)CustomRPC.OfficerKill, Hazel.SendOption.None, -1);
             writer.Write(PlayerControl.LocalPlayer.PlayerId);
-            writer.Write(target.PlayerId); // kill target or suicide
+            writer.Write(target.PlayerId);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             PlayerControl.LocalPlayer.MurderPlayer(target);
             PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
@@ -56,22 +56,20 @@ namespace ExtraRolesMod
                 if (PlayerControl.LocalPlayer.isPlayerRole("Officer"))
                 {
                     if (PlayerTools.getOfficerCD() > 0)
-                    {
                         return false;
-                    }
 
                     var isTargetJoker = target.isPlayerRole("Joker");
                     var isTargetImpostor = target.Data.IsImpostor;
-                    var officerKillSetting = (OfficerKillBehaviour) Main.Config.officerKillBehaviour;
+                    var officerKillSetting = Main.Config.officerKillBehaviour;
                     if (target.isPlayerImmortal())
                     {
                         // suicide packet
                         WriteKillRpc(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
                         BreakShield(false);
                     }
-                    else if ((officerKillSetting == OfficerKillBehaviour.OfficerSurvives // don't care who it is, kill them
+                    else if (officerKillSetting == OfficerKillBehaviour.OfficerSurvives // don't care who it is, kill them
                         || isTargetImpostor // impostors always die
-                        || officerKillSetting == OfficerKillBehaviour.Joker && isTargetJoker)) // joker can die and target is joker
+                        || officerKillSetting == OfficerKillBehaviour.Joker && isTargetJoker) // joker can die and target is joker
                     {
                         // kill target
                         WriteKillRpc(PlayerControl.LocalPlayer, target);
@@ -87,7 +85,6 @@ namespace ExtraRolesMod
                         WriteKillRpc(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
                     }
 
-                    System.Console.WriteLine("Error: There is an undhandled setting case: {0}", officerKillSetting);
                     return false;
                 }
 
