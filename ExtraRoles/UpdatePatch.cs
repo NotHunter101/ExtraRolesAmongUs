@@ -180,7 +180,7 @@ namespace ExtraRolesMod
                     continue;
                 if (PlayerControl.LocalPlayer.isPlayerRole(roleName) ||
                     showRole ||
-                    Main.Config.jokerCanSeeRoles && PlayerControl.LocalPlayer.isPlayerRole("Joker")))
+                    Main.Config.jokerCanSeeRoles && PlayerControl.LocalPlayer.isPlayerRole("Joker"))
                     role.PlayerControl.nameText.Color = roleColor;
             }
 

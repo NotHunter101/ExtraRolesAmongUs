@@ -66,7 +66,7 @@ namespace ExtraRolesMod
         public static CustomToggleOption
             jokerCanVent = CustomOption.AddToggle("Joker Can Vent", true);
         public static CustomToggleOption
-            jokerCanSeeImposters = CustomOption.AddToggle("Joker Can See Imposters", true);
+            jokerCanSeeImpostors = CustomOption.AddToggle("Joker Can See Imposters", true);
         public static CustomToggleOption
             jokerCanSeeRoles = CustomOption.AddToggle("Joker Can See Roles", true);
 
