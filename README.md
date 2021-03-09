@@ -20,7 +20,7 @@ Their goal is to locate the Impostor and deliver vigilante justice, but if they 
   
 ## Engineer
 The Engineer can repair one emergency per game from anywhere on the entire map.
-The other ability of The Engineer is that they are able to use the vents that were previously exclusive to Impostors.
+The other ablity of The Engineer is that they are able to use the vents that were previously exclusive to Impostors.
 
 ## Joker
 The Joker is interesting; they aren't part of the Crewmates **or** Impostors, and they can only win by being falsely convicted as an Impostor.
@@ -30,26 +30,24 @@ The Joker also has no tasks.
 # Installation
 
 Here's a quick video if you can't be bothered to read the steps: https://youtu.be/gtuqYsdir_k  
-For the rest of you, here are the installation instructions.  
+For the rest of you, here's the installation instructions.  
   
 ## Instructions
   
-  
-1) Make sure you have installed [vc_redist](https://aka.ms/vs/16/release/vc_redist.x86.exe) https://aka.ms/vs/16/release/vc_redist.x86.exe
-2) Download the latest release from the [releases](https://github.com/NotHunter101/ExtraRolesAmongUs/releases) tab.
-3) If you do not have WinRar, install it from here: https://www.rarlab.com/
-4) Once WinRar is installed, open the .rar file you downloaded from the releases tab.
-5) Go to the Among Us install directory. On Steam, right-click the game, hover over "Manage", and click "Browse Local Files"
-6) Drag every single file inside the downloaded .rar into your Among Us directory. (The folder that contains Among Us.exe)
-7) Run the game. The mod will take pretty long to start the first time, but after that, it will start at about the same speed.
-8) To verify the mod is installed, look at the text in the top left of the menu screen.
-9) Make sure it says "Mods: 3" and "Extra Roles Mod vX.X.X Loaded." (X.X.X being the current version number)
+1) Download the latest release from the releases tab.
+2) If you do not have WinRar, install it from here: https://www.rarlab.com/
+3) Once WinRar is installed, open the .rar file you downloaded from the releases tab.
+4) Go to the Among Us install directory. On Steam, right click the game, hover over manage, and click "Browse Local Files"
+4) Drag every single file inside the downloaded .rar into your Among Us directory. (The folder that contains Among Us.exe)
+5) Run the game. The mod will take pretty long to start the first time, but after that, it will start at about the same speed.
+6) To verify the mod is installed, look at the text in the top left of the menu screen.
+7) Make sure it says "Mods: 3" and "Extra Roles Mod vX.X.X Loaded." (X.X.X being the current version number)
 
 # Game Options
   
 ## Show Medic
 *Default: false*<br/>
-This is the game setting that toggles whether the Medic's name is lit up green for everybody in the game, or just themselves.
+This is the game setting that toggles wether the Medic's name is lit up green for everybody in the game, or just themselves.
   
 ## Show Shielded Player
 *Default: true*<br/>
@@ -77,7 +75,7 @@ If this setting is enabled, The Jokers's name will be lit up grey for everyone. 
   
 ## Joker Can Die To Officer
 *Default: true*<br/>
-If this setting is enabled, The Officer will be able to kill The Joker without repercussion. If it's disabled, killing The Joker will execute as if they were a Crewmate.
+If this setting is enabled, The Officer will be able to kill The Joker without reprecussion. If it's disabled, killing The Joker will execute as if they were a Crewmate.
   
 ### Time Where Medic Reports Will Have Name
 *Default: 5*<br/>
@@ -124,7 +122,7 @@ If you ever need to talk to someone for help fixing an issue, want to report a b
 # Resources
 https://github.com/NuclearPowered/Reactor The framework the mod uses.  
 https://github.com/BepInEx For hooking game functions.  
-https://github.com/Impostor/Impostor For running a non-official server. (currently, the anti-cheat breaks some features of the mod)  
+https://github.com/Impostor/Impostor For running a non-official server. (if you wish)  
 https://github.com/DorCoMaNdO/Reactor-Essentials For creating custom game options easily.  
 https://github.com/Woodi-dev/Among-Us-Sheriff-Mod For code snippets.  
 https://github.com/tomozbot/SweeperMod For code snippets.  

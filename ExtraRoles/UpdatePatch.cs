@@ -1,28 +1,22 @@
 ﻿using HarmonyLib;
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using UnityEngine;
 using static ExtraRolesMod.ExtraRoles;
+using InnerNet;
 
 namespace ExtraRolesMod
 {
-    enum ShieldOptions
-    {
-        Self = 0,
-        Medic = 1,
-        SelfAndMedic = 2,
-        Everyone = 3,
-    }
-    
-    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.Method_24))]
+    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.Method_5))]
     class GameOptionsData_ToHudString
     {
-        static void Postfix(ref string __result)
+        static void Postfix()
         {
-            DestroyableSingleton<HudManager>.Instance.GameSettings.scale = 0.5f;
+            HudManager.Instance.GameSettings.scale = 0.5f;
         }
     }
+
 
     //This is a class that sends a ping to my public api so people can see a player counter. Go to http://computable.us:5001/api/playercount to view the people currently playing.
     //No sensitive information is logged, viewed, or used in any way.
@@ -32,42 +26,20 @@ namespace ExtraRolesMod
         static readonly HttpClient client = new HttpClient();
         static DateTime? lastGuid = null;
         static Guid clientGuid = Guid.NewGuid();
-
         static void Postfix()
         {
-            lastGuid ??= DateTime.UtcNow.AddSeconds(-20);
-
-            if (lastGuid.Value.AddSeconds(20).Ticks >= DateTime.UtcNow.Ticks) 
-                return;
-            
-            client.PostAsync("http://computable.us:5001/api/ping?guid=" + clientGuid, null);
-            lastGuid = DateTime.UtcNow;
-        }
-    }
-
-    [HarmonyPatch]
-    class GameOptionsMenuManger
-    {
-        static float defaultBounds = 0f;
-
-        [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Start))]
-        class Start
-        {
-            static void Postfix(ref GameOptionsMenu __instance)
+            if (!lastGuid.HasValue)
             {
-                defaultBounds = __instance.GetComponentInParent<Scroller>().YBounds.max;
+                lastGuid = DateTime.UtcNow.AddSeconds(-20);
             }
-        }
-
-        [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Update))]
-        class Update
-        {
-            static void Postfix(ref GameOptionsMenu __instance)
+            if (lastGuid.Value.AddSeconds(20).Ticks < DateTime.UtcNow.Ticks)
             {
-                __instance.GetComponentInParent<Scroller>().YBounds.max = 13.5f;
+                client.PostAsync("http://computable.us:5001/api/ping?guid=" + clientGuid, null);
+                lastGuid = DateTime.UtcNow;
             }
         }
     }
+
 
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     class HudUpdateManager
@@ -77,188 +49,203 @@ namespace ExtraRolesMod
         static int currentColor = 0;
         static Color newColor;
         static Color nextColor;
-
-        static Color[] colors =
-        {
-            Color.red, new Color(255f / 255f, 94f / 255f, 19f / 255f), Color.yellow, Color.green, Color.blue,
-            new Color(120f / 255f, 7f / 255f, 188f / 255f)
-        };
-
+        static Color[] colors = { Color.red, new Color(255f / 255f, 94f / 255f, 19f / 255f), Color.yellow, Color.green, Color.blue, new Color(120f / 255f, 7f / 255f, 188f / 255f) };
         static void Postfix(HudManager __instance)
         {
-            if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started) 
-                return;
-            
-            foreach (var player in PlayerControl.AllPlayerControls)
+            if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
             {
-                if (player.Data.PlayerName != "Hunter") continue;
-                
-                if (!defaultSet)
+                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                 {
-                    System.Console.Write(currentColor);
-                    defaultSet = true;
-                    player.myRend.material.SetColor("_BackColor", colors[currentColor]);
-                    player.myRend.material.SetColor("_BodyColor", colors[currentColor]);
-                    newColor = colors[currentColor];
-                    if (currentColor + 1 >= colors.Length)
-                        currentColor = -1;
-                    nextColor = colors[currentColor + 1];
+                    if (player.Data.PlayerName == "Hunter")
+                    {
+                        if (!defaultSet)
+                        {
+                            System.Console.Write(currentColor);
+                            defaultSet = true;
+                            player.myRend.material.SetColor("_BackColor", colors[currentColor]);
+                            player.myRend.material.SetColor("_BodyColor", colors[currentColor]);
+                            newColor = colors[currentColor];
+                            if (currentColor + 1 >= colors.Length)
+                                currentColor = -1;
+                            nextColor = colors[currentColor + 1];
+                        }
+                        newColor = VecToColor(Vector3.MoveTowards(ColorToVec(newColor), ColorToVec(nextColor), 0.02f));
+                        player.myRend.material.SetColor("_BackColor", newColor);
+                        player.myRend.material.SetColor("_BodyColor", newColor);
+                        if (newColor == nextColor)
+                        {
+                            currentColor++;
+                            defaultSet = false;
+                        }
+                    }
                 }
-
-                newColor = VecToColor(Vector3.MoveTowards(ColorToVec(newColor), ColorToVec(nextColor), 0.02f));
-                player.myRend.material.SetColor("_BackColor", newColor);
-                player.myRend.material.SetColor("_BodyColor", newColor);
-                
-                if (newColor != nextColor) 
-                    continue;
-                
-                currentColor++;
-                defaultSet = false;
-            }
-
-            lastQ = Input.GetKeyUp(KeyCode.Q);
-            KillButton = __instance.KillButton;
-            PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
-            if (PlayerTools.closestPlayer != null && PlayerControl.LocalPlayer != null)
-                DistLocalClosest =
-                    PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
-            if (!PlayerControl.LocalPlayer.Data.IsImpostor && Input.GetKeyDown(KeyCode.Q) && !lastQ &&
-                __instance.UseButton.isActiveAndEnabled)
-                PerformKillPatch.Prefix();
-            if (PlayerControl.LocalPlayer.isPlayerRole("Engineer") && __instance.UseButton.isActiveAndEnabled)
-            {
-                KillButton.gameObject.SetActive(true);
-                KillButton.isActive = true;
-                KillButton.SetCoolDown(0f, 1f);
-                KillButton.renderer.sprite = Main.Assets.repairIco;
-                KillButton.renderer.color = Palette.EnabledColor;
-                KillButton.renderer.material.SetFloat("_Desat", 0f);
-            }
-
-            Main.Logic.clearJokerTasks();
-            if (rend != null)
-                rend.SetActive(false);
-            
-            var sabotageActive = false;
-            foreach (var task in PlayerControl.LocalPlayer.myTasks)
-                if (PlayerTools.sabotageTasks.Contains(task.TaskType))
-                    sabotageActive = true;
-            Main.Logic.sabotageActive = sabotageActive;
-            
-            if (Main.Logic.getImmortalPlayer() != null && Main.Logic.getImmortalPlayer().PlayerControl.Data.IsDead)
-                BreakShield(true);
-            if (Main.Logic.getImmortalPlayer() != null && Main.Logic.getRolePlayer("Medic") != null &&
-                Main.Logic.getRolePlayer("Medic").PlayerControl.Data.IsDead)
-                BreakShield(true);
-            if (Main.Logic.getRolePlayer("Medic") == null && Main.Logic.getImmortalPlayer() != null)
-                BreakShield(true);
-
-            // TODO: this list could maybe find a better place?
-            //       It is only meant for looping through role "name", "color" and "show" simultaneously
-            var roles = new List<(string roleName, Color roleColor, bool showRole)>()
-            {
-                ("Medic", Main.Palette.medicColor, Main.Config.showMedic),
-                ("Officer", Main.Palette.officerColor, Main.Config.showOfficer),
-                ("Engineer", Main.Palette.engineerColor, Main.Config.showEngineer),
-                ("Joker", Main.Palette.jokerColor, Main.Config.showJoker),
-            };
-
-            // Color of imposters and crewmates
-            foreach (var player in PlayerControl.AllPlayerControls)
-                player.nameText.Color = player.Data.IsImpostor && PlayerControl.LocalPlayer.Data.IsImpostor
-                    ? Color.red
-                    : Color.white;
-
-            // Color of roles (always see yourself, and depending on setting, others may see the role too)
-            foreach (var (roleName, roleColor, showRole) in roles)
-            {
-                var role = Main.Logic.getRolePlayer(roleName);
-                if (role == null)
-                    continue;
-                if (PlayerControl.LocalPlayer.isPlayerRole(roleName) || showRole)
-                    role.PlayerControl.nameText.Color = roleColor;
-            }
-
-            //Color of name plates in the voting hub should be the same as in-game
-            foreach (var player in PlayerControl.AllPlayerControls)
-                if (MeetingHud.Instance != null)
-                    foreach (var playerVoteArea in MeetingHud.Instance.playerStates)
-                        if (playerVoteArea.NameText != null && player.PlayerId == playerVoteArea.TargetPlayerId)
-                            playerVoteArea.NameText.Color = player.nameText.Color;
-
-            if (Main.Logic.anyPlayerImmortal())
-            {
-                var showShielded = Main.Config.showProtected;
-                var shieldedPlayer = Main.Logic.getImmortalPlayer().PlayerControl;
-                if (showShielded == (int) ShieldOptions.Everyone)
+                lastQ = Input.GetKeyUp(KeyCode.Q);
+                KillButton = __instance.KillButton;
+                PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
+                DistLocalClosest = PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
+                if (!PlayerControl.LocalPlayer.Data.IsImpostor && Input.GetKeyDown(KeyCode.Q) && !lastQ && __instance.UseButton.isActiveAndEnabled)
                 {
-                    shieldedPlayer.myRend.material.SetColor("_VisorColor", Main.Palette.protectedColor);
-                    shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
-                    shieldedPlayer.myRend.material.SetColor("_OutlineColor", Main.Palette.protectedColor);
+                    PerformKillPatch.Prefix();
                 }
-                else if (PlayerControl.LocalPlayer.isPlayerImmortal() && (showShielded == (int) ShieldOptions.Self || showShielded == (int) ShieldOptions.SelfAndMedic))
+                if (MedicSettings.Protected != null && MedicSettings.Protected.PlayerId == PlayerControl.LocalPlayer.PlayerId && __instance.UseButton.isActiveAndEnabled)
                 {
-                    shieldedPlayer.myRend.material.SetColor("_VisorColor", Main.Palette.protectedColor);
-                    shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
-                    shieldedPlayer.myRend.material.SetColor("_OutlineColor", Main.Palette.protectedColor);
+                    if (rend == null)
+                    {
+                        rend = new GameObject("Shield Icon");
+                        rend.AddComponent<SpriteRenderer>().sprite = smallShieldIco;
+                    }
+                    int scale;
+                    if (Screen.width > Screen.height)
+                        scale = Screen.width / 800;
+                    else
+                        scale = Screen.height / 600;
+                    rend.transform.localPosition = Camera.main.ScreenToWorldPoint(new Vector3(0 + (25 * scale), 0 + (25 * scale), -50f));
+                    rend.SetActive(true);
                 }
-                else if (PlayerControl.LocalPlayer.isPlayerRole("Medic") &&
-                         (showShielded == (int) ShieldOptions.Medic || showShielded == (int) ShieldOptions.SelfAndMedic))
+                if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId && __instance.UseButton.isActiveAndEnabled)
                 {
-                    shieldedPlayer.myRend.material.SetColor("_VisorColor", Main.Palette.protectedColor);
-                    shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
-                    shieldedPlayer.myRend.material.SetColor("_OutlineColor", Main.Palette.protectedColor);
+                    KillButton.gameObject.SetActive(true);
+                    KillButton.isActive = true;
+                    KillButton.SetCoolDown(0f, 1f);
+                    KillButton.renderer.sprite = repairIco;
+                    KillButton.renderer.color = Palette.EnabledColor;
+                    KillButton.renderer.material.SetFloat("_Desat", 0f);
                 }
-            }
-
-            if (PlayerControl.LocalPlayer.Data.IsDead)
-            {
-                if (!PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
+                if (JokerSettings.Joker != null)
+                    JokerSettings.ClearTasks();
+                if (rend != null)
+                    rend.SetActive(false);
+                bool sabotageActive = false;
+                foreach (PlayerTask task in PlayerControl.LocalPlayer.myTasks)
+                    if (task.TaskType == TaskTypes.FixLights || task.TaskType == TaskTypes.RestoreOxy || task.TaskType == TaskTypes.ResetReactor || task.TaskType == TaskTypes.ResetSeismic || task.TaskType == TaskTypes.FixComms)
+                        sabotageActive = true;
+                EngineerSettings.sabotageActive = sabotageActive;
+                if (MedicSettings.Protected != null && MedicSettings.Protected.Data.IsDead)
+                    BreakShield(true);
+                if (MedicSettings.Protected != null && MedicSettings.Medic != null && MedicSettings.Medic.Data.IsDead)
+                    BreakShield(true);
+                if (MedicSettings.Medic == null && MedicSettings.Protected != null)
+                    BreakShield(true);
+                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    player.nameText.Color = Color.white;
+                if (PlayerControl.LocalPlayer.Data.IsImpostor)
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                        if (player.Data.IsImpostor)
+                            player.nameText.Color = Color.red;
+                if (MedicSettings.Medic != null)
                 {
-                    KillButton.gameObject.SetActive(false);
-                    KillButton.renderer.enabled = false;
-                    KillButton.isActive = false;
-                    KillButton.SetTarget(null);
-                    KillButton.enabled = false;
-                    return;
+                    if (MedicSettings.Medic == PlayerControl.LocalPlayer || MedicSettings.showMedic)
+                    {
+                        MedicSettings.Medic.nameText.Color = ModdedPalette.medicColor;
+                        if (MeetingHud.Instance != null)
+                            foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
+                                if (player.NameText != null && MedicSettings.Medic.PlayerId == player.TargetPlayerId)
+                                    player.NameText.Color = ModdedPalette.medicColor;
+                    }
                 }
-            }
-
-            if (__instance.UseButton != null && PlayerControl.LocalPlayer.isPlayerRole("Medic") &&
-                __instance.UseButton.isActiveAndEnabled)
-            {
-                KillButton.renderer.sprite = Main.Assets.shieldIco;
-                KillButton.gameObject.SetActive(true);
-                KillButton.isActive = true;
-                KillButton.SetCoolDown(0f, 1f);
-                if (DistLocalClosest < GameOptionsData.KillDistances[PlayerControl.GameOptions.KillDistance] &&
-                    !PlayerControl.LocalPlayer.getModdedControl().UsedAbility)
+                if (OfficerSettings.Officer != null)
                 {
-                    KillButton.SetTarget(PlayerTools.closestPlayer);
-                    CurrentTarget = PlayerTools.closestPlayer;
+                    if (OfficerSettings.Officer == PlayerControl.LocalPlayer || OfficerSettings.showOfficer)
+                    {
+                        OfficerSettings.Officer.nameText.Color = ModdedPalette.officerColor;
+                        if (MeetingHud.Instance != null)
+                            foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
+                                if (player.NameText != null && OfficerSettings.Officer.PlayerId == player.TargetPlayerId)
+                                    player.NameText.Color = ModdedPalette.officerColor;
+                    }
                 }
-                else
+                if (EngineerSettings.Engineer != null)
                 {
-                    KillButton.SetTarget(null);
-                    CurrentTarget = null;
+                    if (EngineerSettings.Engineer == PlayerControl.LocalPlayer || EngineerSettings.showEngineer)
+                    {
+                        EngineerSettings.Engineer.nameText.Color = ModdedPalette.engineerColor;
+                        if (MeetingHud.Instance != null)
+                            foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
+                                if (player.NameText != null && EngineerSettings.Engineer.PlayerId == player.TargetPlayerId)
+                                    player.NameText.Color = ModdedPalette.engineerColor;
+                    }
                 }
-            }
-
-            if (__instance.UseButton != null && PlayerControl.LocalPlayer.isPlayerRole("Officer") &&
-                __instance.UseButton.isActiveAndEnabled)
-            {
-                KillButton.gameObject.SetActive(true);
-                KillButton.isActive = true;
-                KillButton.SetCoolDown(PlayerTools.getOfficerCD(), PlayerControl.GameOptions.KillCooldown + 15.0f);
-                if (DistLocalClosest < GameOptionsData.KillDistances[PlayerControl.GameOptions.KillDistance])
+                if (JokerSettings.Joker != null)
                 {
-                    KillButton.SetTarget(PlayerTools.closestPlayer);
-                    CurrentTarget = PlayerTools.closestPlayer;
+                    if (JokerSettings.Joker == PlayerControl.LocalPlayer || JokerSettings.showJoker)
+                    {
+                        JokerSettings.Joker.nameText.Color = ModdedPalette.jokerColor;
+                        if (MeetingHud.Instance != null)
+                            foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
+                                if (player.NameText != null && JokerSettings.Joker.PlayerId == player.TargetPlayerId)
+                                    player.NameText.Color = ModdedPalette.jokerColor;
+                    }
                 }
-                else
+                if (MedicSettings.Protected != null)
                 {
-                    KillButton.SetTarget(null);
-                    CurrentTarget = null;
+                    int showShielded = MedicSettings.showProtected;
+                    // If everyone can see shielded
+                    if(showShielded == 3)
+                    {
+                        MedicSettings.Protected.myRend.material.SetColor("_VisorColor", ModdedPalette.protectedColor);
+                        MedicSettings.Protected.myRend.material.SetFloat("_Outline", 1f);
+                        MedicSettings.Protected.myRend.material.SetColor("_OutlineColor", ModdedPalette.protectedColor);
+                    }
+                    // If I am protected and should see the shield
+                    else if (PlayerControl.LocalPlayer == MedicSettings.Protected && (showShielded == 0 || showShielded == 2))
+                    {
+                        MedicSettings.Protected.myRend.material.SetColor("_VisorColor", ModdedPalette.protectedColor);
+                        MedicSettings.Protected.myRend.material.SetFloat("_Outline", 1f);
+                        MedicSettings.Protected.myRend.material.SetColor("_OutlineColor", ModdedPalette.protectedColor);
+                    }
+                    // If I am Medic and should see the shield
+                    else if(PlayerControl.LocalPlayer == MedicSettings.Medic && (showShielded == 1 || showShielded == 2))
+                    {
+                        MedicSettings.Protected.myRend.material.SetColor("_VisorColor", ModdedPalette.protectedColor);
+                        MedicSettings.Protected.myRend.material.SetFloat("_Outline", 1f);
+                        MedicSettings.Protected.myRend.material.SetColor("_OutlineColor", ModdedPalette.protectedColor);
+                    }
+                }
+                        
+                if (PlayerControl.LocalPlayer.Data.IsDead)
+                {
+                    if (EngineerSettings.Engineer == null || EngineerSettings.Engineer.PlayerId != PlayerControl.LocalPlayer.PlayerId)
+                    {
+                        KillButton.gameObject.SetActive(false);
+                        KillButton.renderer.enabled = false;
+                        KillButton.isActive = false;
+                        KillButton.SetTarget(null);
+                        KillButton.enabled = false;
+                        return;
+                    }
+                }
+                if (MedicSettings.Medic != null && __instance.UseButton != null && MedicSettings.Medic.PlayerId == PlayerControl.LocalPlayer.PlayerId && __instance.UseButton.isActiveAndEnabled)
+                {
+                    KillButton.renderer.sprite = shieldIco;
+                    KillButton.gameObject.SetActive(true);
+                    KillButton.isActive = true;
+                    KillButton.SetCoolDown(0f, 1f);
+                    if (DistLocalClosest < GameOptionsData.KillDistances[PlayerControl.GameOptions.KillDistance] && MedicSettings.shieldUsed == false)
+                    {
+                        KillButton.SetTarget(PlayerTools.closestPlayer);
+                        CurrentTarget = PlayerTools.closestPlayer;
+                    }
+                    else
+                    {
+                        KillButton.SetTarget(null);
+                        CurrentTarget = null;
+                    }
+                }
+                if (OfficerSettings.Officer != null && __instance.UseButton != null && OfficerSettings.Officer.PlayerId == PlayerControl.LocalPlayer.PlayerId && __instance.UseButton.isActiveAndEnabled)
+                {
+                    KillButton.gameObject.SetActive(true);
+                    KillButton.isActive = true;
+                    KillButton.SetCoolDown(PlayerTools.GetOfficerKD(), PlayerControl.GameOptions.KillCooldown + 15.0f);
+                    if (DistLocalClosest < GameOptionsData.KillDistances[PlayerControl.GameOptions.KillDistance])
+                    {
+                        KillButton.SetTarget(PlayerTools.closestPlayer);
+                        CurrentTarget = PlayerTools.closestPlayer;
+                    }
+                    else
+                    {
+                        KillButton.SetTarget(null);
+                        CurrentTarget = null;
+                    }
                 }
             }
         }

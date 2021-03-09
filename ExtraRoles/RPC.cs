@@ -1,7 +1,5 @@
-﻿using System;
-using HarmonyLib;
+﻿using HarmonyLib;
 using Hazel;
-using System.Linq;
 using static ExtraRolesMod.ExtraRoles;
 
 namespace ExtraRolesMod
@@ -40,11 +38,11 @@ namespace ExtraRolesMod
         SetTasks = 29,
         UpdateGameData = 30,
     }
-
     enum CustomRPC
     {
         SetMedic = 43,
         SetProtected = 44,
+        ShieldBreak = 45,
         SetOfficer = 46,
         OfficerKill = 47,
         SetEngineer = 48,
@@ -53,103 +51,146 @@ namespace ExtraRolesMod
         ResetVaribles = 51,
         SetLocalPlayers = 56,
         JokerWin = 57,
-        AttemptSound = 58
     }
 
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
     class HandleRpcPatch
     {
-        static void Postfix(byte HKHMBLJFLMC, MessageReader ALMCIJKELCP)
+        static void Postfix(byte __0, MessageReader __1)
         {
-            var packetId = HKHMBLJFLMC;
-            var reader = ALMCIJKELCP;
-
-            var setRole = new Action<string>(roleName =>
-            {
-                var roleId = ALMCIJKELCP.ReadByte();
-                foreach (var player in PlayerControl.AllPlayerControls)
-                    if (player.PlayerId == roleId)
-                        player.getModdedControl().Role = roleName;
-            });
-
+            byte packetId = __0;
+            MessageReader reader = __1;
             switch (packetId)
             {
-                case (byte) CustomRPC.AttemptSound:
-                    BreakShield(false);
+                case (byte)CustomRPC.ShieldBreak:
+                    if (MedicSettings.Protected != null)
+                    {
+                        MedicSettings.Protected.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
+                        MedicSettings.Protected.myRend.material.SetFloat("_Outline", 0f);
+                    }    
+                    MedicSettings.Protected = null;
                     break;
-                case (byte) CustomRPC.FixLights:
-                    var switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
+                case (byte)CustomRPC.FixLights:
+                    SwitchSystem switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
                     switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
                     break;
-                case (byte) CustomRPC.SetLocalPlayers:
+                case (byte)CustomRPC.SetLocalPlayers:
+                    ConsoleTools.Info("Setting Local Players...");
                     localPlayers.Clear();
                     localPlayer = PlayerControl.LocalPlayer;
-                    var localPlayerBytes = ALMCIJKELCP.ReadBytesAndSize();
-                    foreach (var id in localPlayerBytes)
-                    foreach (var player in PlayerControl.AllPlayerControls)
-                        if (player.PlayerId == id)
-                            localPlayers.Add(player);
-                    break;
-                case (byte) CustomRPC.ResetVaribles:
-                    Main.Config.SetConfigSettings();
-                    Main.Logic.AllModPlayerControl.Clear();
-                    killedPlayers.Clear();
-                    var crewmates = PlayerControl.AllPlayerControls.ToArray().ToList();
-                    foreach (var plr in crewmates)
-                        Main.Logic.AllModPlayerControl.Add(new ModPlayerControl
-                        {
-                            PlayerControl = plr, Role = "Impostor", UsedAbility = false, LastAbilityTime = null,
-                            Immortal = false
-                        });
-                    crewmates.RemoveAll(x => x.Data.IsImpostor);
-                    foreach (var plr in crewmates)
-                        plr.getModdedControl().Role = "Crewmate";
-                    break;
-                case (byte) CustomRPC.SetMedic:
-                    setRole("Medic");
-                    break;
-                case (byte) CustomRPC.SetProtected:
-                    var protectedId = ALMCIJKELCP.ReadByte();
-                    foreach (var player in PlayerControl.AllPlayerControls)
-                        if (player.PlayerId == protectedId)
-                            player.getModdedControl().Immortal = true;
-                    break;
-                case (byte) CustomRPC.SetOfficer:
-                    setRole("Officer");
-                    break;
-                case (byte) CustomRPC.OfficerKill:
-                    var killerId = ALMCIJKELCP.ReadByte();
-                    var killer = PlayerTools.getPlayerById(killerId);
+                    var localPlayerBytes = reader.ReadBytesAndSize();
 
-                    var targetId = ALMCIJKELCP.ReadByte();
-                    var target = PlayerTools.getPlayerById(targetId);
-
-                    killer.MurderPlayer(target);
-                    if (target.isPlayerImmortal())
-                        BreakShield(false);
-                    break;
-                case (byte) CustomRPC.SetEngineer:
-                    setRole("Engineer");
-                    break;
-                case (byte) CustomRPC.SetJoker:
-                    setRole("Joker");
-                    break;
-                case (byte) CustomRPC.JokerWin:
-                    foreach (var player in PlayerControl.AllPlayerControls)
+                    foreach (byte id in localPlayerBytes)
                     {
-                        if (player.isPlayerRole("Joker")) 
-                            continue;
-                        
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                        {
+                            if (player.PlayerId == id)
+                                localPlayers.Add(player);
+                        }
+                    }
+                    break;
+                case (byte)RPC.SetInfected:
+                    {
+                        ConsoleTools.Info("set infected.");
+                        break;
+                    }
+                case (byte)CustomRPC.ResetVaribles:
+                    {
+                        MedicSettings.ClearSettings();
+                        OfficerSettings.ClearSettings();
+                        EngineerSettings.ClearSettings();
+                        JokerSettings.ClearSettings();
+                        MedicSettings.SetConfigSettings();
+                        OfficerSettings.SetConfigSettings();
+                        EngineerSettings.SetConfigSettings();
+                        JokerSettings.SetConfigSettings();
+                        killedPlayers.Clear();
+                        break;
+                    }
+                case (byte)CustomRPC.SetMedic:
+                    {
+                        ConsoleTools.Info("Medic Set Through RPC!");
+                        byte MedicId = reader.ReadByte();
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                        {
+                            if (player.PlayerId == MedicId)
+                            {
+                                MedicSettings.Medic = player;
+                            }
+                        }
+                        break;
+                    }
+                case (byte)CustomRPC.SetProtected:
+                    {
+                        byte ProtectedId = reader.ReadByte();
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                        {
+                            if (player.PlayerId == ProtectedId)
+                            {
+                                MedicSettings.Protected = player;
+                            }
+                        }
+                        break;
+                    }
+                case (byte)CustomRPC.SetOfficer:
+                    {
+                        ConsoleTools.Info("Officer Set Through RPC!");
+                        byte OfficerId = reader.ReadByte();
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                        {
+                            if (player.PlayerId == OfficerId)
+                            {
+                                OfficerSettings.Officer = player;
+                            }
+                        }
+                        break;
+                    }
+                case (byte)CustomRPC.OfficerKill:
+                    {
+                        var killerid = reader.ReadByte();
+                        var targetid = reader.ReadByte();
+                        PlayerControl killer = PlayerTools.getPlayerById(killerid);
+                        PlayerControl target = PlayerTools.getPlayerById(targetid);
+                        killer.MurderPlayer(target);
+                        break;
+                    }
+                case (byte)CustomRPC.SetEngineer:
+                    {
+                        ConsoleTools.Info("Engineer Set Through RPC!");
+                        byte EngineerId = reader.ReadByte();
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                        {
+                            if (player.PlayerId == EngineerId)
+                            {
+                                EngineerSettings.Engineer = player;
+                            }
+                        }
+                        break;
+                    }
+                case (byte)CustomRPC.SetJoker:
+                    {
+                        ConsoleTools.Info("Joker Set Through RPC!");
+                        byte JokerId = reader.ReadByte();
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                        {
+                            if (player.PlayerId == JokerId)
+                            {
+                                JokerSettings.Joker = player;
+                            }
+                        }
+                        break;
+                    }
+                case (byte)CustomRPC.JokerWin:
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    {
                         player.RemoveInfected();
                         player.Die(DeathReason.Exile);
                         player.Data.IsDead = true;
                         player.Data.IsImpostor = false;
                     }
-
-                    var joker = Main.Logic.getRolePlayer("Joker").PlayerControl;
-                    joker.Revive();
-                    joker.Data.IsDead = false;
-                    joker.Data.IsImpostor = true;
+                    JokerSettings.Joker.Revive();
+                    JokerSettings.Joker.Data.IsDead = false;
+                    JokerSettings.Joker.Data.IsImpostor = true;
                     break;
             }
         }

@@ -1,54 +1,49 @@
 ﻿using ExtraRolesMod;
 using HarmonyLib;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using static ExtraRolesMod.ExtraRoles;
 
 namespace ExtraRoles
 {
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.LocalPlayer.CmdReportDeadBody))]
     class BodyReportPatch
     {
-        static void Postfix(PlayerControl __instance, GameData.PlayerInfo CAKODNGLPDF)
+        static void Postfix(PlayerControl __instance, GameData.PlayerInfo __0)
         {
             System.Console.WriteLine("Report Body!");
-            var matches = killedPlayers.Where(x => x.PlayerId == CAKODNGLPDF.PlayerId).ToArray();
-            DeadPlayer killer = null;
-
-            if (matches.Length > 0)
-                killer = matches[0];
-
-            if (killer == null)
-                return;
-            var isMedicAlive = __instance.isPlayerRole("Medic");
-            var areReportsEnabled = Main.Config.showReport;
-
-            if (!isMedicAlive || !areReportsEnabled)
-                return;
-            
-            var isUserMedic = PlayerControl.LocalPlayer.isPlayerRole("Medic");
-            if (!isUserMedic)
-                return;
-
-            var br = new BodyReport
+            byte reporterId = __instance.PlayerId;
+            DeadPlayer killer = killedPlayers.Where(x => x.PlayerId == __0.PlayerId).FirstOrDefault();
+            if (killer != null)
             {
-                Killer = PlayerTools.getPlayerById(killer.KillerId),
-                Reporter = __instance,
-                KillAge = (float) (DateTime.UtcNow - killer.KillTime).TotalMilliseconds,
-                DeathReason = killer.DeathReason
-            };
+                // If there is a Medic alive and Medic reported and reports are enabled
+                if (MedicSettings.Medic != null && reporterId == MedicSettings.Medic.PlayerId && MedicSettings.showReport)
+                {
+                    // If the user is the medic
+                    if (MedicSettings.Medic.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                    {
+                        // Create Body Report
+                        BodyReport br = new BodyReport();
+                        br.Killer = PlayerTools.getPlayerById(killer.KillerId);
+                        br.Reporter = br.Killer = PlayerTools.getPlayerById(killer.KillerId);
+                        br.KillAge = (float)(DateTime.UtcNow - killer.KillTime).TotalMilliseconds;
+                        br.DeathReason = killer.DeathReason;
+                        // Generate message
+                        var reportMsg = BodyReport.ParseBodyReport(br);
 
-            var reportMsg = BodyReport.ParseBodyReport(br);
-
-            if (string.IsNullOrWhiteSpace(reportMsg))
-                return;
-
-            if (AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance)
-            {
-                // Send the message through chat only visible to the medic
-                DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, reportMsg);
-            }
+                        // If message is not empty
+                        if (!string.IsNullOrWhiteSpace(reportMsg))
+                        {   
+                            
+                            if (AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance)
+                            {
+                                // Send the message through chat only visible to the medic
+                                DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, reportMsg);
+                            }
+                        }
+                    }
+                }
+            }       
         }
     }
 }
