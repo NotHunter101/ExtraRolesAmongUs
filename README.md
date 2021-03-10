@@ -77,9 +77,13 @@ If this setting is enabled, The Engineer's name will be lit up orange for everyo
 *Default: false*<br/>
 If this setting is enabled, The Jokers's name will be lit up grey for everyone. If it isn't, it will only be lit for themselves.
   
-## Joker Can Die To Officer
-*Default: true*<br/>
-If this setting is enabled, The Officer will be able to kill The Joker without repercussion. If it's disabled, killing The Joker will execute as if they were a Crewmate.
+## Officer Kill Behaviour
+*Default: Impostor*<br/>
+This settings control what will happen when The Officer attempts to kill someone in the game.
+- Impostor: The Officer can only kill the impostor. If The Officer attacks a Crewmate or The Joker The Officer will die. 
+- Joker: The Officer can kill either Impostor(s) or the Joker. If The Officer attacks a Crewmate The Officer will die 
+- Crew Die: The Officer can kill both The Joker And Impostors without consequences. If The Officer attacks a Crewmate both the officer and the Crewmate die.
+- Anyone: The Officer can kill anyone without consequences.
   
 ### Time Where Medic Reports Will Have Name
 *Default: 5*<br/>
