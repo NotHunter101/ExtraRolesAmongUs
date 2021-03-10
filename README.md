@@ -3,12 +3,10 @@ A BepInEx mod for Among Us that adds 4 new roles into the game.
 
 ![character infographic](./characterGraphic.png)
 
-# Dependency
-
-Install [vc_redist](https://aka.ms/vs/16/release/vc_redist.x86.exe)
-
 # Notice
 This mod will work on Innersloth servers, but everybody in the lobby has to have the same version of the mod. For help with installing the mod, getting it to work, or fixing an issue, join the [Discord](https://discord.gg/j2MVs4r6cc).
+
+**This mod cannot be installed on Android/IOS/Epic Games**
 
 # What does the mod add?
 
@@ -38,14 +36,16 @@ For the rest of you, here are the installation instructions.
   
 ## Instructions
   
-1) Download the latest release from the [releases](https://github.com/NotHunter101/ExtraRolesAmongUs/releases) tab.
-2) If you do not have WinRar, install it from here: https://www.rarlab.com/
-3) Once WinRar is installed, open the .rar file you downloaded from the releases tab.
-4) Go to the Among Us install directory. On Steam, right-click the game, hover over "Manage", and click "Browse Local Files"
-4) Drag every single file inside the downloaded .rar into your Among Us directory. (The folder that contains Among Us.exe)
-5) Run the game. The mod will take pretty long to start the first time, but after that, it will start at about the same speed.
-6) To verify the mod is installed, look at the text in the top left of the menu screen.
-7) Make sure it says "Mods: 3" and "Extra Roles Mod vX.X.X Loaded." (X.X.X being the current version number)
+  
+1) Make sure you have installed [vc_redist](https://aka.ms/vs/16/release/vc_redist.x86.exe) https://aka.ms/vs/16/release/vc_redist.x86.exe
+2) Download the latest release from the [releases](https://github.com/NotHunter101/ExtraRolesAmongUs/releases) tab.
+3) If you do not have WinRar, install it from here: https://www.rarlab.com/
+4) Once WinRar is installed, open the .rar file you downloaded from the releases tab.
+5) Go to the Among Us install directory. On Steam, right-click the game, hover over "Manage", and click "Browse Local Files"
+6) Drag every single file inside the downloaded .rar into your Among Us directory. (The folder that contains Among Us.exe)
+7) Run the game. The mod will take pretty long to start the first time, but after that, it will start at about the same speed.
+8) To verify the mod is installed, look at the text in the top left of the menu screen.
+9) Make sure it says "Mods: 3" and "Extra Roles Mod vX.X.X Loaded." (X.X.X being the current version number)
 
 # Game Options
   
@@ -77,9 +77,13 @@ If this setting is enabled, The Engineer's name will be lit up orange for everyo
 *Default: false*<br/>
 If this setting is enabled, The Jokers's name will be lit up grey for everyone. If it isn't, it will only be lit for themselves.
   
-## Joker Can Die To Officer
-*Default: true*<br/>
-If this setting is enabled, The Officer will be able to kill The Joker without repercussion. If it's disabled, killing The Joker will execute as if they were a Crewmate.
+## Officer Kill Behaviour
+*Default: Impostor*<br/>
+This settings control what will happen when The Officer attempts to kill someone in the game.
+- Impostor: The Officer can only kill the impostor. If The Officer attacks a Crewmate or The Joker The Officer will die. 
+- Joker: The Officer can kill either Impostor(s) or the Joker. If The Officer attacks a Crewmate The Officer will die 
+- Crew Die: The Officer can kill both The Joker And Impostors without consequences. If The Officer attacks a Crewmate both the officer and the Crewmate die.
+- Anyone: The Officer can kill anyone without consequences.
   
 ### Time Where Medic Reports Will Have Name
 *Default: 5*<br/>
