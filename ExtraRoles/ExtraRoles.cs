@@ -188,7 +188,7 @@ namespace ExtraRolesMod
         public static double DistLocalClosest;
         public static GameObject shieldIndicator = null;
         public static SpriteRenderer shieldRenderer = null;
-        public static string versionString = "v1.4.3b+joker-abilities-v1";
+        public static string versionString = "v1.4.3b";
 
         public class ModdedPalette
         {
