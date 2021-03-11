@@ -37,11 +37,15 @@ namespace ExtraRolesMod
         public static CustomNumberOption OfficerKillCooldown =
             CustomOption.AddNumber("Officer Kill Cooldown", 30f, 10f, 60f, 2.5f);
 
-        public static CustomToggleOption playerMurderIndicator =
-            CustomOption.AddToggle("Murder Attempt Indicator for Shielded Player", false);
-
         public static CustomStringOption
             officerKillBehaviour = CustomOption.AddString("Officer Kill Behaviour", new[] { "Impostor", "Joker", "Crew Die", "Anyone" });
+
+        public static CustomToggleOption officerShouldDieToShieldedPlayers =
+            CustomOption.AddToggle("Officer Dies When Attacking Shielded Players", true);
+
+
+        public static CustomToggleOption playerMurderIndicator =
+            CustomOption.AddToggle("Murder Attempt Indicator for Shielded Player", false);
 
         public static CustomToggleOption medicReportSwitch = CustomOption.AddToggle("Show Medic Reports", true);
 

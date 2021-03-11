@@ -63,8 +63,11 @@ namespace ExtraRolesMod
                     var officerKillSetting = Main.Config.officerKillBehaviour;
                     if (target.isPlayerImmortal())
                     {
-                        // suicide packet
-                        WriteKillRpc(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
+                        if (Main.Config.officerShouldDieToShieldedPlayers)
+                        {
+                            // suicide packet
+                            WriteKillRpc(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
+                        }
                         BreakShield(false);
                     }
                     else if (officerKillSetting == OfficerKillBehaviour.OfficerSurvives // don't care who it is, kill them
