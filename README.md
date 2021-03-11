@@ -36,7 +36,7 @@ The Joker is interesting; they aren't part of the Crewmates **or** Impostors, an
 If The Joker get's voted off the ship, the game will end instantly.
 The Joker also has no tasks.
 
-# Releases :
+# Releases:
 | Among Us - Version | Mod Version | Link |
 |----------|-------------|-----------------|
 | **2021.3.5s** | v1.3.1-AU3.5s | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1(3.5s)/Extra.Roles.v.1.3.1-3.5s.zip) (latest version)
