@@ -1,10 +1,17 @@
+![character infographic](./characterGraphic.png)
+
 # Extra Roles
 A BepInEx mod for Among Us that adds 4 new roles into the game.
 
-![character infographic](./characterGraphic.png)
+- [Medic](#medic)
+- [Officer](#officer)
+- [Engineer](#engineer)
+- [Joker](#joker)
 
 # Notice
 This mod will work on Innersloth servers, but everybody in the lobby has to have the same version of the mod. For help with installing the mod, getting it to work, or fixing an issue, join the [Discord](https://discord.gg/j2MVs4r6cc).
+
+[![Discord](https://discord.com/assets/e4923594e694a21542a489471ecffa50.svg)](https://discord.gg/j2MVs4r6cc)
 
 **This mod cannot be installed on Android/IOS/Epic Games**
 
@@ -29,24 +36,29 @@ The Joker is interesting; they aren't part of the Crewmates **or** Impostors, an
 If The Joker get's voted off the ship, the game will end instantly.
 The Joker also has no tasks.
 
-# Installation
+# Releases :
+| Among Us - Version | Mod Version | Link |
+|----------|-------------|-----------------|
+| **2021.3.5s** | v1.3.1-AU3.5s | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1(3.5s)/Extra.Roles.v.1.3.1-3.5s.zip) (latest version)
+| **2021.3.5s** | v1.3.1-Custom | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1-c/Extra.Roles.v.1.3.1-custom.zip)
+| **2021.3.5s** | v1.3.1 | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1/Role.Mod.v.1.3.1.zip)
 
-Here's a quick video if you can't be bothered to read the steps: https://youtu.be/gtuqYsdir_k  
-For the rest of you, here are the installation instructions.  
   
 ## Instructions
-  
-  
-1) Make sure you have installed [vc_redist](https://aka.ms/vs/16/release/vc_redist.x86.exe) https://aka.ms/vs/16/release/vc_redist.x86.exe
-2) Download the latest release from the [releases](https://github.com/NotHunter101/ExtraRolesAmongUs/releases) tab.
-5) Go to the Among Us install directory. On Steam, right-click the game, hover over "Manage", and click "Browse Local Files"
-6) Drag every single file inside the downloaded .zip into your Among Us directory. (The folder that contains Among Us.exe)
-7) Run the game. The mod will take pretty long to start the first time, but after that, it will start at about the same speed as normal.
-8) To verify the mod is installed, look at the text in the top left of the menu screen.
-9) Make sure it says "Mods: 3" and "Extra Roles Mod vX.X.X Loaded." (X.X.X being the current version number)
+
+1) Download and unzip the latest release from the [releases](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/latest) tab.
+2) Go to the Among Us install directory. On Steam, right-click the game, hover over "Manage", and click "Browse Local Files"
+3) Drag every single file inside the downloaded .zip into your Among Us directory. (The folder that contains Among Us.exe)
+4) Run the game. The mod will take pretty long to start the first time, but after that, it will start at about the same speed as normal.
+5) To verify the mod is installed, look at the text in the top left of the menu screen.
+6) Make sure it says "Mods: 3" and "Extra Roles Mod vX.X.X Loaded." (X.X.X being the current version number)
+
+Not working? You might want to install the dependency [vc_redist](https://aka.ms/vs/16/release/vc_redist.x86.exe).
+
+For an easier understanding on how to use the mod, watch this video: https://youtu.be/gtuqYsdir_k
 
 # Game Options
-  
+
 ## Show Medic
 *Default: false*<br/>
 This is the game setting that toggles whether the Medic's name is lit up green for everybody in the game, or just themselves.
@@ -78,8 +90,8 @@ If this setting is enabled, The Jokers's name will be lit up grey for everyone. 
 ## Officer Kill Behaviour
 *Default: Impostor*<br/>
 This settings control what will happen when The Officer attempts to kill someone in the game.
-- Impostor: The Officer can only kill the impostor. If The Officer attacks a Crewmate or The Joker The Officer will die. 
-- Joker: The Officer can kill either Impostor(s) or the Joker. If The Officer attacks a Crewmate The Officer will die 
+- Impostor: The Officer can only kill the impostor. If The Officer attacks a Crewmate or The Joker The Officer will die.
+- Joker: The Officer can kill either Impostor(s) or the Joker. If The Officer attacks a Crewmate The Officer will die.
 - Crew Die: The Officer can kill both The Joker And Impostors without consequences. If The Officer attacks a Crewmate both the officer and the Crewmate die.
 - Anyone: The Officer can kill anyone without consequences.
   
@@ -89,46 +101,52 @@ The amount of time (in seconds) that The Medic will have to report the body sinc
 
 ## Time Where Medic Reports Will Have Color Type
 *Default: 20*<br/>
-The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's color type.  
-"color type" means either "lighter" or "darker", and a full list of colors and their types are included at the bottom of the page.  
+The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's color type.
+"color type" means either "lighter" or "darker", and a full list of colors and their types are included at the bottom of the page.
   
 ## Medic Spawn Chance
 *Default: 100*<br/>
-The percentage chance that anybody in the game will become The Medic.  
+The percentage chance that anybody in the game will become The Medic.
   
 ## Officer Spawn Chance
 *Default: 100*<br/>
-The percentage chance that anybody in the game will become The Officer.  
+The percentage chance that anybody in the game will become The Officer.
   
 ## Engineer Spawn Chance
 *Default: 100*<br/>
-The percentage chance that anybody in the game will become The Engineer.  
+The percentage chance that anybody in the game will become The Engineer.
   
 ## Joker Spawn Chance
 *Default: 100*<br/>
-The percentage chance that anybody in the game will become The Joker.  
+The percentage chance that anybody in the game will become The Joker.
 
 # Color Types
-Red is darker.  
-Blue is darker.  
-Green is darker.  
-Pink is lighter.  
-Orange is lighter.  
-Yellow is lighter.  
-Grey is darker.  
-White is lighter.  
-Purple is darker.  
-Brown is darker.  
-Cyan is lighter.  
-Lime is lighter.  
+- Red is darker.
+- Blue is darker.
+- Green is darker.
+- Pink is lighter.
+- Orange is lighter.
+- Yellow is lighter.
+- Grey is darker.
+- White is lighter.
+- Purple is darker.
+- Brown is darker.
+- Cyan is lighter.
+- Lime is lighter.
 
 # Bugs or feature suggestions
-If you ever need to talk to someone for help fixing an issue, want to report a bug, or suggest a feature, do not hesitate to join the mod [Discord Server](https://discord.gg/j2MVs4r6cc). 
+If you ever need to talk to someone for help fixing an issue, want to report a bug, or suggest a feature, do not hesitate to join the mod [Discord Server](https://discord.gg/j2MVs4r6cc).
+[![Discord](https://discord.com/assets/e4923594e694a21542a489471ecffa50.svg)](https://discord.gg/j2MVs4r6cc)
  
 # Resources
-https://github.com/NuclearPowered/Reactor The framework the mod uses.  
-https://github.com/BepInEx For hooking game functions.  
-https://github.com/Impostor/Impostor For running a non-official server. (currently, the anti-cheat breaks some features of the mod)  
-https://github.com/DorCoMaNdO/Reactor-Essentials For creating custom game options easily.  
-https://github.com/Woodi-dev/Among-Us-Sheriff-Mod For code snippets.  
-https://github.com/tomozbot/SweeperMod For code snippets.  
+- https://github.com/NuclearPowered/Reactor The framework the mod uses.
+
+- https://github.com/BepInEx For hooking game functions.
+
+- https://github.com/Impostor/Impostor For running a non-official server. (currently, the anti-cheat breaks some features of the mod)
+
+- https://github.com/DorCoMaNdO/Reactor-Essentials For creating custom game options easily.
+
+- https://github.com/Woodi-dev/Among-Us-Sheriff-Mod For code snippets.
+
+- https://github.com/tomozbot/SweeperMod For code snippets.
