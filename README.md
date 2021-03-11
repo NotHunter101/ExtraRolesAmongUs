@@ -94,7 +94,7 @@ The amount of time (in seconds) that The Medic will have to report the body sinc
 
 ## Joker Can Vent
 *Default: true*<br/>
-Allows the joker to use the vents.
+Allows the Joker to use the vents.
 
 ## Joker Can See Impostors
 *Default: true*<br/>
