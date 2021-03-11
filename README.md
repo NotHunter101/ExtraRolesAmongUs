@@ -39,11 +39,9 @@ For the rest of you, here are the installation instructions.
   
 1) Make sure you have installed [vc_redist](https://aka.ms/vs/16/release/vc_redist.x86.exe) https://aka.ms/vs/16/release/vc_redist.x86.exe
 2) Download the latest release from the [releases](https://github.com/NotHunter101/ExtraRolesAmongUs/releases) tab.
-3) If you do not have WinRar, install it from here: https://www.rarlab.com/
-4) Once WinRar is installed, open the .rar file you downloaded from the releases tab.
 5) Go to the Among Us install directory. On Steam, right-click the game, hover over "Manage", and click "Browse Local Files"
-6) Drag every single file inside the downloaded .rar into your Among Us directory. (The folder that contains Among Us.exe)
-7) Run the game. The mod will take pretty long to start the first time, but after that, it will start at about the same speed.
+6) Drag every single file inside the downloaded .zip into your Among Us directory. (The folder that contains Among Us.exe)
+7) Run the game. The mod will take pretty long to start the first time, but after that, it will start at about the same speed as normal.
 8) To verify the mod is installed, look at the text in the top left of the menu screen.
 9) Make sure it says "Mods: 3" and "Extra Roles Mod vX.X.X Loaded." (X.X.X being the current version number)
 
