@@ -91,7 +91,19 @@ The amount of time (in seconds) that The Medic will have to report the body sinc
 *Default: 20*<br/>
 The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's color type.  
 "color type" means either "lighter" or "darker", and a full list of colors and their types are included at the bottom of the page.  
-  
+
+## Joker Can Vent
+*Default: true*<br/>
+Allows the joker to use the vents.
+
+## Joker Can See Impostors
+*Default: true*<br/>
+The names of the Impostors will be displayed red to the Joker.
+
+## Joker Can See Roles
+*Default: true*<br/>
+The names of every role will be shown to the Joker in their color.
+
 ## Medic Spawn Chance
 *Default: 100*<br/>
 The percentage chance that anybody in the game will become The Medic.  

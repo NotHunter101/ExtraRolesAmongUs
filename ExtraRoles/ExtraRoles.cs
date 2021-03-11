@@ -221,13 +221,14 @@ namespace ExtraRolesMod
             public bool showEngineer { get; set; }
             public bool showJoker { get; set; }
             public OfficerKillBehaviour officerKillBehaviour { get; set; }
+            public bool jokerCanVent { get; set; }
+            public bool jokerCanSeeImpostors { get; set; }
+            public bool jokerCanSeeRoles { get; set; }
             public float medicSpawnChance { get; set; }
             public float engineerSpawnChance { get; set; }
             public float officerSpawnChance { get; set; }
             public float jokerSpawnChance { get; set; }
-            public bool jokerCanVent { get; set; }
-            public bool jokerCanSeeImpostors { get; set; }
-            public bool jokerCanSeeRoles { get; set; }
+            
 
             public void SetConfigSettings()
             {
@@ -242,13 +243,13 @@ namespace ExtraRolesMod
                 this.showEngineer = HarmonyMain.showEngineer.GetValue();
                 this.showJoker = HarmonyMain.showJoker.GetValue();
                 this.officerKillBehaviour = (OfficerKillBehaviour) HarmonyMain.officerKillBehaviour.GetValue();
+                this.jokerCanVent = HarmonyMain.jokerCanVent.GetValue();
+                this.jokerCanSeeImpostors = HarmonyMain.jokerCanSeeImpostors.GetValue();
+                this.jokerCanSeeRoles = HarmonyMain.jokerCanSeeRoles.GetValue();
                 this.medicSpawnChance = HarmonyMain.medicSpawnChance.GetValue();
                 this.engineerSpawnChance = HarmonyMain.engineerSpawnChance.GetValue();
                 this.officerSpawnChance = HarmonyMain.officerSpawnChance.GetValue();
                 this.jokerSpawnChance = HarmonyMain.jokerSpawnChance.GetValue();
-                this.jokerCanVent = HarmonyMain.jokerCanVent.GetValue();
-                this.jokerCanSeeImpostors = HarmonyMain.jokerCanSeeImpostors.GetValue();
-                this.jokerCanSeeRoles = HarmonyMain.jokerCanSeeRoles.GetValue();
             }
         }
 
