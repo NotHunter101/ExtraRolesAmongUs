@@ -4,6 +4,7 @@
         <Version>1.3.1</Version>
         <GameVersion>2021.3.5s</GameVersion>
         <Mappings>NuclearPowered/Mappings:0.2.0</Mappings>
+        <EssentialsVersion>Essentials-2021.3.5s</EssentialsVersion>
 
         <Description>A Reactor mod that adds four new roles to the game.</Description>
         <Authors>NotHunter101</Authors>
@@ -22,7 +23,7 @@
 
     <ItemGroup>
       <Reference Include="Essentials">
-        <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Among Us Modded\BepInEx\plugins\Essentials-2021.3.5s.dll</HintPath>
+          <HintPath>$(AmongUs)\BepInEx\plugins\$(EssentialsVersion).dll</HintPath>
       </Reference>
     </ItemGroup>
 
