@@ -3,6 +3,7 @@ using HarmonyLib;
 using Hazel;
 using System.Linq;
 using static ExtraRolesMod.ExtraRoles;
+using ExtraRoles.Medic;
 
 namespace ExtraRolesMod
 {
@@ -99,7 +100,7 @@ namespace ExtraRolesMod
                         Main.Logic.AllModPlayerControl.Add(new ModPlayerControl
                         {
                             PlayerControl = plr, Role = "Impostor", UsedAbility = false, LastAbilityTime = null,
-                            Immortal = false
+                            Immortal = ShieldState.None
                         });
                     crewmates.RemoveAll(x => x.Data.IsImpostor);
                     foreach (var plr in crewmates)
@@ -112,7 +113,7 @@ namespace ExtraRolesMod
                     var protectedId = ALMCIJKELCP.ReadByte();
                     foreach (var player in PlayerControl.AllPlayerControls)
                         if (player.PlayerId == protectedId)
-                            player.getModdedControl().Immortal = true;
+                            player.getModdedControl().Immortal = ShieldState.Intact;
                     break;
                 case (byte) CustomRPC.SetOfficer:
                     setRole("Officer");

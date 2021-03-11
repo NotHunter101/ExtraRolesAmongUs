@@ -1,3 +1,4 @@
+﻿using ExtraRoles.Medic;
 ﻿using ExtraRoles.Officer;
 using HarmonyLib;
 using Hazel;

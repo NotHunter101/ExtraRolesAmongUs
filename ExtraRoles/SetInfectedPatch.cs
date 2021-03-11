@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using ExtraRoles.Medic;
+using HarmonyLib;
 using Hazel;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace ExtraRolesMod
                 Main.Logic.AllModPlayerControl.Add(new ModPlayerControl
                 {
                     PlayerControl = plr, Role = "Impostor", UsedAbility = false, LastAbilityTime = null,
-                    Immortal = false
+                    Immortal = ShieldState.None
                 });
             crewmates.RemoveAll(x => x.Data.IsImpostor);
             foreach (var plr in crewmates)

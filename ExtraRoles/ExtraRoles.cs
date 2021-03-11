@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Reactor.Unstrip;
 using static ExtraRolesMod.ExtraRoles;
+using ExtraRoles.Medic;
 using ExtraRoles.Officer;
 
 namespace ExtraRolesMod
@@ -78,7 +79,7 @@ namespace ExtraRolesMod
         /// </summary>
         public static bool isPlayerImmortal(this PlayerControl plr)
         {
-            return plr.getModdedControl() != null && plr.getModdedControl().Immortal;
+            return plr.getModdedControl() != null && plr.getModdedControl().Immortal != ShieldState.None;
         }
 
         public static ModPlayerControl getModdedControl(this PlayerControl plr)
@@ -107,12 +108,12 @@ namespace ExtraRolesMod
 
             public ModPlayerControl getImmortalPlayer()
             {
-                return Main.Logic.AllModPlayerControl.Find(x => x.Immortal);
+                return Main.Logic.AllModPlayerControl.Find(x => x.Immortal != ShieldState.None);
             }
 
             public bool anyPlayerImmortal()
             {
-                return Main.Logic.AllModPlayerControl.FindAll(x => x.Immortal).Count > 0;
+                return Main.Logic.AllModPlayerControl.FindAll(x => x.Immortal != ShieldState.None).Count > 0;
             }
 
             public void clearJokerTasks()
@@ -157,7 +158,12 @@ namespace ExtraRolesMod
         public static void BreakShield(bool flag)
         {
             if (PlayerControl.LocalPlayer.isPlayerImmortal())
+            {
                 SoundManager.Instance.PlaySound(Main.Assets.breakClip, false, 100f);
+                PlayerControl.LocalPlayer.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
+                PlayerControl.LocalPlayer.myRend.material.SetFloat("_Outline", 0f);
+                PlayerControl.LocalPlayer.getModdedControl().Immortal = ShieldState.Broken;
+            }
 
             if (!flag)
                 return;
@@ -168,7 +174,7 @@ namespace ExtraRolesMod
             var immortal = Main.Logic.getImmortalPlayer();
             immortal.PlayerControl.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
             immortal.PlayerControl.myRend.material.SetFloat("_Outline", 0f);
-            immortal.Immortal = false;
+            immortal.Immortal = ShieldState.None;
         }
 
         public static GameObject rend;
@@ -199,7 +205,7 @@ namespace ExtraRolesMod
             public string Role { get; set; }
             public DateTime? LastAbilityTime { get; set; }
             public bool UsedAbility { get; set; }
-            public bool Immortal { get; set; }
+            public ShieldState Immortal { get; set; } = ShieldState.None;
         }
 
         public class ModdedConfig

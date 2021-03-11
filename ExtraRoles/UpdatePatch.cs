@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using ExtraRoles.Medic;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -192,22 +193,18 @@ namespace ExtraRolesMod
                 var shieldedPlayer = Main.Logic.getImmortalPlayer().PlayerControl;
                 if (showShielded == (int) ShieldOptions.Everyone)
                 {
-                    shieldedPlayer.myRend.material.SetColor("_VisorColor", Main.Palette.protectedColor);
-                    shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
-                    shieldedPlayer.myRend.material.SetColor("_OutlineColor", Main.Palette.protectedColor);
+                    GiveShieldedPlayerShield(shieldedPlayer);
                 }
                 else if (PlayerControl.LocalPlayer.isPlayerImmortal() && (showShielded == (int) ShieldOptions.Self || showShielded == (int) ShieldOptions.SelfAndMedic))
                 {
-                    shieldedPlayer.myRend.material.SetColor("_VisorColor", Main.Palette.protectedColor);
-                    shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
-                    shieldedPlayer.myRend.material.SetColor("_OutlineColor", Main.Palette.protectedColor);
+                   
+                    GiveShieldedPlayerShield(shieldedPlayer);
+
                 }
                 else if (PlayerControl.LocalPlayer.isPlayerRole("Medic") &&
                          (showShielded == (int) ShieldOptions.Medic || showShielded == (int) ShieldOptions.SelfAndMedic))
                 {
-                    shieldedPlayer.myRend.material.SetColor("_VisorColor", Main.Palette.protectedColor);
-                    shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
-                    shieldedPlayer.myRend.material.SetColor("_OutlineColor", Main.Palette.protectedColor);
+                    GiveShieldedPlayerShield(shieldedPlayer);
                 }
             }
 
@@ -260,6 +257,22 @@ namespace ExtraRolesMod
                     KillButton.SetTarget(null);
                     CurrentTarget = null;
                 }
+            }
+        }
+
+        private static void GiveShieldedPlayerShield(PlayerControl shieldedPlayer)
+        {
+            if (shieldedPlayer.getModdedControl().Immortal == ShieldState.Broken)
+            {
+                shieldedPlayer.myRend.material.SetColor("_VisorColor", Color.white);
+                shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
+                shieldedPlayer.myRend.material.SetColor("_OutlineColor", Color.white);
+            }
+            else
+            {
+                shieldedPlayer.myRend.material.SetColor("_VisorColor", Main.Palette.protectedColor);
+                shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
+                shieldedPlayer.myRend.material.SetColor("_OutlineColor", Main.Palette.protectedColor);
             }
         }
     }
