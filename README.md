@@ -18,10 +18,19 @@ This mod will work on Innersloth servers, but everybody in the lobby has to have
 # What does the mod add?
 
 ## Medic
+### **Team: Crewmates**
 The Medic can give any player a shield that will make them immortal. Although, if The Medic dies, the shield will break.
 The only exception is The Officer; they will still die if they try to kill a Crewmate.
 The Medic's other feature shows when they find a corpse: they can get a report that contains clues to the killer's identity.
 The type of information they get is based on a timer that can be configured inside the lobby.
+
+## Game Options:
+| Name | Description | Type | Default |
+|----------|:-------------:|:------:|:------:|
+| Snow Medic | This is the game setting that toggles whether the Medic's name is lit up green for everybody in the game, or just themselves. | Toggle | False |
+| Show Shielded Player | When The Medic shield's somebody, their visor will change to the color cyan. If this setting is set to 1, everybody can see the color change. If not, only the shielded player can see. | Toggle | True |
+| Murder Attempt Indicator For Shielded Player | If this setting is enabled, the shielded player will hear a *ting* noise when somebody tries (and fails) to murder them. | Toggle | True |
+-----------------------
   
 ## Officer
 The Officer is a class of Crewmate that is allowed to kill people, similar to Impostors.
