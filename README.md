@@ -187,3 +187,6 @@ If you ever need to talk to someone for help fixing an issue, want to report a b
 - https://github.com/Woodi-dev/Among-Us-Sheriff-Mod For code snippets.
 
 - https://github.com/tomozbot/SweeperMod For code snippets.
+
+# License
+This software is distributed under the GNU GPLv3 License. BepInEx is distributed under LGPL-2.1 License.
