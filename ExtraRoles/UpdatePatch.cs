@@ -178,16 +178,22 @@ namespace ExtraRolesMod
                 var role = Main.Logic.getRolePlayer(roleName);
                 if (role == null)
                     continue;
-                if (PlayerControl.LocalPlayer.isPlayerRole(roleName) || showRole)
+                if (PlayerControl.LocalPlayer.isPlayerRole(roleName) || showRole || PlayerControl.LocalPlayer.Data.IsDead)
                     role.PlayerControl.nameText.Color = roleColor;
             }
 
             //Color of name plates in the voting hub should be the same as in-game
-            foreach (var player in PlayerControl.AllPlayerControls)
-                if (MeetingHud.Instance != null)
-                    foreach (var playerVoteArea in MeetingHud.Instance.playerStates)
-                        if (playerVoteArea.NameText != null && player.PlayerId == playerVoteArea.TargetPlayerId)
-                            playerVoteArea.NameText.Color = player.nameText.Color;
+            if (MeetingHud.Instance != null)
+            {
+                foreach (var playerVoteArea in MeetingHud.Instance.playerStates)
+                {
+                    if (playerVoteArea.NameText == null) 
+                        continue;
+
+                    var player = PlayerTools.getPlayerById((byte)playerVoteArea.TargetPlayerId);
+                    playerVoteArea.NameText.Color = player.nameText.Color;
+                }
+            }
 
             if (Main.Logic.anyPlayerImmortal())
             {
