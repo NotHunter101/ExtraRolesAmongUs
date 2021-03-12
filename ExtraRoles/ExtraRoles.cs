@@ -101,7 +101,7 @@ namespace ExtraRolesMod
 
         public static void BreakShield(bool flag)
         {
-            if (PlayerControl.LocalPlayer.isPlayerImmortal())
+            if (PlayerControl.LocalPlayer.getModdedControl()?.Immortal == ShieldState.Broken)
             {
                 SoundManager.Instance.PlaySound(Main.Assets.breakClip, false, 100f);
                 PlayerControl.LocalPlayer.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
