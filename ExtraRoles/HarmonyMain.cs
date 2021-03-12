@@ -50,6 +50,13 @@ namespace ExtraRolesMod
 
         public static CustomNumberOption medicReportColorDuration =
             CustomOption.AddNumber("Time Where Medic Reports Will Have Color Type", 15, 0, 120, 2.5f);
+        
+        public static CustomToggleOption
+            jokerCanVent = CustomOption.AddToggle("Joker Can Vent", true);
+        public static CustomToggleOption
+            jokerCanSeeImpostors = CustomOption.AddToggle("Joker Can See Imposters", true);
+        public static CustomToggleOption
+            jokerCanSeeRoles = CustomOption.AddToggle("Joker Can See Roles", true);
 
         public static CustomNumberOption
             medicSpawnChance = CustomOption.AddNumber("Medic Spawn Chance", 100, 0, 100, 5);

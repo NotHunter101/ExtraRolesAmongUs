@@ -65,7 +65,7 @@ namespace ExtraRolesMod
         {
             static void Postfix(ref GameOptionsMenu __instance)
             {
-                __instance.GetComponentInParent<Scroller>().YBounds.max = 13.5f;
+                __instance.GetComponentInParent<Scroller>().YBounds.max = 15.5f;
             }
         }
     }
@@ -166,9 +166,11 @@ namespace ExtraRolesMod
 
             // Color of imposters and crewmates
             foreach (var player in PlayerControl.AllPlayerControls)
-                player.nameText.Color = player.Data.IsImpostor && PlayerControl.LocalPlayer.Data.IsImpostor
-                    ? Color.red
-                    : Color.white;
+            {
+                bool iAmImpostor = PlayerControl.LocalPlayer.Data.IsImpostor;
+                bool iAmJoker = PlayerControl.LocalPlayer.isPlayerRole("Joker");
+                player.nameText.Color = player.Data.IsImpostor && (iAmImpostor || iAmJoker && Main.Config.jokerCanSeeImpostors) ? Color.red : Color.white;
+            }
 
             // Color of roles (always see yourself, and depending on setting, others may see the role too)
             foreach (var (roleName, roleColor, showRole) in roles)
@@ -176,7 +178,9 @@ namespace ExtraRolesMod
                 var role = Main.Logic.getRolePlayer(roleName);
                 if (role == null)
                     continue;
-                if (PlayerControl.LocalPlayer.isPlayerRole(roleName) || showRole)
+                if (PlayerControl.LocalPlayer.isPlayerRole(roleName) ||
+                    showRole ||
+                    Main.Config.jokerCanSeeRoles && PlayerControl.LocalPlayer.isPlayerRole("Joker"))
                     role.PlayerControl.nameText.Color = roleColor;
             }
 
