@@ -13,7 +13,7 @@ This mod will work on Innersloth servers, but everybody in the lobby has to have
 
 [![Discord](https://discord.com/assets/e4923594e694a21542a489471ecffa50.svg)](https://discord.gg/j2MVs4r6cc)
 
-**This mod cannot be installed on Android/IOS/Epic Games**
+**This mod cannot be installed on Android/iOS/Epic Games/Microsoft Store**
 
 # What does the mod add?
 
