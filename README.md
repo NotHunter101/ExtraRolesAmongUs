@@ -10,9 +10,9 @@ A BepInEx mod for Among Us that adds 4 new roles into the game.
 # Notice
 This mod will work on Innersloth servers, but everybody in the lobby has to have the same version of the mod. For help with installing the mod, getting it to work, or fixing an issue, join the [Discord](https://discord.gg/j2MVs4r6cc).
 
-[![Discord](https://discord.com/assets/e4923594e694a21542a489471ecffa50.svg)](https://discord.gg/j2MVs4r6cc)
-
 **This mod cannot be installed on Android/iOS/Epic Games/Microsoft Store**
+
+[![Discord](https://discord.com/assets/e4923594e694a21542a489471ecffa50.svg)](https://discord.gg/j2MVs4r6cc)
 
 # What does the mod add?
 
