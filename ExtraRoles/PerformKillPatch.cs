@@ -23,6 +23,7 @@ namespace ExtraRolesMod
 
         private static void WriteGiveShieldRpc(PlayerControl target)
         {
+            PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
             Rpc<GiveShieldRpc>.Instance.Send(data: target.PlayerId, immediately: true);
         }
 

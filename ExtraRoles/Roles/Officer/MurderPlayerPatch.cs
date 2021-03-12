@@ -1,5 +1,6 @@
 ﻿using ExtraRoles.Medic;
 using ExtraRoles.Officer;
+using ExtraRoles.Roles.Medic;
 using ExtraRoles.Rpc;
 using ExtraRolesMod;
 using HarmonyLib;
