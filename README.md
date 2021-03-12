@@ -71,7 +71,7 @@ The Joker also has no tasks.
 ### Game Options
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
-| Show Joker | If this setting is enabled, The Jokers' name will be lit up grey for everyone. If it isn't, it will only be lit for themselves | Toggle | Off |
+| Show Joker | If this setting is enabled, The Joker's name will be lit up grey for everyone. If it isn't, it will only be lit for themselves | Toggle | Off |
 | Joker Spawn Chance | The percentage chance that anybody in the game will become The Joker | Number | 100% |
 -----------------------
 
