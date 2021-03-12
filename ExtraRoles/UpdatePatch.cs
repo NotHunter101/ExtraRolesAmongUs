@@ -168,7 +168,7 @@ namespace ExtraRolesMod
 
             // Color of imposters and crewmates
             foreach (var player in PlayerControl.AllPlayerControls)
-                player.nameText.Color = player.Data.IsImpostor && PlayerControl.LocalPlayer.Data.IsImpostor
+                player.nameText.Color = player.Data.IsImpostor && (PlayerControl.LocalPlayer.Data.IsImpostor || PlayerControl.LocalPlayer.Data.IsDead)
                     ? Color.red
                     : Color.white;
 
