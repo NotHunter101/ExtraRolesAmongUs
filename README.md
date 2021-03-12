@@ -79,8 +79,38 @@ The Joker also has no tasks.
 | Among Us - Version | Mod Version | Link |
 |----------|-------------|-----------------|
 | **2021.3.5s** | v1.3.1-AU3.5s | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1(3.5s)/Extra.Roles.v.1.3.1-3.5s.zip) (latest version)
-| **2021.3.5s** | v1.3.1-Custom | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1-c/Extra.Roles.v.1.3.1-custom.zip)
-| **2021.3.5s** | v1.3.1 | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1/Role.Mod.v.1.3.1.zip)
+| **2021.12.9s** | v1.3.1-Custom | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1-c/Extra.Roles.v.1.3.1-custom.zip)
+| **2021.12.9s** | v1.3.1 | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1/Role.Mod.v.1.3.1.zip)
+
+<details>
+  <summary> Changelog </summary>
+  <h3> <v> v1.3.1-AU3.5s </b> </h3>
+  <p> Fixes: </p>
+  <ul>
+    <li> Engineer being able to Fix every sabotage </li>
+    <li> The Investigator being able to revive people voted out (and instead made it an option) </li>
+    <li> Footprints not appearing if a person walks over old footprints </li>
+    <li> Graphical glitch where Jester and Lovers simultaneously win </li>
+    <li> Players spawning back into positions from the last game when time is rewound right at the beginning of a new game </li>
+    <li> Graphical Bug of Time Master's name not being blue in Meetings </li>
+    <li> Fixed Medbay Scan not working for custom colours </li>
+  </ul>
+  <hr>
+  <h3> <b> v1.0.2 </b> </h3>
+  <p> Fixes: </p>
+  <ul>
+    <li>  The Swapper being unable to vote </li>
+    Swapper unable to vote
+    <li> Mayor Vote Bank ending up negative </li>
+    <li> Anonymous Voting not working when Mayor is in a game </li>
+    <li> Chats not working in the lobby </li>
+    <li> Sheriff desync (I think) </li>
+    <li> Buttons being able to be used during meetings </li>
+  </ul>
+  <hr>
+  <h3> <b> v1.0.1 </b> </h3>
+  <p> Fixes errors of not being able to launch. </p>
+</details>
 
   
 ## Instructions
