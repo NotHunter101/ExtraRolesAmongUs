@@ -29,7 +29,10 @@ The type of information they get is based on a timer that can be configured insi
 |----------|:-------------:|:------:|:------:|
 | Snow Medic | This is the game setting that toggles whether the Medic's name is lit up green for everybody in the game, or just themselves | Toggle | False |
 | Show Shielded Player | When The Medic shield's somebody, their visor will change to the color cyan. If this setting is set to 1, everybody can see the color change. If not, only the shielded player can see | Toggle | True |
-| Murder Attempt Indicator For Shielded Player | If this setting is enabled, the shielded player will hear a *ting* noise when somebody tries (and fails) to murder them. | Toggle | True |
+| Murder Attempt Indicator For Shielded Player | If this setting is enabled, the shielded player will hear a *ting* noise when somebody tries (and fails) to murder them | Toggle | True |
+| Time Where Medic Reports Will Have Name | The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's name | Number | 5 |
+| Time Where Medic Reports Will Have Color Type | The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's color type. "color type" means either "lighter" or "darker", and a full list of colors and their types are included at the bottom of the page | Number | 20 |
+| Medic Spawn Chance | The percentage chance that anybody in the game will become The Medic | Number | 100% |
 -----------------------
   
 ## Officer
@@ -40,8 +43,10 @@ Their goal is to locate the Impostor and deliver vigilante justice, but if they 
 ### Game Options
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
-| Snow Officer | If this setting is enabled, The Officer's name will be lit up blue for everyone. If it isn't, it will only be lit for themselves | Toggle | 0% |
+| Snow Officer | If this setting is enabled, The Officer's name will be lit up blue for everyone. If it isn't, it will only be lit for themselves | Toggle | False |
 | Officer Kill Cooldown | This is the kill cooldown length for The Officer. The first cooldown on the first round will be equal to ten no matter what, just like the Impostor | Number | 30 |
+| Officer Kill Behaviour | This settings control what will happen when The Officer attempts to kill someone in the game | Toggle | Impostor |
+| Officer Spawn Chance | The percentage chance that anybody in the game will become The Officer | Number | 100% |
 -----------------------
   
 ## Engineer
@@ -53,6 +58,7 @@ The other ability of The Engineer is that they are able to use the vents that we
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Show Engineer | If this setting is enabled, The Engineer's name will be lit up orange for everyone. If it isn't, it will only be lit for themselves | Toggle | False |
+| Engineer Spawn Chance | The percentage chance that anybody in the game will become The Officer | Number | 100% |
 -----------------------
 
 ## Jester
@@ -65,6 +71,7 @@ The Joker also has no tasks.
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Show Jester | If this setting is enabled, The Jokers's name will be lit up grey for everyone. If it isn't, it will only be lit for themselves | Toggle | False |
+| Joker Spawn Chance | The percentage chance that anybody in the game will become The Joker | Number | 100% |
 -----------------------
 
 # Releases:
