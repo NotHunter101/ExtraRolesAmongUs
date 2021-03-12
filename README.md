@@ -79,7 +79,7 @@ The Joker also has no tasks.
 | Among Us - Version | Mod Version | Link |
 |----------|-------------|-----------------|
 | **2021.3.5s** | v1.3.1-AU3.5s | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1(3.5s)/Extra.Roles.v.1.3.1-3.5s.zip) (latest version)
-| **2021.12.9s** | v1.3.1 | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1/Role.Mod.v.1.3.1.zip)
+| **2020.12.9s** | v1.3.1 | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1/Role.Mod.v.1.3.1.zip)
   
 ## Install Instructions
 
