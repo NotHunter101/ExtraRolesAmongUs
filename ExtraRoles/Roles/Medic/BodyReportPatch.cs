@@ -1,4 +1,5 @@
-﻿using ExtraRolesMod;
+﻿using ExtraRoles.Roles;
+using ExtraRolesMod;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,10 @@ namespace ExtraRoles
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
     class BodyReportPatch
     {
-        static void Postfix(PlayerControl __instance, GameData.PlayerInfo CAKODNGLPDF)
+        static void Postfix(PlayerControl __instance, GameData.PlayerInfo PAIBDFDMIGK)
         {
             System.Console.WriteLine("Report Body!");
-            var matches = killedPlayers.Where(x => x.PlayerId == CAKODNGLPDF.PlayerId).ToArray();
+            var matches = killedPlayers.Where(x => x.PlayerId == PAIBDFDMIGK.PlayerId).ToArray();
             DeadPlayer killer = null;
 
             if (matches.Length > 0)
@@ -21,13 +22,13 @@ namespace ExtraRoles
 
             if (killer == null)
                 return;
-            var isMedicAlive = __instance.isPlayerRole("Medic");
+            var isMedicAlive = __instance.isPlayerRole(Role.Medic);
             var areReportsEnabled = Main.Config.showReport;
 
             if (!isMedicAlive || !areReportsEnabled)
                 return;
             
-            var isUserMedic = PlayerControl.LocalPlayer.isPlayerRole("Medic");
+            var isUserMedic = PlayerControl.LocalPlayer.isPlayerRole(Role.Medic);
             if (!isUserMedic)
                 return;
 

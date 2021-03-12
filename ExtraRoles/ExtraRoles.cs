@@ -6,6 +6,7 @@ using Reactor.Unstrip;
 using static ExtraRolesMod.ExtraRoles;
 using ExtraRoles.Medic;
 using ExtraRoles.Officer;
+using ExtraRoles.Roles;
 
 namespace ExtraRolesMod
 {
@@ -69,7 +70,7 @@ namespace ExtraRolesMod
 
     public static class Extensions
     {
-        public static bool isPlayerRole(this PlayerControl plr, string roleName)
+        public static bool isPlayerRole(this PlayerControl plr, Role roleName)
         {
             return plr.getModdedControl() != null && plr.getModdedControl().Role == roleName;
         }
@@ -101,7 +102,7 @@ namespace ExtraRolesMod
 
         public class ModdedLogic
         {
-            public ModPlayerControl getRolePlayer(string roleName)
+            public ModPlayerControl getRolePlayer(Role roleName)
             {
                 return Main.Logic.AllModPlayerControl.Find(x => x.Role == roleName);
             }
@@ -118,7 +119,7 @@ namespace ExtraRolesMod
 
             public void clearJokerTasks()
             {
-                var joker = Main.Logic.getRolePlayer("Joker");
+                var joker = Main.Logic.getRolePlayer(Role.Joker);
                 if (joker == null)
                     return;
                 var jokerControl = joker.PlayerControl;
@@ -202,7 +203,7 @@ namespace ExtraRolesMod
         public class ModPlayerControl
         {
             public PlayerControl PlayerControl { get; set; }
-            public string Role { get; set; }
+            public Role Role { get; set; }
             public DateTime? LastAbilityTime { get; set; }
             public bool UsedAbility { get; set; }
             public ShieldState Immortal { get; set; } = ShieldState.None;
