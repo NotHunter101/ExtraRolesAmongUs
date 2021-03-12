@@ -62,7 +62,7 @@ namespace ExtraRolesMod
                     }
                     else if (officerKillSetting == OfficerKillBehaviour.OfficerSurvives // don't care who it is, kill them
                         || isTargetImpostor // impostors always die
-                        || officerKillSetting  >= OfficerKillBehaviour.Joker && isTargetJoker) // joker can die and target is joker
+                        || (officerKillSetting  != OfficerKillBehaviour.Impostor && isTargetJoker)) // joker can die and target is joker
                     {
                         // kill target
                         SendOfficerKillRpc(target);
