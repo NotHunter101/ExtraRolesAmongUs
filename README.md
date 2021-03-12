@@ -6,7 +6,7 @@ A BepInEx mod for Among Us that adds 4 new roles into the game.
 - [Medic](#medic)
 - [Officer](#officer)
 - [Engineer](#engineer)
-- [Joker](#joker)
+- [Jester/Joker](#joker)
 
 # Notice
 This mod will work on Innersloth servers, but everybody in the lobby has to have the same version of the mod. For help with installing the mod, getting it to work, or fixing an issue, join the [Discord](https://discord.gg/j2MVs4r6cc).
@@ -27,23 +27,45 @@ The type of information they get is based on a timer that can be configured insi
 ## Game Options:
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
-| Snow Medic | This is the game setting that toggles whether the Medic's name is lit up green for everybody in the game, or just themselves. | Toggle | False |
-| Show Shielded Player | When The Medic shield's somebody, their visor will change to the color cyan. If this setting is set to 1, everybody can see the color change. If not, only the shielded player can see. | Toggle | True |
+| Snow Medic | This is the game setting that toggles whether the Medic's name is lit up green for everybody in the game, or just themselves | Toggle | False |
+| Show Shielded Player | When The Medic shield's somebody, their visor will change to the color cyan. If this setting is set to 1, everybody can see the color change. If not, only the shielded player can see | Toggle | True |
 | Murder Attempt Indicator For Shielded Player | If this setting is enabled, the shielded player will hear a *ting* noise when somebody tries (and fails) to murder them. | Toggle | True |
 -----------------------
   
 ## Officer
+### **Team Crewmates**
 The Officer is a class of Crewmate that is allowed to kill people, similar to Impostors.
 Their goal is to locate the Impostor and deliver vigilante justice, but if they accidentally shoot a Crewmate, they die instead.
+
+### Game Options
+| Name | Description | Type | Default |
+|----------|:-------------:|:------:|:------:|
+| Snow Officer | If this setting is enabled, The Officer's name will be lit up blue for everyone. If it isn't, it will only be lit for themselves | Toggle | 0% |
+| Officer Kill Cooldown | This is the kill cooldown length for The Officer. The first cooldown on the first round will be equal to ten no matter what, just like the Impostor | Number | 30 |
+-----------------------
   
 ## Engineer
+### **Team: Crewmates**
 The Engineer can repair one emergency per game from anywhere on the entire map.
 The other ability of The Engineer is that they are able to use the vents that were previously exclusive to Impostors.
 
-## Joker
-The Joker is interesting; they aren't part of the Crewmates **or** Impostors, and they can only win by being falsely convicted as an Impostor.
+### Game Options
+| Name | Description | Type | Default |
+|----------|:-------------:|:------:|:------:|
+| Show Engineer | If this setting is enabled, The Engineer's name will be lit up orange for everyone. If it isn't, it will only be lit for themselves | Toggle | False |
+-----------------------
+
+## Jester
+### Team: Neutral
+The Jester is interesting; they aren't part of the Crewmates **or** Impostors, and they can only win by being falsely convicted as an Impostor.
 If The Joker get's voted off the ship, the game will end instantly.
 The Joker also has no tasks.
+
+### Game Options
+| Name | Description | Type | Default |
+|----------|:-------------:|:------:|:------:|
+| Show Jester | If this setting is enabled, The Jokers's name will be lit up grey for everyone. If it isn't, it will only be lit for themselves | Toggle | False |
+-----------------------
 
 # Releases:
 | Among Us - Version | Mod Version | Link |
