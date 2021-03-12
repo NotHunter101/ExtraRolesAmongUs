@@ -6,7 +6,7 @@ A BepInEx mod for Among Us that adds 4 new roles into the game.
 - [Medic](#medic)
 - [Officer](#officer)
 - [Engineer](#engineer)
-- [Jester](#jester)
+- [Joker](#joker)
 
 # Notice
 This mod will work on Innersloth servers, but everybody in the lobby has to have the same version of the mod. For help with installing the mod, getting it to work, or fixing an issue, join the [Discord](https://discord.gg/j2MVs4r6cc).
@@ -62,16 +62,16 @@ The other ability of The Engineer is that they are able to use the vents that we
 | Engineer Spawn Chance | The percentage chance that anybody in the game will become The Officer | Number | 100% |
 -----------------------
 
-## Jester
+## Joker
 ### Team: Neutral
-The Jester is interesting; they aren't part of the Crewmates **or** Impostors, and they can only win by being falsely convicted as an Impostor.
+The Joker is interesting; they aren't part of the Crewmates **or** Impostors, and they can only win by being falsely convicted as an Impostor.
 If The Joker get's voted off the ship, the game will end instantly.
 The Joker also has no tasks.
 
 ### Game Options
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
-| Show Jester | If this setting is enabled, The Jokers's name will be lit up grey for everyone. If it isn't, it will only be lit for themselves | Toggle | Off |
+| Show Joker | If this setting is enabled, The Jokers' name will be lit up grey for everyone. If it isn't, it will only be lit for themselves | Toggle | Off |
 | Joker Spawn Chance | The percentage chance that anybody in the game will become The Joker | Number | 100% |
 -----------------------
 
@@ -79,10 +79,9 @@ The Joker also has no tasks.
 | Among Us - Version | Mod Version | Link |
 |----------|-------------|-----------------|
 | **2021.3.5s** | v1.3.1-AU3.5s | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1(3.5s)/Extra.Roles.v.1.3.1-3.5s.zip) (latest version)
-| **2021.12.9s** | v1.3.1-Custom | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1-c/Extra.Roles.v.1.3.1-custom.zip)
 | **2021.12.9s** | v1.3.1 | [Download](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/download/v1.3.1/Role.Mod.v.1.3.1.zip)
   
-## Instructions
+## Install Instructions
 
 1) Download and unzip the latest release from the [releases](https://github.com/NotHunter101/ExtraRolesAmongUs/releases/latest) tab.
 2) Go to the Among Us install directory. On Steam, right-click the game, hover over "Manage", and click "Browse Local Files"
