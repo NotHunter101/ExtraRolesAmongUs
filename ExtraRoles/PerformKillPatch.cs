@@ -16,6 +16,7 @@ namespace ExtraRolesMod
     {
         private static void SendOfficerKillRpc(PlayerControl target)
         {
+            PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
             var attacker = PlayerControl.LocalPlayer;
             Rpc<OfficerKillRpc>.Instance.Send(data: (Attacker: attacker, Target: target), immediately: true);
             Rpc<AttemptKillShieldedPlayerRpc>.Instance.Send(data: attacker.PlayerId, immediately: true);
