@@ -27,9 +27,10 @@ The type of information they get is based on a timer that can be configured insi
 ## Game Options:
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
-| Snow Medic | This is the game setting that toggles whether the Medic's name is lit up green for everybody in the game, or just themselves | Toggle | False |
-| Show Shielded Player | When The Medic shield's somebody, their visor will change to the color cyan. If this setting is set to 1, everybody can see the color change. If not, only the shielded player can see | Toggle | True |
-| Murder Attempt Indicator For Shielded Player | If this setting is enabled, the shielded player will hear a *ting* noise when somebody tries (and fails) to murder them | Toggle | True |
+| Snow Medic | This is the game setting that toggles whether the Medic's name is lit up green for everybody in the game, or just themselves | Toggle | Off |
+| Show Shielded Player | When The Medic shield's somebody, their visor will change to the color cyan. If this setting is set to 1, everybody can see the color change. If not, only the shielded player can see | Options | Self |
+| Murder Attempt Indicator For Shielded Player | If this setting is enabled, the shielded player will hear a *ting* noise when somebody tries (and fails) to murder them | Toggle | On |
+| Snow Medic Reports | When the medic reports the body and if this function is desactived, it will not show the Medic who reported it | Options | Off |
 | Time Where Medic Reports Will Have Name | The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's name | Number | 5 |
 | Time Where Medic Reports Will Have Color Type | The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's color type. "color type" means either "lighter" or "darker", and a full list of colors and their types are included at the bottom of the page | Number | 20 |
 | Medic Spawn Chance | The percentage chance that anybody in the game will become The Medic | Number | 100% |
@@ -43,9 +44,9 @@ Their goal is to locate the Impostor and deliver vigilante justice, but if they 
 ### Game Options
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
-| Snow Officer | If this setting is enabled, The Officer's name will be lit up blue for everyone. If it isn't, it will only be lit for themselves | Toggle | False |
+| Snow Officer | If this setting is enabled, The Officer's name will be lit up blue for everyone. If it isn't, it will only be lit for themselves | Toggle | Off |
 | Officer Kill Cooldown | This is the kill cooldown length for The Officer. The first cooldown on the first round will be equal to ten no matter what, just like the Impostor | Number | 30 |
-| Officer Kill Behaviour | This settings control what will happen when The Officer attempts to kill someone in the game | Toggle | Impostor |
+| Officer Kill Behaviour | This settings control what will happen when The Officer attempts to kill someone in the game | Options | Impostor |
 | Officer Spawn Chance | The percentage chance that anybody in the game will become The Officer | Number | 100% |
 -----------------------
   
@@ -57,7 +58,7 @@ The other ability of The Engineer is that they are able to use the vents that we
 ### Game Options
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
-| Show Engineer | If this setting is enabled, The Engineer's name will be lit up orange for everyone. If it isn't, it will only be lit for themselves | Toggle | False |
+| Show Engineer | If this setting is enabled, The Engineer's name will be lit up orange for everyone. If it isn't, it will only be lit for themselves | Toggle | Off |
 | Engineer Spawn Chance | The percentage chance that anybody in the game will become The Officer | Number | 100% |
 -----------------------
 
@@ -70,7 +71,7 @@ The Joker also has no tasks.
 ### Game Options
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
-| Show Jester | If this setting is enabled, The Jokers's name will be lit up grey for everyone. If it isn't, it will only be lit for themselves | Toggle | False |
+| Show Jester | If this setting is enabled, The Jokers's name will be lit up grey for everyone. If it isn't, it will only be lit for themselves | Toggle | Off |
 | Joker Spawn Chance | The percentage chance that anybody in the game will become The Joker | Number | 100% |
 -----------------------
 
