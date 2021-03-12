@@ -33,7 +33,7 @@ The type of information they get is based on a timer that can be configured insi
 -----------------------
   
 ## Officer
-### **Team Crewmates**
+### **Team: Crewmates**
 The Officer is a class of Crewmate that is allowed to kill people, similar to Impostors.
 Their goal is to locate the Impostor and deliver vigilante justice, but if they accidentally shoot a Crewmate, they die instead.
 
