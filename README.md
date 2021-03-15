@@ -43,7 +43,7 @@ Their goal is to locate the Impostor and deliver vigilante justice, but if they 
 ### Game Options
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
-| Snow Officer | If this setting is enabled, The Officer's name will be lit up blue for everyone. If it isn't, it will only be lit for themselves | Toggle | Off |
+| Show Officer | If this setting is enabled, The Officer's name will be lit up blue for everyone. If it isn't, it will only be lit for themselves | Toggle | Off |
 | Officer Kill Cooldown | This is the kill cooldown length for The Officer. The first cooldown on the first round will be equal to ten no matter what, just like the Impostor | Number | 30 |
 | Officer Kill Behaviour | This settings control what will happen when The Officer attempts to kill someone in the game | Options | Impostor |
 | Officer Spawn Chance | The percentage chance that anybody in the game will become The Officer | Number | 100% |
