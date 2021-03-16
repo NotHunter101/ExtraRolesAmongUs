@@ -27,7 +27,7 @@ The type of information they get is based on a timer that can be configured insi
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Snow Medic | This is the game setting that toggles whether the Medic's name is lit up green for everybody in the game, or just themselves | Toggle | Off |
-| Show Shielded Player | When The Medic shield's somebody, their visor will change to the color cyan. If this setting is set to 1, everybody can see the color change. If not, only the shielded player can see | Options | Self |
+| Show Shielded Player | When The Medic shields somebody, their visor will change to the color cyan. If this setting is set to 1, everybody can see the color change. If not, only the shielded player can see | Options | Self |
 | Murder Attempt Indicator For Shielded Player | If this setting is enabled, the shielded player will hear a *ting* noise when somebody tries (and fails) to murder them | Toggle | On |
 | Snow Medic Reports | When the medic reports the body and if this function is desactived, it will not show the Medic who reported it | Options | Off |
 | Time Where Medic Reports Will Have Name | The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's name | Number | 5 |
