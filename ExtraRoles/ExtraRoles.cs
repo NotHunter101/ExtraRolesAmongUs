@@ -165,6 +165,7 @@ namespace ExtraRolesMod
             public bool showEngineer { get; set; }
             public bool showJoker { get; set; }
             public OfficerKillBehaviour officerKillBehaviour { get; set; }
+            public bool officerShouldDieToShieldedPlayers { get; set; }
             public float medicSpawnChance { get; set; }
             public float engineerSpawnChance { get; set; }
             public float officerSpawnChance { get; set; }
@@ -183,6 +184,7 @@ namespace ExtraRolesMod
                 this.showEngineer = HarmonyMain.showEngineer.GetValue();
                 this.showJoker = HarmonyMain.showJoker.GetValue();
                 this.officerKillBehaviour = (OfficerKillBehaviour) HarmonyMain.officerKillBehaviour.GetValue();
+                this.officerShouldDieToShieldedPlayers = HarmonyMain.officerShouldDieToShieldedPlayers.GetValue();
                 this.medicSpawnChance = HarmonyMain.medicSpawnChance.GetValue();
                 this.engineerSpawnChance = HarmonyMain.engineerSpawnChance.GetValue();
                 this.officerSpawnChance = HarmonyMain.officerSpawnChance.GetValue();
