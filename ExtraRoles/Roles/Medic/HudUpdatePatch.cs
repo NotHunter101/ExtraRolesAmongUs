@@ -19,13 +19,6 @@ namespace ExtraRolesMod.Roles.Medic
 
         public static void Postfix()
         {
-            if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Ended)
-            {
-                MedicShieldButton?.Dispose();
-                MedicShieldButton = null;
-                return;
-            }
-
             if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started)
                 return;
 
@@ -35,25 +28,24 @@ namespace ExtraRolesMod.Roles.Medic
             if (PlayerControl.LocalPlayer.Data.IsDead)
                 return;
 
-            if (MedicShieldButton == null)
-            {
-                AddMedicShieldButton();
-            }
-            else
+            if (MedicShieldButton != null)
             {
                 MedicShieldButton.Clickable = PlayerControl.LocalPlayer.FindClosestPlayer() != null;
             }
         }
 
-        private static void AddMedicShieldButton()
+        public static void AddMedicShieldButton()
         {
-            var pos1 = HudManager.Instance.KillButton.transform.localPosition;
-            var x = pos1.x;
-            x = x * 2 - 1.3F;
+            if (MedicShieldButton == null)
+            {
+                var pos1 = HudManager.Instance.KillButton.transform.localPosition;
+                var x = pos1.x;
+                x = x * 2 - 1.3F;
 
-            MedicShieldButton = new CooldownButton(Main.Assets.shieldIco, new Vector2(x, 0f), 1f, 0f, 0f);
-            MedicShieldButton.OnClick += MedicShieldButton_OnClick;
-            System.Console.WriteLine("Added Medic Shield button");
+                MedicShieldButton = new CooldownButton(Main.Assets.shieldIco, new Vector2(x, 0f), 1f, 0f, 0f);
+                MedicShieldButton.OnClick += MedicShieldButton_OnClick;
+            }
+            MedicShieldButton.Visible = false;
         }
 
         private static void MedicShieldButton_OnClick(object sender, System.ComponentModel.CancelEventArgs e)

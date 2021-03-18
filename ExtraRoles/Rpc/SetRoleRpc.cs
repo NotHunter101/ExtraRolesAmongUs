@@ -18,7 +18,23 @@ namespace ExtraRolesMod.Rpc
 
         public override void Handle(PlayerControl innerNetObject, SetRoleData role)
         {
-            PlayerTools.getPlayerById(role.Player).getModdedControl().Role = role.Role;
+            var player = PlayerTools.getPlayerById(role.Player);
+            player.getModdedControl().Role = role.Role;
+            if (!player.AmOwner)
+                return;
+
+            switch (role.Role)
+            {
+                case Role.Officer:
+                    Roles.Officer.HudUpdatePatch.OfficerKillButton.Visible = true;
+                    break;
+                case Role.Engineer:
+                    Roles.Engineer.HudUpdatePatch.EngineerButton.Visible = true;
+                    break;
+                case Role.Medic:
+                    Roles.Medic.HudUpdatePatch.MedicShieldButton.Visible = true;
+                    break;
+            }
         }
 
         public override SetRoleData Read(MessageReader reader)

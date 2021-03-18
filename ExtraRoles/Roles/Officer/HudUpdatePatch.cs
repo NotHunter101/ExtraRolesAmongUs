@@ -22,18 +22,13 @@ namespace ExtraRolesMod.Roles.Officer
 
         public static void Postfix()
         {
-            if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Ended)
-            {
-                OfficerKillButton?.Dispose();
-                OfficerKillButton = null;
-                return;
-            }
-
             if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started)
                 return;
 
             if (!PlayerControl.LocalPlayer.isPlayerRole(Role.Officer))
+            {
                 return;
+            }
 
             if (PlayerControl.LocalPlayer.Data.IsDead)
                 return;
@@ -53,17 +48,19 @@ namespace ExtraRolesMod.Roles.Officer
             }
         }
 
-        private static void AddOfficerKillButton()
+        public static void AddOfficerKillButton()
         {
-            var sprite = UnityEngine.Object.Instantiate(HudManager.Instance.KillButton.renderer.sprite);
-            var pos1 = HudManager.Instance.KillButton.transform.localPosition;
-            var x = pos1.x;
-            x = x * 2 - 1.3F;
+            if (OfficerKillButton == null)
+            {
+                var sprite = UnityEngine.Object.Instantiate(HudManager.Instance.KillButton.renderer.sprite);
+                var pos1 = HudManager.Instance.KillButton.transform.localPosition;
+                var x = pos1.x;
+                x = x * 2 - 1.3F;
 
-
-            OfficerKillButton = new CooldownButton(sprite, new Vector2(x, 0f), Main.Config.OfficerCD, 0f, 10f);
-            OfficerKillButton.OnClick += OfficerKillButton_OnClick;
-            System.Console.WriteLine("Added Officer Kill button");
+                OfficerKillButton = new CooldownButton(sprite, new Vector2(x, 0f), Main.Config.OfficerCD, 0f, 10f);
+                OfficerKillButton.OnClick += OfficerKillButton_OnClick;
+            }
+            OfficerKillButton.Visible = false;
         }
 
         public static void OfficerKillButton_OnClick(object sender, CancelEventArgs e)

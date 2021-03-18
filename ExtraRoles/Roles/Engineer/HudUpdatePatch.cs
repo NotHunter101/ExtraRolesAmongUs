@@ -17,13 +17,6 @@ namespace ExtraRolesMod.Roles.Engineer
 
         public static void Postfix()
         {
-            if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Ended)
-            {
-                EngineerButton?.Dispose();
-                EngineerButton = null;
-                return;
-            }
-
             if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started)
                 return;
 
@@ -32,20 +25,21 @@ namespace ExtraRolesMod.Roles.Engineer
 
             if (PlayerControl.LocalPlayer.Data.IsDead)
                 return;
-            if (EngineerButton == null)
-            {
-                AddEngineerButton();
-            }
+
         }
 
-        private static void AddEngineerButton()
+        public static void AddEngineerButton()
         {
-            var pos1 = HudManager.Instance.KillButton.transform.localPosition;
-            var x = pos1.x;
-            x = x * 2 - 1.3F;
+            if (EngineerButton == null)
+            {
+                var pos1 = HudManager.Instance.KillButton.transform.localPosition;
+                var x = pos1.x;
+                x = x * 2 - 1.3F;
 
-            EngineerButton = new CooldownButton(Main.Assets.repairIco, new Vector2(x, 0f), 0f, 0f, 0f);
-            EngineerButton.OnClick += EngineerButton_OnClick;
+                EngineerButton = new CooldownButton(Main.Assets.repairIco, new Vector2(x, 0f), 0f, 0f, 0f);
+                EngineerButton.OnClick += EngineerButton_OnClick;
+            }
+            EngineerButton.Visible = false;
         }
 
         private static void EngineerButton_OnClick(object sender, System.ComponentModel.CancelEventArgs e)

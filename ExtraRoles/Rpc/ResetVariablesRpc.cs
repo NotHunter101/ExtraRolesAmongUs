@@ -39,6 +39,10 @@ namespace ExtraRolesMod.Rpc
             crewmates.RemoveAll(x => x.Data.IsImpostor);
             foreach (var plr in crewmates)
                 plr.getModdedControl().Role = Role.Crewmate;
+
+            Roles.Engineer.HudUpdatePatch.AddEngineerButton();
+            Roles.Officer.HudUpdatePatch.AddOfficerKillButton();
+            Roles.Medic.HudUpdatePatch.AddMedicShieldButton();
         }
 
         public override bool Read(MessageReader reader)
