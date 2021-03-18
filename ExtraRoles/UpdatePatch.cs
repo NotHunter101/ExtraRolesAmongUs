@@ -76,7 +76,6 @@ namespace ExtraRolesMod
     class HudUpdateManager
     {
         static bool defaultSet = false;
-        static bool lastQ = false;
         static int currentColor = 0;
         static Color newColor;
         static Color nextColor;
@@ -119,24 +118,10 @@ namespace ExtraRolesMod
                 defaultSet = false;
             }
 
-            lastQ = Input.GetKeyUp(KeyCode.Q);
             KillButton = __instance.KillButton;
-            var target = PlayerControl.LocalPlayer.FindClosestPlayer();
-            
-            if (!PlayerControl.LocalPlayer.Data.IsImpostor && Input.GetKeyDown(KeyCode.Q) && !lastQ &&  __instance.UseButton.isActiveAndEnabled)
-                PerformKillPatch.Prefix(KillButton);
-
-            if (PlayerControl.LocalPlayer.isPlayerRole(Role.Engineer) && __instance.UseButton.isActiveAndEnabled)
-            {
-                KillButton.gameObject.SetActive(true);
-                KillButton.isActive = true;
-                KillButton.SetCoolDown(0f, 1f);
-                KillButton.renderer.sprite = Main.Assets.repairIco;
-                KillButton.renderer.color = Palette.EnabledColor;
-                KillButton.renderer.material.SetFloat("_Desat", 0f);
-            }
 
             Main.Logic.clearJokerTasks();
+       
             if (rend != null)
                 rend.SetActive(false);
             
@@ -212,38 +197,6 @@ namespace ExtraRolesMod
                 {
                     GiveShieldedPlayerShield(shieldedPlayer);
                 }
-            }
-
-            if (PlayerControl.LocalPlayer.Data.IsDead)
-            {
-                if (!PlayerControl.LocalPlayer.isPlayerRole(Role.Engineer))
-                {
-                    KillButton.gameObject.SetActive(false);
-                    KillButton.renderer.enabled = false;
-                    KillButton.isActive = false;
-                    KillButton.SetTarget(null);
-                    KillButton.enabled = false;
-                    return;
-                }
-            }
-
-            if (__instance.UseButton != null && PlayerControl.LocalPlayer.isPlayerRole(Role.Medic) &&
-                __instance.UseButton.isActiveAndEnabled)
-            {
-                KillButton.renderer.sprite = Main.Assets.shieldIco;
-                KillButton.gameObject.SetActive(true);
-                KillButton.isActive = true;
-                KillButton.SetCoolDown(0f, 1f);
-                KillButton.SetTarget(target);
-            }
-
-            if (__instance.UseButton != null && PlayerControl.LocalPlayer.isPlayerRole(Role.Officer) &&
-                __instance.UseButton.isActiveAndEnabled)
-            {
-                KillButton.gameObject.SetActive(true);
-                KillButton.isActive = true;
-                KillButton.SetCoolDown(PlayerTools.getOfficerCD(), PlayerControl.GameOptions.KillCooldown + 15.0f);
-                KillButton.SetTarget(target);
             }
         }
 

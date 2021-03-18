@@ -14,84 +14,8 @@ namespace ExtraRolesMod
     [HarmonyPatch(typeof(KillButtonManager), nameof(KillButtonManager.PerformKill))]
     class PerformKillPatch
     {
-        private static void SendOfficerKillRpc(PlayerControl target)
-        {
-            PlayerControl.LocalPlayer.getModdedControl().LastAbilityTime = DateTime.UtcNow;
-            var attacker = PlayerControl.LocalPlayer;
-            Rpc<OfficerKillRpc>.Instance.Send(data: (Attacker: attacker, Target: target), immediately: true);
-            Rpc<AttemptKillShieldedPlayerRpc>.Instance.Send(data: attacker.PlayerId, immediately: true);
-        }
-
-        private static void WriteGiveShieldRpc(PlayerControl target)
-        {
-            PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
-            Rpc<GiveShieldRpc>.Instance.Send(data: target.PlayerId, immediately: true);
-        }
-
         public static bool Prefix(KillButtonManager __instance)
         {
-            if (PlayerControl.LocalPlayer.isPlayerRole(Role.Engineer))
-            {
-                DestroyableSingleton<HudManager>.Instance.ShowMap((Action<MapBehaviour>) delegate(MapBehaviour m)
-                {
-                    m.ShowInfectedMap();
-                    m.ColorControl.baseColor = Main.Logic.sabotageActive ? Color.gray : Main.Palette.engineerColor;
-                });
-                return false;
-            }
-
-            if (PlayerControl.LocalPlayer.Data.IsDead)
-                return false;
-
-            var target = __instance.CurrentTarget;
-            if (target != null)
-            {
-                //code that handles the ability button presses
-                if (PlayerControl.LocalPlayer.isPlayerRole(Role.Officer))
-                {
-                    if (PlayerTools.getOfficerCD() > 0)
-                        return false;
-
-                    var isTargetJoker = target.isPlayerRole(Role.Joker);
-                    var isTargetImpostor = target.Data.IsImpostor;
-                    var officerKillSetting = Main.Config.officerKillBehaviour;
-                    if (target.isPlayerImmortal())
-                    {
-                        if (Main.Config.officerShouldDieToShieldedPlayers)
-                        {
-                            // suicide packet
-                            SendOfficerKillRpc(PlayerControl.LocalPlayer);
-                        }
-                        BreakShield(false);
-                    }
-                    else if (officerKillSetting == OfficerKillBehaviour.OfficerSurvives // don't care who it is, kill them
-                        || isTargetImpostor // impostors always die
-                        || (officerKillSetting  != OfficerKillBehaviour.Impostor && isTargetJoker)) // joker can die and target is joker
-                    {
-                        // kill target
-                        SendOfficerKillRpc(target);
-                    }
-                    else // officer dies
-                    {
-                        if (officerKillSetting == OfficerKillBehaviour.CrewDie)
-                        {
-                            // kill target too
-                            SendOfficerKillRpc(target);
-                        }
-                        // kill officer
-                        SendOfficerKillRpc(PlayerControl.LocalPlayer);
-                    }
-
-                    return false;
-                }
-
-                if (PlayerControl.LocalPlayer.isPlayerRole(Role.Medic))
-                {
-                    WriteGiveShieldRpc(target);
-                    return false;
-                }
-            }
-
             // continue the murder as normal
             if (!KillButton.CurrentTarget.isPlayerImmortal())
                 return true;
