@@ -14,7 +14,7 @@ namespace ExtraRolesMod
     [HarmonyPatch(typeof(KillButtonManager), nameof(KillButtonManager.PerformKill))]
     class PerformKillPatch
     {
-        public static bool Prefix(KillButtonManager __instance)
+        public static bool Prefix()
         {
             // continue the murder as normal
             if (!KillButton.CurrentTarget.isPlayerImmortal())
@@ -27,6 +27,7 @@ namespace ExtraRolesMod
             if (!shouldPlayShieldBreakSound)
                 return false;
 
+            System.Console.WriteLine("Attempted murder!");
             // Send Play Shield Break RPC
             Rpc<AttemptKillShieldedPlayerRpc>.Instance.Send(data: PlayerControl.LocalPlayer.PlayerId, immediately: true);
 
