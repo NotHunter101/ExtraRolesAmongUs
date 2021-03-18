@@ -60,7 +60,7 @@ namespace ExtraRolesMod
                         if (Main.Config.officerShouldDieToShieldedPlayers)
                         {
                             // suicide packet
-                            WriteKillRpc(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
+                            SendOfficerKillRpc(PlayerControl.LocalPlayer);
                         }
                         BreakShield(false);
                     }
