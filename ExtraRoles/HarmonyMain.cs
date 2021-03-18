@@ -18,7 +18,7 @@ namespace ExtraRolesMod
     [BepInPlugin(Id)]
     [BepInProcess("Among Us.exe")]
     [BepInDependency(ReactorPlugin.Id)]
-    public class HarmonyMain : BasePlugin
+    public partial class HarmonyMain : BasePlugin
     {
         public const string Id = "gg.reactor.extraroles";
 
@@ -88,6 +88,7 @@ namespace ExtraRolesMod
 
             //Hunter101#1337
             CustomOption.ShamelessPlug = false;
+
 
             RegisterInIl2CppAttribute.Register();
             RegisterCustomRpcAttribute.Register(this);

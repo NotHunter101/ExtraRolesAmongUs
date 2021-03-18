@@ -7,6 +7,7 @@
 
         <Description>A Reactor mod that adds four new roles to the game.</Description>
         <Authors>NotHunter101</Authors>
+        <RootNamespace>ExtraRolesMod</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

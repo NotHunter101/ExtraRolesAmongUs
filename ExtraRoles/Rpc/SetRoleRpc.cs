@@ -1,10 +1,10 @@
-﻿using ExtraRoles.Roles;
+﻿using ExtraRolesMod.Roles;
 using ExtraRolesMod;
 using Hazel;
 using Reactor;
 using static ExtraRolesMod.ExtraRoles;
 
-namespace ExtraRoles.Rpc
+namespace ExtraRolesMod.Rpc
 {
     [RegisterCustomRpc]
     public class SetRoleRpc : PlayerCustomRpc<HarmonyMain, SetRoleRpc.SetRoleData>

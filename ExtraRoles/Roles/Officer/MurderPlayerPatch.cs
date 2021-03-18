@@ -1,7 +1,7 @@
-﻿using ExtraRoles.Medic;
-using ExtraRoles.Officer;
-using ExtraRoles.Roles.Medic;
-using ExtraRoles.Rpc;
+﻿using ExtraRolesMod.Medic;
+using ExtraRolesMod.Officer;
+using ExtraRolesMod.Roles.Medic;
+using ExtraRolesMod.Rpc;
 using ExtraRolesMod;
 using HarmonyLib;
 using Hazel;
@@ -10,7 +10,7 @@ using System;
 using UnityEngine;
 using static ExtraRolesMod.ExtraRoles;
 
-namespace ExtraRoles.Roles.Officer
+namespace ExtraRolesMod.Roles.Officer
 {
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
     public static class MurderPlayerPatch

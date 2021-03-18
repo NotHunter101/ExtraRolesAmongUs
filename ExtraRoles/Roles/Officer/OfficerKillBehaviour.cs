@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ExtraRoles.Officer
+namespace ExtraRolesMod.Officer
 {
     public enum OfficerKillBehaviour
     {

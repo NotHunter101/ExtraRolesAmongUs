@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ExtraRoles.Roles.Medic
+namespace ExtraRolesMod.Roles.Medic
 {
     public class DeadPlayer
     {

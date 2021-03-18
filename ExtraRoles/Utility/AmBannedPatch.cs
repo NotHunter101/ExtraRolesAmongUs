@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace ExtraRoles.Utility
+namespace ExtraRolesMod.Utility
 {
     [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.AmBanned), MethodType.Getter)]
     public static class AmBannedPatch

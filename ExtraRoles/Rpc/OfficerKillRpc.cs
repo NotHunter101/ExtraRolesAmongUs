@@ -3,7 +3,7 @@ using Hazel;
 using Reactor;
 using static ExtraRolesMod.ExtraRoles;
 
-namespace ExtraRoles.Rpc
+namespace ExtraRolesMod.Rpc
 {
     [RegisterCustomRpc]
     public class OfficerKillRpc : PlayerCustomRpc<HarmonyMain, OfficerKillRpc.OfficerKillData>

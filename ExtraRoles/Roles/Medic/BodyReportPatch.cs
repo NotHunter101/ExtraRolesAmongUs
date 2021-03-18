@@ -1,5 +1,5 @@
-﻿using ExtraRoles.Roles;
-using ExtraRoles.Roles.Medic;
+﻿using ExtraRolesMod.Roles;
+using ExtraRolesMod.Roles.Medic;
 using ExtraRolesMod;
 using HarmonyLib;
 using System;

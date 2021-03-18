@@ -1,5 +1,5 @@
 ﻿using Essentials.UI;
-using ExtraRoles.Rpc;
+using ExtraRolesMod.Rpc;
 using ExtraRolesMod;
 using HarmonyLib;
 using InnerNet;
@@ -10,7 +10,7 @@ using System.Text;
 using UnityEngine;
 using static ExtraRolesMod.ExtraRoles;
 
-namespace ExtraRoles.Roles.Medic
+namespace ExtraRolesMod.Roles.Medic
 {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     public static class HudUpdatePatch

@@ -4,8 +4,8 @@ using Hazel;
 using System;
 using static ExtraRolesMod.ExtraRoles;
 using UnhollowerBaseLib;
-using ExtraRoles.Roles;
-using ExtraRoles.Rpc;
+using ExtraRolesMod.Roles;
+using ExtraRolesMod.Rpc;
 using Reactor;
 
 namespace ExtraRoles

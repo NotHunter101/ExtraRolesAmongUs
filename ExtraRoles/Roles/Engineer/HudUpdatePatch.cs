@@ -8,7 +8,7 @@ using System.Text;
 using UnityEngine;
 using static ExtraRolesMod.ExtraRoles;
 
-namespace ExtraRoles.Roles.Engineer
+namespace ExtraRolesMod.Roles.Engineer
 {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     public static class HudUpdatePatch

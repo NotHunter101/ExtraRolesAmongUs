@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using static ExtraRolesMod.ExtraRoles;
 
-namespace ExtraRoles.Utility
+namespace ExtraRolesMod.Utility
 {
     //function called on start of game. write version text on menu
     [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]

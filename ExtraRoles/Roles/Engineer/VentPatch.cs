@@ -1,4 +1,4 @@
-﻿using ExtraRoles.Roles;
+﻿using ExtraRolesMod.Roles;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;

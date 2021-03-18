@@ -1,12 +1,12 @@
-﻿using ExtraRoles.Medic;
-using ExtraRoles.Roles;
+﻿using ExtraRolesMod.Medic;
+using ExtraRolesMod.Roles;
 using ExtraRolesMod;
 using Hazel;
 using Reactor;
 using System.Linq;
 using static ExtraRolesMod.ExtraRoles;
 
-namespace ExtraRoles.Rpc
+namespace ExtraRolesMod.Rpc
 {
     [RegisterCustomRpc]
     public class ResetVariablesRpc : PlayerCustomRpc<HarmonyMain, bool>

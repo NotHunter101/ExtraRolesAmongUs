@@ -3,7 +3,7 @@ using Hazel;
 using Reactor;
 using static ExtraRolesMod.ExtraRoles;
 
-namespace ExtraRoles.Rpc
+namespace ExtraRolesMod.Rpc
 {
     [RegisterCustomRpc]
     public class AttemptKillShieldedPlayerRpc : PlayerCustomRpc<HarmonyMain, byte>

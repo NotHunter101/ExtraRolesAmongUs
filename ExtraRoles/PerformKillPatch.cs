@@ -1,7 +1,7 @@
-﻿using ExtraRoles.Medic;
-﻿using ExtraRoles.Officer;
-using ExtraRoles.Roles;
-using ExtraRoles.Rpc;
+﻿using ExtraRolesMod.Medic;
+﻿using ExtraRolesMod.Officer;
+using ExtraRolesMod.Roles;
+using ExtraRolesMod.Rpc;
 using HarmonyLib;
 using Hazel;
 using Reactor;

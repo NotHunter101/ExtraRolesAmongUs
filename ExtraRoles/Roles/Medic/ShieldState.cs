@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ExtraRoles.Medic
+namespace ExtraRolesMod.Medic
 {
     public enum ShieldState
     {

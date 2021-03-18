@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Reactor.Unstrip;
 using static ExtraRolesMod.ExtraRoles;
-using ExtraRoles.Medic;
-using ExtraRoles.Officer;
-using ExtraRoles.Roles;
-using ExtraRoles.Roles.Medic;
+using ExtraRolesMod.Medic;
+using ExtraRolesMod.Officer;
+using ExtraRolesMod.Roles;
+using ExtraRolesMod.Roles.Medic;
 
 namespace ExtraRolesMod
 {

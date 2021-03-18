@@ -4,7 +4,7 @@ using Reactor;
 using UnhollowerBaseLib;
 using static ExtraRolesMod.ExtraRoles;
 
-namespace ExtraRoles.Rpc
+namespace ExtraRolesMod.Rpc
 {
     [RegisterCustomRpc]
     public class SetLocalPlayersRpc : PlayerCustomRpc<HarmonyMain, byte[]>

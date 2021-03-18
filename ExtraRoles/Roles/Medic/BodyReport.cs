@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using static ExtraRolesMod.ExtraRoles;
 
-namespace ExtraRoles.Roles.Medic
+namespace ExtraRolesMod.Roles.Medic
 {
     //body report class for when medic reports a body
     public class BodyReport

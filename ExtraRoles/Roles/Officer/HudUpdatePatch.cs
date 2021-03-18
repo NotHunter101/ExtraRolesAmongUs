@@ -1,6 +1,6 @@
 ﻿using Essentials.UI;
-using ExtraRoles.Officer;
-using ExtraRoles.Rpc;
+using ExtraRolesMod.Officer;
+using ExtraRolesMod.Rpc;
 using ExtraRolesMod;
 using HarmonyLib;
 using InnerNet;
@@ -12,7 +12,7 @@ using System.Text;
 using UnityEngine;
 using static ExtraRolesMod.ExtraRoles;
 
-namespace ExtraRoles.Roles.Officer
+namespace ExtraRolesMod.Roles.Officer
 {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     public static class HudUpdatePatch
@@ -39,11 +39,7 @@ namespace ExtraRoles.Roles.Officer
                 return;
 
 
-            if (OfficerKillButton == null)
-            {
-                AddOfficerKillButton();
-            }
-            else
+            if (OfficerKillButton != null)
             {
                 OfficerKillButton.Clickable = PlayerControl.LocalPlayer.FindClosestPlayer() != null;
             }
@@ -70,7 +66,7 @@ namespace ExtraRoles.Roles.Officer
             System.Console.WriteLine("Added Officer Kill button");
         }
 
-        private static void OfficerKillButton_OnClick(object sender, CancelEventArgs e)
+        public static void OfficerKillButton_OnClick(object sender, CancelEventArgs e)
         {
             var target = PlayerControl.LocalPlayer.FindClosestPlayer();
             var isTargetJoker = target.isPlayerRole(Role.Joker);

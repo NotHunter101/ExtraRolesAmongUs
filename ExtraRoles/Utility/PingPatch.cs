@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using static ExtraRolesMod.ExtraRoles;
 
-namespace ExtraRoles.Utility
+namespace ExtraRolesMod.Utility
 {
 
     [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]

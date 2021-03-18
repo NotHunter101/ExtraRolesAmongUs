@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ExtraRoles.Roles
+namespace ExtraRolesMod.Roles
 {
     public enum Role : byte
     {
