@@ -28,7 +28,7 @@ namespace ExtraRolesMod
             Rpc<GiveShieldRpc>.Instance.Send(data: target.PlayerId, immediately: true);
         }
 
-        public static bool Prefix()
+        public static bool Prefix(KillButtonManager __instance)
         {
             if (PlayerControl.LocalPlayer.isPlayerRole(Role.Engineer))
             {
@@ -43,9 +43,9 @@ namespace ExtraRolesMod
             if (PlayerControl.LocalPlayer.Data.IsDead)
                 return false;
 
-            if (CurrentTarget != null)
+            var target = __instance.CurrentTarget;
+            if (target != null)
             {
-                var target = CurrentTarget;
                 //code that handles the ability button presses
                 if (PlayerControl.LocalPlayer.isPlayerRole(Role.Officer))
                 {

@@ -2,14 +2,14 @@
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace ExtraRolesMod
 {
     [HarmonyPatch]
     public static class PlayerTools
     {
-        public static PlayerControl closestPlayer = null;
-        
         public static List<TaskTypes> sabotageTasks = new List<TaskTypes>
         {
             TaskTypes.FixComms,
@@ -73,34 +73,35 @@ namespace ExtraRolesMod
             return true;
         }
 
-        public static PlayerControl getClosestPlayer(PlayerControl refplayer)
+        public static PlayerControl FindClosestPlayer(this PlayerControl player)
         {
-            var mindist = double.MaxValue;
-            PlayerControl closestplayer = null;
-            foreach (var player in PlayerControl.AllPlayerControls)
+            PlayerControl result = null;
+            float num = GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)];
+            if (!ShipStatus.Instance)
             {
-                if (player.Data.IsDead)
-                    continue;
-                if (player == refplayer)
-                    continue;
-                var dist = getDistBetweenPlayers(player, refplayer);
-                if (dist >= mindist)
-                    continue;
-
-                mindist = dist;
-                closestplayer = player;
+                return null;
             }
-
-            return closestplayer;
-        }
-
-        public static double getDistBetweenPlayers(PlayerControl player, PlayerControl refplayer)
-        {
-            var refpos = refplayer.GetTruePosition();
-            var playerpos = player.GetTruePosition();
-
-            return Math.Sqrt((refpos[0] - playerpos[0]) * (refpos[0] - playerpos[0]) +
-                             (refpos[1] - playerpos[1]) * (refpos[1] - playerpos[1]));
+            Vector2 truePosition = player.GetTruePosition();
+            List<GameData.PlayerInfo> allPlayers = GameData.Instance.AllPlayers.ToArray().ToList();
+            for (int i = 0; i < allPlayers.Count; i++)
+            {
+                GameData.PlayerInfo playerInfo = allPlayers[i];
+                if (!playerInfo.Disconnected && playerInfo.PlayerId != player.PlayerId && !playerInfo.IsDead)
+                {
+                    PlayerControl @object = playerInfo.Object;
+                    if (@object)
+                    {
+                        Vector2 vector = @object.GetTruePosition() - truePosition;
+                        float magnitude = vector.magnitude;
+                        if (magnitude <= num && !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude, Constants.ShipAndObjectsMask))
+                        {
+                            result = @object;
+                            num = magnitude;
+                        }
+                    }
+                }
+            }
+            return result;
         }
     }
 }

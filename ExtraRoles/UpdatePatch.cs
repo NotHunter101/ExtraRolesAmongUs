@@ -121,13 +121,11 @@ namespace ExtraRolesMod
 
             lastQ = Input.GetKeyUp(KeyCode.Q);
             KillButton = __instance.KillButton;
-            PlayerTools.closestPlayer = PlayerTools.getClosestPlayer(PlayerControl.LocalPlayer);
-            if (PlayerTools.closestPlayer != null && PlayerControl.LocalPlayer != null)
-                DistLocalClosest =
-                    PlayerTools.getDistBetweenPlayers(PlayerControl.LocalPlayer, PlayerTools.closestPlayer);
-            if (!PlayerControl.LocalPlayer.Data.IsImpostor && Input.GetKeyDown(KeyCode.Q) && !lastQ &&
-                __instance.UseButton.isActiveAndEnabled)
-                PerformKillPatch.Prefix();
+            var target = PlayerControl.LocalPlayer.FindClosestPlayer();
+            
+            if (!PlayerControl.LocalPlayer.Data.IsImpostor && Input.GetKeyDown(KeyCode.Q) && !lastQ &&  __instance.UseButton.isActiveAndEnabled)
+                PerformKillPatch.Prefix(KillButton);
+
             if (PlayerControl.LocalPlayer.isPlayerRole(Role.Engineer) && __instance.UseButton.isActiveAndEnabled)
             {
                 KillButton.gameObject.SetActive(true);
@@ -236,17 +234,7 @@ namespace ExtraRolesMod
                 KillButton.gameObject.SetActive(true);
                 KillButton.isActive = true;
                 KillButton.SetCoolDown(0f, 1f);
-                if (DistLocalClosest < GameOptionsData.KillDistances[PlayerControl.GameOptions.KillDistance] &&
-                    !PlayerControl.LocalPlayer.getModdedControl().UsedAbility)
-                {
-                    KillButton.SetTarget(PlayerTools.closestPlayer);
-                    CurrentTarget = PlayerTools.closestPlayer;
-                }
-                else
-                {
-                    KillButton.SetTarget(null);
-                    CurrentTarget = null;
-                }
+                KillButton.SetTarget(target);
             }
 
             if (__instance.UseButton != null && PlayerControl.LocalPlayer.isPlayerRole(Role.Officer) &&
@@ -255,16 +243,7 @@ namespace ExtraRolesMod
                 KillButton.gameObject.SetActive(true);
                 KillButton.isActive = true;
                 KillButton.SetCoolDown(PlayerTools.getOfficerCD(), PlayerControl.GameOptions.KillCooldown + 15.0f);
-                if (DistLocalClosest < GameOptionsData.KillDistances[PlayerControl.GameOptions.KillDistance])
-                {
-                    KillButton.SetTarget(PlayerTools.closestPlayer);
-                    CurrentTarget = PlayerTools.closestPlayer;
-                }
-                else
-                {
-                    KillButton.SetTarget(null);
-                    CurrentTarget = null;
-                }
+                KillButton.SetTarget(target);
             }
         }
 
