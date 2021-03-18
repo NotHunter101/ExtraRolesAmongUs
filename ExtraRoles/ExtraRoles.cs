@@ -6,70 +6,14 @@ using Reactor.Unstrip;
 using static ExtraRolesMod.ExtraRoles;
 using ExtraRoles.Medic;
 using ExtraRoles.Officer;
+using ExtraRoles.Roles;
+using ExtraRoles.Roles.Medic;
 
 namespace ExtraRolesMod
 {
-    public class DeadPlayer
-    {
-        public byte KillerId { get; set; }
-        public byte PlayerId { get; set; }
-        public DateTime KillTime { get; set; }
-        public DeathReason DeathReason { get; set; }
-    }
-
-    //body report class for when medic reports a body
-    public class BodyReport
-    {
-        public DeathReason DeathReason { get; set; }
-        public PlayerControl Killer { get; set; }
-        public PlayerControl Reporter { get; set; }
-        public float KillAge { get; set; }
-
-        public static string ParseBodyReport(BodyReport br)
-        {
-            System.Console.WriteLine(br.KillAge);
-            if (br.KillAge > Main.Config.medicKillerColorDuration * 1000)
-            {
-                return
-                    $"Body Report: The corpse is too old to gain information from. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
-            }
-
-            if (br.DeathReason == (DeathReason) 3)
-            {
-                return
-                    $"Body Report (Officer): The cause of death appears to be suicide! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
-            }
-
-            if (br.KillAge < Main.Config.medicKillerNameDuration * 1000)
-            {
-                return
-                    $"Body Report: The killer appears to be {br.Killer.Data.PlayerName}! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
-            }
-
-            var colors = new Dictionary<byte, string>()
-            {
-                {0, "darker"},
-                {1, "darker"},
-                {2, "darker"},
-                {3, "lighter"},
-                {4, "lighter"},
-                {5, "lighter"},
-                {6, "darker"},
-                {7, "lighter"},
-                {8, "darker"},
-                {9, "darker"},
-                {10, "lighter"},
-                {11, "lighter"},
-            };
-            var typeOfColor = colors[br.Killer.Data.ColorId];
-            return
-                $"Body Report: The killer appears to be a {typeOfColor} color. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
-        }
-    }
-
     public static class Extensions
     {
-        public static bool isPlayerRole(this PlayerControl plr, string roleName)
+        public static bool isPlayerRole(this PlayerControl plr, Role roleName)
         {
             return plr.getModdedControl() != null && plr.getModdedControl().Role == roleName;
         }
@@ -101,7 +45,7 @@ namespace ExtraRolesMod
 
         public class ModdedLogic
         {
-            public ModPlayerControl getRolePlayer(string roleName)
+            public ModPlayerControl getRolePlayer(Role roleName)
             {
                 return Main.Logic.AllModPlayerControl.Find(x => x.Role == roleName);
             }
@@ -118,7 +62,7 @@ namespace ExtraRolesMod
 
             public void clearJokerTasks()
             {
-                var joker = Main.Logic.getRolePlayer("Joker");
+                var joker = Main.Logic.getRolePlayer(Role.Joker);
                 if (joker == null)
                     return;
                 var jokerControl = joker.PlayerControl;
@@ -157,7 +101,7 @@ namespace ExtraRolesMod
 
         public static void BreakShield(bool flag)
         {
-            if (PlayerControl.LocalPlayer.isPlayerImmortal())
+            if (PlayerControl.LocalPlayer.getModdedControl()?.Immortal == ShieldState.Broken)
             {
                 SoundManager.Instance.PlaySound(Main.Assets.breakClip, false, 100f);
                 PlayerControl.LocalPlayer.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
@@ -202,7 +146,7 @@ namespace ExtraRolesMod
         public class ModPlayerControl
         {
             public PlayerControl PlayerControl { get; set; }
-            public string Role { get; set; }
+            public Role Role { get; set; }
             public DateTime? LastAbilityTime { get; set; }
             public bool UsedAbility { get; set; }
             public ShieldState Immortal { get; set; } = ShieldState.None;
@@ -245,35 +189,6 @@ namespace ExtraRolesMod
                 this.engineerSpawnChance = HarmonyMain.engineerSpawnChance.GetValue();
                 this.officerSpawnChance = HarmonyMain.officerSpawnChance.GetValue();
                 this.jokerSpawnChance = HarmonyMain.jokerSpawnChance.GetValue();
-            }
-        }
-
-        [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
-        public static class VersionStartPatch
-        {
-            static void Postfix(VersionShower __instance)
-            {
-                __instance.text.Text = __instance.text.Text + "   Extra Roles " + versionString +
-                                       " Loaded. (http://www.extraroles.net/)";
-            }
-        }
-
-        [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.AmBanned), MethodType.Getter)]
-        public static class AmBannedPatch
-        {
-            public static void Postfix(out bool __result)
-            {
-                __result = false;
-            }
-        }
-
-        [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]
-        public static class PingPatch
-        {
-            public static void Postfix(PingTracker __instance)
-            {
-                __instance.text.Text += "\nextraroles.net";
-                __instance.text.Text += "\nExtraRoles " + versionString;
             }
         }
     }

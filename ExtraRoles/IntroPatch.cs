@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using ExtraRoles.Roles;
+using HarmonyLib;
 using System;
 using static ExtraRolesMod.ExtraRoles;
 
@@ -9,7 +10,7 @@ namespace ExtraRolesMod
     {
         static bool Prefix(IntroCutscene.CoBegin__d __instance)
         {
-            if (!PlayerControl.LocalPlayer.isPlayerRole("Joker"))
+            if (!PlayerControl.LocalPlayer.isPlayerRole(Role.Joker))
                 return true;
 
             var jokerTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
@@ -20,11 +21,11 @@ namespace ExtraRolesMod
 
         static void Postfix(IntroCutscene.CoBegin__d __instance)
         {
-            var officer = Main.Logic.getRolePlayer("Officer");
+            var officer = Main.Logic.getRolePlayer(Role.Officer);
             if (officer != null)
                 officer.LastAbilityTime = DateTime.UtcNow;
 
-            if (PlayerControl.LocalPlayer.isPlayerRole("Medic"))
+            if (PlayerControl.LocalPlayer.isPlayerRole(Role.Medic))
             {
                 __instance.__this.Title.Text = "Medic";
                 __instance.__this.Title.Color = Main.Palette.medicColor;
@@ -33,7 +34,7 @@ namespace ExtraRolesMod
                 return;
             }
 
-            if (PlayerControl.LocalPlayer.isPlayerRole("Officer"))
+            if (PlayerControl.LocalPlayer.isPlayerRole(Role.Officer))
             {
                 __instance.__this.Title.Text = "Officer";
                 __instance.__this.Title.Color = Main.Palette.officerColor;
@@ -42,7 +43,7 @@ namespace ExtraRolesMod
                 return;
             }
 
-            if (PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
+            if (PlayerControl.LocalPlayer.isPlayerRole(Role.Engineer))
             {
                 __instance.__this.Title.Text = "Engineer";
                 __instance.__this.Title.Color = Main.Palette.engineerColor;
@@ -51,7 +52,7 @@ namespace ExtraRolesMod
                 return;
             }
 
-            if (PlayerControl.LocalPlayer.isPlayerRole("Joker"))
+            if (PlayerControl.LocalPlayer.isPlayerRole(Role.Joker))
             {
                 __instance.__this.Title.Text = "Joker";
                 __instance.__this.Title.Color = Main.Palette.jokerColor;

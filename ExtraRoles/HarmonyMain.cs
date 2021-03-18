@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Net;
 using Reactor;
-using Essentials.CustomOptions;
+using Essentials.Options;
 using static ExtraRolesMod.ExtraRoles;
 using Reactor.Unstrip;
 using UnityEngine;
@@ -73,7 +73,7 @@ namespace ExtraRolesMod
         public override void Load()
         {
             Ip = Config.Bind("Custom", "Ipv4 or Hostname", "127.0.0.1");
-            Port = Config.Bind("Custom", "Port", (ushort) 22023);
+            Port = Config.Bind("Custom", "Port", (ushort)22023);
 
             Main.Assets.bundle = AssetBundle.LoadFromFile(Directory.GetCurrentDirectory() + "\\Assets\\bundle");
             Main.Assets.breakClip = Main.Assets.bundle.LoadAsset<AudioClip>("SB").DontUnload();
@@ -89,6 +89,16 @@ namespace ExtraRolesMod
             //Hunter101#1337
             CustomOption.ShamelessPlug = false;
 
+            RegisterInIl2CppAttribute.Register();
+            RegisterCustomRpcAttribute.Register(this);
+
+            AddCustomRegion();
+
+            Harmony.PatchAll();
+        }
+
+        private void AddCustomRegion()
+        {
             var defaultRegions = ServerManager.DefaultRegions.ToList();
             var ip = Ip.Value;
             if (Uri.CheckHostName(Ip.Value).ToString() == "Dns")
@@ -102,15 +112,14 @@ namespace ExtraRolesMod
                 }
             }
 
-            defaultRegions.Insert(0, new RegionInfo(
-                "Custom", ip, new[]
+            defaultRegions.Insert(0, new DnsRegionInfo(
+                "Custom", ip, StringNames.NoTranslation, new[]
                 {
                     new ServerInfo($"Custom-Server", ip, Port.Value)
-                })
+                }).Cast<IRegionInfo>()
             );
 
             ServerManager.DefaultRegions = defaultRegions.ToArray();
-            Harmony.PatchAll();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using ExtraRoles.Roles;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 
@@ -36,7 +37,7 @@ namespace ExtraRolesMod
         /// </summary>
         public static float getOfficerCD()
         {
-            var lastAbilityTime = ExtraRoles.Main.Logic.getRolePlayer("Officer").LastAbilityTime;
+            var lastAbilityTime = ExtraRoles.Main.Logic.getRolePlayer(Role.Officer).LastAbilityTime;
             if (lastAbilityTime == null)
             {
                 return ExtraRoles.Main.Config.OfficerCD;
