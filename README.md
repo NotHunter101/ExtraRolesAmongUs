@@ -130,8 +130,12 @@ This settings control what will happen when The Officer attempts to kill someone
 - Joker: The Officer can kill either Impostor(s) or the Joker. If The Officer attacks a Crewmate The Officer will die.
 - Crew Die: The Officer can kill both The Joker And Impostors without consequences. If The Officer attacks a Crewmate both the officer and the Crewmate die.
 - Anyone: The Officer can kill anyone without consequences.
+
+## Officer Dies When Attacking Shielded Players
+*Default: true*
+If this setting is enabled, The Officer will die when he attempts to attack a shielded player.
   
-### Time Where Medic Reports Will Have Name
+## Time Where Medic Reports Will Have Name
 *Default: 5*<br/>
 The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's name.
 
