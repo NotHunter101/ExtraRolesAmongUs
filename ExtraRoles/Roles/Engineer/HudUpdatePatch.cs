@@ -32,11 +32,7 @@ namespace ExtraRolesMod.Roles.Engineer
         {
             if (EngineerButton == null)
             {
-                var pos1 = HudManager.Instance.KillButton.transform.localPosition;
-                var x = pos1.x;
-                x = x * 2 - 1.3F;
-
-                EngineerButton = new CooldownButton(Main.Assets.repairIco, new Vector2(x, 0f), 0f, 0f, 0f);
+                EngineerButton = new CooldownButton(Main.Assets.repairIco, new Vector2(6.5f, 0f), 0f, 0f, 0f);
                 EngineerButton.OnClick += EngineerButton_OnClick;
             }
             EngineerButton.Visible = false;

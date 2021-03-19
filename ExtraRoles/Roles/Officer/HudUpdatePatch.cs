@@ -42,22 +42,14 @@ namespace ExtraRolesMod.Roles.Officer
             lastQ = Input.GetKeyUp(KeyCode.Q);
 
             if (Input.GetKeyDown(KeyCode.Q) && !lastQ && HudManager.Instance.UseButton.isActiveAndEnabled && OfficerKillButton.Clickable)
-            {
-                OfficerKillButton_OnClick(HudManager.Instance, new CancelEventArgs());
-                OfficerKillButton.ApplyCooldown(OfficerKillButton.CooldownTime);
-            }
+                OfficerKillButton.PerformClick();
         }
 
         public static void AddOfficerKillButton()
         {
             if (OfficerKillButton == null)
             {
-                var sprite = UnityEngine.Object.Instantiate(HudManager.Instance.KillButton.renderer.sprite);
-                var pos1 = HudManager.Instance.KillButton.transform.localPosition;
-                var x = pos1.x;
-                x = x * 2 - 1.3F;
-
-                OfficerKillButton = new CooldownButton(sprite, new Vector2(x, 0f), Main.Config.OfficerCD, 0f, 10f);
+                OfficerKillButton = new CooldownButton(sprite: null, new Vector2(6.5f, 0f), Main.Config.OfficerCD, 0f, 10f);
                 OfficerKillButton.OnClick += OfficerKillButton_OnClick;
             }
             OfficerKillButton.Visible = false;
