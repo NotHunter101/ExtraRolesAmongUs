@@ -93,6 +93,11 @@ namespace ExtraRolesMod
             RegisterInIl2CppAttribute.Register();
             RegisterCustomRpcAttribute.Register(this);
 
+
+            Roles.Engineer.EngineerRepairButton.AddEngineerButton();
+            Roles.Officer.OfficerKillButton.AddOfficerKillButton();
+            Roles.Medic.MedicShieldButton.AddMedicShieldButton();
+
             AddCustomRegion();
 
             Harmony.PatchAll();

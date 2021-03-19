@@ -14,45 +14,34 @@ using static ExtraRolesMod.ExtraRoles;
 
 namespace ExtraRolesMod.Roles.Officer
 {
-    [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
-    public static class HudUpdatePatch
+    public static class OfficerKillButton
     {
         static bool lastQ = false;
-        public static CooldownButton OfficerKillButton { get; private set; }
+        public static CooldownButton Button { get; private set; }
 
-        public static void Postfix()
+        public static void AddOfficerKillButton()
         {
-            if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started)
-                return;
-
-            if (!PlayerControl.LocalPlayer.isPlayerRole(Role.Officer))
+            if (Button == null)
             {
-                return;
+                Button = new CooldownButton(sprite: null, new Vector2(7.967f, 0f), Main.Config.OfficerCD, 0f, 10f);
+                Button.OnUpdate += OfficerKillButton_OnUpdate;
+                Button.OnClick += OfficerKillButton_OnClick;
             }
+            Button.Visible = false;
+        }
 
-            if (PlayerControl.LocalPlayer.Data.IsDead)
-                return;
 
-
-            if (OfficerKillButton != null)
+        private static void OfficerKillButton_OnUpdate(object sender, EventArgs e)
+        {
+            if (Button != null)
             {
-                OfficerKillButton.Clickable = PlayerControl.LocalPlayer.FindClosestPlayer() != null;
+                Button.Clickable = !PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.FindClosestPlayer() != null;
             }
 
             lastQ = Input.GetKeyUp(KeyCode.Q);
 
-            if (Input.GetKeyDown(KeyCode.Q) && !lastQ && HudManager.Instance.UseButton.isActiveAndEnabled && OfficerKillButton.Clickable)
-                OfficerKillButton.PerformClick();
-        }
-
-        public static void AddOfficerKillButton()
-        {
-            if (OfficerKillButton == null)
-            {
-                OfficerKillButton = new CooldownButton(sprite: null, new Vector2(6.5f, 0f), Main.Config.OfficerCD, 0f, 10f);
-                OfficerKillButton.OnClick += OfficerKillButton_OnClick;
-            }
-            OfficerKillButton.Visible = false;
+            if (Input.GetKeyDown(KeyCode.Q) && !lastQ && Button.IsUsable)
+                Button.PerformClick();
         }
 
         public static void OfficerKillButton_OnClick(object sender, CancelEventArgs e)

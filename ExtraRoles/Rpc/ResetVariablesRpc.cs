@@ -20,6 +20,10 @@ namespace ExtraRolesMod.Rpc
 
         public override void Handle(PlayerControl innerNetObject, bool data)
         {
+            Roles.Officer.OfficerKillButton.Button.Visible = false;
+            Roles.Engineer.EngineerRepairButton.Button.Visible = false;
+            Roles.Medic.MedicShieldButton.Button.Visible = false;
+
             Main.Config.SetConfigSettings();
             Main.Logic.AllModPlayerControl.Clear();
             killedPlayers.Clear();
@@ -39,10 +43,6 @@ namespace ExtraRolesMod.Rpc
             crewmates.RemoveAll(x => x.Data.IsImpostor);
             foreach (var plr in crewmates)
                 plr.getModdedControl().Role = Role.Crewmate;
-
-            Roles.Engineer.HudUpdatePatch.AddEngineerButton();
-            Roles.Officer.HudUpdatePatch.AddOfficerKillButton();
-            Roles.Medic.HudUpdatePatch.AddMedicShieldButton();
         }
 
         public override bool Read(MessageReader reader)

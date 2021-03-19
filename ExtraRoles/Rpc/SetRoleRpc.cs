@@ -26,13 +26,13 @@ namespace ExtraRolesMod.Rpc
             switch (role.Role)
             {
                 case Role.Officer:
-                    Roles.Officer.HudUpdatePatch.OfficerKillButton.Visible = true;
+                    Roles.Officer.OfficerKillButton.Button.Visible = true;
                     break;
                 case Role.Engineer:
-                    Roles.Engineer.HudUpdatePatch.EngineerButton.Visible = true;
+                    Roles.Engineer.EngineerRepairButton.Button.Visible = true;
                     break;
                 case Role.Medic:
-                    Roles.Medic.HudUpdatePatch.MedicShieldButton.Visible = true;
+                    Roles.Medic.MedicShieldButton.Button.Visible = true;
                     break;
             }
         }
