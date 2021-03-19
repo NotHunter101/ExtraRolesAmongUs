@@ -47,8 +47,6 @@ namespace ExtraRolesMod
                 var playerIdForRole = crewmates[randomCrewmateIndex].PlayerId;
                 crewmates.RemoveAt(randomCrewmateIndex);
 
-                System.Console.WriteLine($"Spawning {roleName} with PlayerID = {playerIdForRole}");
-
                 Rpc<SetRoleRpc>.Instance.Send(data: (PlayerId: playerIdForRole, Role: roleName), immediately: true);
             }
 

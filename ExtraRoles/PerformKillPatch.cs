@@ -27,7 +27,6 @@ namespace ExtraRolesMod
             if (!shouldPlayShieldBreakSound)
                 return false;
 
-            System.Console.WriteLine("Attempted murder!");
             // Send Play Shield Break RPC
             Rpc<AttemptKillShieldedPlayerRpc>.Instance.Send(data: PlayerControl.LocalPlayer.PlayerId, immediately: true);
 
