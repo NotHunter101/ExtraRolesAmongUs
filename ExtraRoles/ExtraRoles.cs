@@ -164,7 +164,6 @@ namespace ExtraRolesMod
             public bool showOfficer { get; set; }
             public bool showEngineer { get; set; }
             public bool showJoker { get; set; }
-            public bool jokerCanDieToOfficer { get; set; }
             public float minimumCrewmateCount { get; set; }
             public OfficerKillBehaviour officerKillBehaviour { get; set; }
             public bool officerShouldDieToShieldedPlayers { get; set; }
@@ -185,7 +184,6 @@ namespace ExtraRolesMod
                 this.OfficerCD = HarmonyMain.OfficerKillCooldown.GetValue();
                 this.showEngineer = HarmonyMain.showEngineer.GetValue();
                 this.showJoker = HarmonyMain.showJoker.GetValue();
-                this.jokerCanDieToOfficer = HarmonyMain.jokerCanDieToOfficer.GetValue();
                 this.minimumCrewmateCount = HarmonyMain.minimumCrewmateCount.GetValue();
                 this.officerKillBehaviour = (OfficerKillBehaviour) HarmonyMain.officerKillBehaviour.GetValue();
                 this.officerShouldDieToShieldedPlayers = HarmonyMain.officerShouldDieToShieldedPlayers.GetValue();
