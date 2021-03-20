@@ -46,7 +46,6 @@ namespace ExtraRolesMod
                 if (shouldSpawn)
                 {
                     var randomCrewmateIndex = rng.Next(0, crewmates.Count);
-                    crewmates[randomCrewmateIndex].getModdedControl().Role = roleName;
                     var playerIdForRole = crewmates[randomCrewmateIndex].PlayerId;
                     crewmates.RemoveAt(randomCrewmateIndex);
                     Rpc<SetRoleRpc>.Instance.Send(data: (PlayerId: playerIdForRole, Role: roleName), immediately: true);
