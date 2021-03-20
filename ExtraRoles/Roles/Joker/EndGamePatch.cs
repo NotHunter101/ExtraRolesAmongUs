@@ -6,7 +6,7 @@ using static ExtraRolesMod.ExtraRoles;
 
 namespace ExtraRolesMod
 {
-    [HarmonyPatch(typeof(EndGameManager), "SetEverythingUp")]
+    [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.SetEverythingUp))]
     public static class EndGamePatch
     {
         public static bool Prefix()

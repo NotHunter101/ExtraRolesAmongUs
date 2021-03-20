@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Net;
 using Reactor;
-using Essentials.CustomOptions;
+using Essentials.Options;
 using static ExtraRolesMod.ExtraRoles;
 using Reactor.Unstrip;
 using UnityEngine;
@@ -37,11 +37,15 @@ namespace ExtraRolesMod
         public static CustomNumberOption OfficerKillCooldown =
             CustomOption.AddNumber("Officer Kill Cooldown", 30f, 10f, 60f, 2.5f);
 
+        public static CustomStringOption
+            officerKillBehaviour = CustomOption.AddString("Officer Kill Behaviour", new[] { "Impostor", "Joker", "Crew Die", "Anyone" });
+
+        public static CustomToggleOption officerShouldDieToShieldedPlayers =
+            CustomOption.AddToggle("Officer Dies When Attacking Shielded Players", true);
+
+
         public static CustomToggleOption playerMurderIndicator =
             CustomOption.AddToggle("Murder Attempt Indicator for Shielded Player", false);
-
-        public static CustomToggleOption
-            jokerCanDieToOfficer = CustomOption.AddToggle("Joker Can Die To Officer", true);
 
         public static CustomToggleOption medicReportSwitch = CustomOption.AddToggle("Show Medic Reports", true);
 
@@ -72,7 +76,7 @@ namespace ExtraRolesMod
         public override void Load()
         {
             Ip = Config.Bind("Custom", "Ipv4 or Hostname", "127.0.0.1");
-            Port = Config.Bind("Custom", "Port", (ushort) 22023);
+            Port = Config.Bind("Custom", "Port", (ushort)22023);
 
             Main.Assets.bundle = AssetBundle.LoadFromFile(Directory.GetCurrentDirectory() + "\\Assets\\bundle");
             Main.Assets.breakClip = Main.Assets.bundle.LoadAsset<AudioClip>("SB").DontUnload();
@@ -88,6 +92,16 @@ namespace ExtraRolesMod
             //Hunter101#1337
             CustomOption.ShamelessPlug = false;
 
+            RegisterInIl2CppAttribute.Register();
+            RegisterCustomRpcAttribute.Register(this);
+
+            AddCustomRegion();
+
+            Harmony.PatchAll();
+        }
+
+        private void AddCustomRegion()
+        {
             var defaultRegions = ServerManager.DefaultRegions.ToList();
             var ip = Ip.Value;
             if (Uri.CheckHostName(Ip.Value).ToString() == "Dns")
@@ -101,15 +115,14 @@ namespace ExtraRolesMod
                 }
             }
 
-            defaultRegions.Insert(0, new RegionInfo(
-                "Custom", ip, new[]
+            defaultRegions.Insert(0, new DnsRegionInfo(
+                "Custom", ip, StringNames.NoTranslation, new[]
                 {
                     new ServerInfo($"Custom-Server", ip, Port.Value)
-                })
+                }).Cast<IRegionInfo>()
             );
 
             ServerManager.DefaultRegions = defaultRegions.ToArray();
-            Harmony.PatchAll();
         }
     }
 }

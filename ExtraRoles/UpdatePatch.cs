@@ -1,4 +1,7 @@
-﻿using HarmonyLib;
+using ExtraRoles.Medic;
+using ExtraRoles.Roles;
+using HarmonyLib;
+using InnerNet;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -14,13 +17,13 @@ namespace ExtraRolesMod
         SelfAndMedic = 2,
         Everyone = 3,
     }
-    
-    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.Method_24))]
+
+    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.Method_5))]
     class GameOptionsData_ToHudString
     {
-        static void Postfix(ref string __result)
+        static void Postfix()
         {
-            DestroyableSingleton<HudManager>.Instance.GameSettings.scale = 0.5f;
+            HudManager.Instance.GameSettings.scale = 0.5f;
         }
     }
 
@@ -125,7 +128,7 @@ namespace ExtraRolesMod
             if (!PlayerControl.LocalPlayer.Data.IsImpostor && Input.GetKeyDown(KeyCode.Q) && !lastQ &&
                 __instance.UseButton.isActiveAndEnabled)
                 PerformKillPatch.Prefix();
-            if (PlayerControl.LocalPlayer.isPlayerRole("Engineer") && __instance.UseButton.isActiveAndEnabled)
+            if (PlayerControl.LocalPlayer.isPlayerRole(Role.Engineer) && __instance.UseButton.isActiveAndEnabled)
             {
                 KillButton.gameObject.SetActive(true);
                 KillButton.isActive = true;
@@ -147,25 +150,25 @@ namespace ExtraRolesMod
             
             if (Main.Logic.getImmortalPlayer() != null && Main.Logic.getImmortalPlayer().PlayerControl.Data.IsDead)
                 BreakShield(true);
-            if (Main.Logic.getImmortalPlayer() != null && Main.Logic.getRolePlayer("Medic") != null &&
-                Main.Logic.getRolePlayer("Medic").PlayerControl.Data.IsDead)
+            if (Main.Logic.getImmortalPlayer() != null && Main.Logic.getRolePlayer(Role.Medic) != null &&
+                Main.Logic.getRolePlayer(Role.Medic).PlayerControl.Data.IsDead)
                 BreakShield(true);
-            if (Main.Logic.getRolePlayer("Medic") == null && Main.Logic.getImmortalPlayer() != null)
+            if (Main.Logic.getRolePlayer(Role.Medic) == null && Main.Logic.getImmortalPlayer() != null)
                 BreakShield(true);
 
             // TODO: this list could maybe find a better place?
             //       It is only meant for looping through role "name", "color" and "show" simultaneously
-            var roles = new List<(string roleName, Color roleColor, bool showRole)>()
+            var roles = new List<(Role roleName, Color roleColor, bool showRole)>()
             {
-                ("Medic", Main.Palette.medicColor, Main.Config.showMedic),
-                ("Officer", Main.Palette.officerColor, Main.Config.showOfficer),
-                ("Engineer", Main.Palette.engineerColor, Main.Config.showEngineer),
-                ("Joker", Main.Palette.jokerColor, Main.Config.showJoker),
+                (Role.Medic, Main.Palette.medicColor, Main.Config.showMedic),
+                (Role.Officer, Main.Palette.officerColor, Main.Config.showOfficer),
+                (Role.Engineer, Main.Palette.engineerColor, Main.Config.showEngineer),
+                (Role.Joker, Main.Palette.jokerColor, Main.Config.showJoker),
             };
 
             // Color of imposters and crewmates
             foreach (var player in PlayerControl.AllPlayerControls)
-                player.nameText.Color = player.Data.IsImpostor && PlayerControl.LocalPlayer.Data.IsImpostor
+                player.nameText.Color = player.Data.IsImpostor && (PlayerControl.LocalPlayer.Data.IsImpostor || PlayerControl.LocalPlayer.Data.IsDead)
                     ? Color.red
                     : Color.white;
 
@@ -175,16 +178,22 @@ namespace ExtraRolesMod
                 var role = Main.Logic.getRolePlayer(roleName);
                 if (role == null)
                     continue;
-                if (PlayerControl.LocalPlayer.isPlayerRole(roleName) || showRole)
+                if (PlayerControl.LocalPlayer.isPlayerRole(roleName) || showRole || PlayerControl.LocalPlayer.Data.IsDead)
                     role.PlayerControl.nameText.Color = roleColor;
             }
 
             //Color of name plates in the voting hub should be the same as in-game
-            foreach (var player in PlayerControl.AllPlayerControls)
-                if (MeetingHud.Instance != null)
-                    foreach (var playerVoteArea in MeetingHud.Instance.playerStates)
-                        if (playerVoteArea.NameText != null && player.PlayerId == playerVoteArea.TargetPlayerId)
-                            playerVoteArea.NameText.Color = player.nameText.Color;
+            if (MeetingHud.Instance != null)
+            {
+                foreach (var playerVoteArea in MeetingHud.Instance.playerStates)
+                {
+                    if (playerVoteArea.NameText == null) 
+                        continue;
+
+                    var player = PlayerTools.getPlayerById((byte)playerVoteArea.TargetPlayerId);
+                    playerVoteArea.NameText.Color = player.nameText.Color;
+                }
+            }
 
             if (Main.Logic.anyPlayerImmortal())
             {
@@ -192,28 +201,24 @@ namespace ExtraRolesMod
                 var shieldedPlayer = Main.Logic.getImmortalPlayer().PlayerControl;
                 if (showShielded == (int) ShieldOptions.Everyone)
                 {
-                    shieldedPlayer.myRend.material.SetColor("_VisorColor", Main.Palette.protectedColor);
-                    shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
-                    shieldedPlayer.myRend.material.SetColor("_OutlineColor", Main.Palette.protectedColor);
+                    GiveShieldedPlayerShield(shieldedPlayer);
                 }
                 else if (PlayerControl.LocalPlayer.isPlayerImmortal() && (showShielded == (int) ShieldOptions.Self || showShielded == (int) ShieldOptions.SelfAndMedic))
                 {
-                    shieldedPlayer.myRend.material.SetColor("_VisorColor", Main.Palette.protectedColor);
-                    shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
-                    shieldedPlayer.myRend.material.SetColor("_OutlineColor", Main.Palette.protectedColor);
+                   
+                    GiveShieldedPlayerShield(shieldedPlayer);
+
                 }
-                else if (PlayerControl.LocalPlayer.isPlayerRole("Medic") &&
+                else if (PlayerControl.LocalPlayer.isPlayerRole(Role.Medic) &&
                          (showShielded == (int) ShieldOptions.Medic || showShielded == (int) ShieldOptions.SelfAndMedic))
                 {
-                    shieldedPlayer.myRend.material.SetColor("_VisorColor", Main.Palette.protectedColor);
-                    shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
-                    shieldedPlayer.myRend.material.SetColor("_OutlineColor", Main.Palette.protectedColor);
+                    GiveShieldedPlayerShield(shieldedPlayer);
                 }
             }
 
             if (PlayerControl.LocalPlayer.Data.IsDead)
             {
-                if (!PlayerControl.LocalPlayer.isPlayerRole("Engineer"))
+                if (!PlayerControl.LocalPlayer.isPlayerRole(Role.Engineer))
                 {
                     KillButton.gameObject.SetActive(false);
                     KillButton.renderer.enabled = false;
@@ -224,7 +229,7 @@ namespace ExtraRolesMod
                 }
             }
 
-            if (__instance.UseButton != null && PlayerControl.LocalPlayer.isPlayerRole("Medic") &&
+            if (__instance.UseButton != null && PlayerControl.LocalPlayer.isPlayerRole(Role.Medic) &&
                 __instance.UseButton.isActiveAndEnabled)
             {
                 KillButton.renderer.sprite = Main.Assets.shieldIco;
@@ -244,7 +249,7 @@ namespace ExtraRolesMod
                 }
             }
 
-            if (__instance.UseButton != null && PlayerControl.LocalPlayer.isPlayerRole("Officer") &&
+            if (__instance.UseButton != null && PlayerControl.LocalPlayer.isPlayerRole(Role.Officer) &&
                 __instance.UseButton.isActiveAndEnabled)
             {
                 KillButton.gameObject.SetActive(true);
@@ -260,6 +265,22 @@ namespace ExtraRolesMod
                     KillButton.SetTarget(null);
                     CurrentTarget = null;
                 }
+            }
+        }
+
+        private static void GiveShieldedPlayerShield(PlayerControl shieldedPlayer)
+        {
+            if (shieldedPlayer.getModdedControl().Immortal == ShieldState.Broken)
+            {
+                shieldedPlayer.myRend.material.SetColor("_VisorColor", Color.white);
+                shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
+                shieldedPlayer.myRend.material.SetColor("_OutlineColor", Color.white);
+            }
+            else
+            {
+                shieldedPlayer.myRend.material.SetColor("_VisorColor", Main.Palette.protectedColor);
+                shieldedPlayer.myRend.material.SetFloat("_Outline", 1f);
+                shieldedPlayer.myRend.material.SetColor("_OutlineColor", Main.Palette.protectedColor);
             }
         }
     }
