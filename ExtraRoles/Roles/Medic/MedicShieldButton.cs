@@ -33,10 +33,7 @@ namespace ExtraRolesMod.Roles.Medic
 
         private static void MedicShieldButton_OnUpdate(object sender, EventArgs e)
         {
-            if (Button != null)
-            {
-                Button.Clickable = !PlayerControl.LocalPlayer.Data.IsDead && !PlayerControl.LocalPlayer.getModdedControl().UsedAbility && PlayerControl.LocalPlayer.FindClosestPlayer() != null;
-            }
+            Button.Clickable = !PlayerControl.LocalPlayer.Data.IsDead && !PlayerControl.LocalPlayer.getModdedControl().UsedAbility && PlayerControl.LocalPlayer.FindClosestPlayer() != null;
 
             lastQ = Input.GetKeyUp(KeyCode.Q);
 
