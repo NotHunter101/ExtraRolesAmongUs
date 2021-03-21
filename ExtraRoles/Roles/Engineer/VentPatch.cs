@@ -13,13 +13,18 @@ namespace ExtraRolesMod
     {
         public static bool Prefix(Vent __instance, ref float __result, [HarmonyArgument(0)] GameData.PlayerInfo pc, [HarmonyArgument(1)] out bool canUse, [HarmonyArgument(2)] out bool couldUse)
         {
+            var vent = __instance;
+            var player = pc.Object;
             float num = float.MaxValue;
-            PlayerControl localPlayer = pc.Object;
-            couldUse = !localPlayer.Data.IsDead;
-            couldUse &= localPlayer.Data.IsImpostor || localPlayer.isPlayerRole(Role.Engineer);
+            couldUse = (pc.IsImpostor || player.isPlayerRole(Role.Engineer)) && !pc.IsDead && (player.CanMove || player.inVent);
             canUse = couldUse;
-            num = Vector2.Distance(localPlayer.GetTruePosition(), __instance.transform.position);
-            canUse &= num <= __instance.UsableDistance;
+            if (canUse)
+            {
+                Vector2 truePosition = player.GetTruePosition();
+                Vector3 position = vent.transform.position;
+                num = Vector2.Distance(truePosition, position);
+                canUse &= (num <= vent.UsableDistance && !PhysicsHelpers.AnythingBetween(truePosition, position, Constants.ShipAndObjectsMask, false));
+            }
             __result = num;
             return false;
         }
