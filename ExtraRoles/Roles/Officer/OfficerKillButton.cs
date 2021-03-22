@@ -33,10 +33,6 @@ namespace ExtraRolesMod.Roles.Officer
 
         private static void OfficerKillButton_OnUpdate(object sender, EventArgs e)
         {
-            Button.Visible = AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started;
-            if (!Button.Visible)
-                return;
-
             Button.Visible = PlayerControl.LocalPlayer.IsPlayerRole(Role.Officer);
             Button.Clickable = !PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.FindClosestPlayer();
 

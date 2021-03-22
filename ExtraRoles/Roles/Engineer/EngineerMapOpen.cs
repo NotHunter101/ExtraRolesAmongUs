@@ -17,7 +17,7 @@ namespace ExtraRolesMod.Roles.Engineer
             __instance.ColorControl.baseColor =
                 !ExtraRoles.Logic.sabotageActive ? Color.gray : Colors.engineerColor;
 
-            var perc = ExtraRoles.Logic.getRolePlayer(Role.Engineer).UsedAbility ? 1f : 0f;
+            var perc = ExtraRoles.Logic.GetRolePlayer(Role.Engineer).UsedAbility ? 1f : 0f;
 
             foreach (var room in __instance.infectedOverlay.rooms)
             {

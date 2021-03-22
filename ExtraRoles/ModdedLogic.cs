@@ -7,24 +7,13 @@ namespace ExtraRolesMod
 {
     public class ModdedLogic
     {
-        public ModPlayerControl getRolePlayer(Role roleName)
+        public ModPlayerControl GetRolePlayer(Role roleName)
         {
             return ExtraRoles.Logic.AllModPlayerControl.Find(x => x.Role == roleName);
         }
-
-        public ModPlayerControl getImmortalPlayer()
-        {
-            return ExtraRoles.Logic.AllModPlayerControl.Find(x => x.Immortal);
-        }
-
-        public bool anyPlayerImmortal()
-        {
-            return ExtraRoles.Logic.AllModPlayerControl.FindAll(x => x.Immortal).Count > 0;
-        }
-
         public void ClearJokerTasks()
         {
-            var joker = ExtraRoles.Logic.getRolePlayer(Role.Joker);
+            var joker = ExtraRoles.Logic.GetRolePlayer(Role.Joker);
             if (joker == null)
                 return;
             var jokerControl = joker.PlayerControl;

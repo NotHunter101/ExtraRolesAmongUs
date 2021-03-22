@@ -30,10 +30,7 @@ namespace ExtraRolesMod.Roles.Medic
 
         private static void MedicShieldButton_OnUpdate(object sender, EventArgs e)
         {
-            Button.Visible = AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started;
-            if (!Button.Visible)
-                return;
-            Button.Visible &= !PlayerControl.LocalPlayer.Data.IsDead;
+            Button.Visible = !PlayerControl.LocalPlayer.Data.IsDead;
             Button.Visible &= PlayerControl.LocalPlayer.IsPlayerRole(Role.Medic);
             if (!Button.Visible)
                 return;

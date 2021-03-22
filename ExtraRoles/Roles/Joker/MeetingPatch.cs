@@ -19,7 +19,7 @@ namespace ExtraRolesMod
             if (ExileController.Instance == null || obj != ExileController.Instance.gameObject)
                 return;
 
-            var Officer = ExtraRoles.Logic.getRolePlayer(Role.Joker);
+            var Officer = ExtraRoles.Logic.GetRolePlayer(Role.Joker);
             if (Officer != null)
                 Officer.LastAbilityTime = DateTime.UtcNow;
             if (ExileController.Instance.exiled == null ||
@@ -38,7 +38,7 @@ namespace ExtraRolesMod
                 player.Data.IsImpostor = false;
             }
 
-            var joker = ExtraRoles.Logic.getRolePlayer(Role.Joker).PlayerControl;
+            var joker = ExtraRoles.Logic.GetRolePlayer(Role.Joker).PlayerControl;
             joker.Revive();
             joker.Data.IsDead = false;
             joker.Data.IsImpostor = true;

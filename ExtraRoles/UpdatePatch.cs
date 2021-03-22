@@ -45,7 +45,7 @@ namespace ExtraRolesMod
             // Color of roles (always see yourself, and depending on setting, others may see the role too)
             foreach (var (roleName, roleColor) in roles)
             {
-                var role = ExtraRoles.Logic.getRolePlayer(roleName);
+                var role = ExtraRoles.Logic.GetRolePlayer(roleName);
                 if (role == null)
                     continue;
                 if (PlayerControl.LocalPlayer.IsPlayerRole(roleName) || PlayerControl.LocalPlayer.Data.IsDead)

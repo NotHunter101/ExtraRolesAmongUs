@@ -25,10 +25,6 @@ namespace ExtraRolesMod.Roles.Engineer
 
         private static void Button_OnUpdate(object sender, EventArgs e)
         {
-            Button.Visible = AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started;
-            if (!Button.Visible)
-                return;
-
             Button.Visible = PlayerControl.LocalPlayer.IsPlayerRole(Role.Engineer);
         }
 

@@ -37,7 +37,7 @@ namespace ExtraRolesMod
         /// </summary>
         public static float getOfficerCD()
         {
-            var lastAbilityTime = ExtraRoles.Logic.getRolePlayer(Role.Officer).LastAbilityTime;
+            var lastAbilityTime = ExtraRoles.Logic.GetRolePlayer(Role.Officer).LastAbilityTime;
             if (lastAbilityTime == null)
             {
                 return ExtraRoles.Config.OfficerCD;
