@@ -123,13 +123,11 @@ namespace ExtraRolesMod
 
         public static GameObject rend;
         public static List<DeadPlayer> killedPlayers = new List<DeadPlayer>();
-        public static PlayerControl CurrentTarget = null;
         public static PlayerControl localPlayer = null;
         public static List<PlayerControl> localPlayers = new List<PlayerControl>();
         public static System.Random rng = new System.Random();
         public static KillButtonManager KillButton;
         public static int KBTarget;
-        public static double DistLocalClosest;
         public static GameObject shieldIndicator = null;
         public static SpriteRenderer shieldRenderer = null;
         public static string versionString = "v1.4.3b";
