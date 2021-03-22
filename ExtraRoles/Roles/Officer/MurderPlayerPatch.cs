@@ -1,5 +1,4 @@
-﻿using ExtraRolesMod.Medic;
-using ExtraRolesMod.Officer;
+﻿using ExtraRolesMod.Officer;
 using ExtraRolesMod.Roles.Medic;
 using ExtraRolesMod.Rpc;
 using ExtraRolesMod;
@@ -8,47 +7,65 @@ using Hazel;
 using Reactor;
 using System;
 using UnityEngine;
-using static ExtraRolesMod.ExtraRoles;
+
 
 namespace ExtraRolesMod.Roles.Officer
 {
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
     public static class MurderPlayerPatch
     {
-        public static bool Prefix(PlayerControl __instance, PlayerControl PAIBDFDMIGK)
+        public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
         {
-            //check if the player is an officer
-            if (__instance.isPlayerRole(Role.Officer))
+            __instance.Data.IsImpostor = true;
+            
+            if (__instance.AmOwner && target.AmOwner)
             {
-                //if so, set them to impostor for one frame so they aren't banned for anti-cheat
-                __instance.Data.IsImpostor = true;
+                target.GetModdedControl().Immortal = false;
+                return true;
+            }
+
+            if (target.IsPlayerImmortal())
+            {
+                var comp = target.GetComponent<PlayerShield>();
+                if (comp && target.AmOwner)
+                {
+                    if (ExtraRoles.Config.ShieldMurderAttemptIndicator)
+                    {
+                        comp.GlowShield();
+                    }
+                }
+                return false;
             }
 
             return true;
         }
 
-        //handle the murder after it's ran
-        public static void Postfix(PlayerControl __instance, PlayerControl PAIBDFDMIGK)
+        public static void Postfix(PlayerControl __instance, PlayerControl __0)
         {
+            if (__instance.IsPlayerRole(Role.Officer))
+            {
+                __instance.Data.IsImpostor = false;
+            }
             var deadBody = new DeadPlayer
             {
-                PlayerId = PAIBDFDMIGK.PlayerId,
+                PlayerId = __0.PlayerId,
                 KillerId = __instance.PlayerId,
                 KillTime = DateTime.UtcNow,
                 DeathReason = DeathReason.Kill
             };
 
-            if (__instance.isPlayerRole(Role.Officer))
+            if (__instance.IsPlayerRole(Role.Officer))
             {
                 __instance.Data.IsImpostor = false;
             }
 
-            if (__instance.PlayerId == PAIBDFDMIGK.PlayerId)
+            if (__instance.PlayerId == __0.PlayerId)
             {
                 deadBody.DeathReason = (DeathReason)3;
             }
 
-            killedPlayers.Add(deadBody);
+            ExtraRoles.KilledPlayers.Add(deadBody);
         }
+
     }
 }

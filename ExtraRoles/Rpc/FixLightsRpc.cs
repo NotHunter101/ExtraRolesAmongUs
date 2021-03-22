@@ -1,14 +1,14 @@
 ﻿using ExtraRolesMod;
 using Hazel;
 using Reactor;
-using static ExtraRolesMod.ExtraRoles;
+
 
 namespace ExtraRolesMod.Rpc
 {
     [RegisterCustomRpc]
-    public class FixLightsRpc : PlayerCustomRpc<HarmonyMain, bool>
+    public class FixLightsRpc : PlayerCustomRpc<ExtraRolesPlugin, bool>
     {
-        public FixLightsRpc(HarmonyMain plugin) : base(plugin)
+        public FixLightsRpc(ExtraRolesPlugin plugin) : base(plugin)
         {
 
         }

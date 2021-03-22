@@ -2,14 +2,14 @@
 using ExtraRolesMod;
 using Hazel;
 using Reactor;
-using static ExtraRolesMod.ExtraRoles;
+
 
 namespace ExtraRolesMod.Rpc
 {
     [RegisterCustomRpc]
-    public class JokerWinRpc : PlayerCustomRpc<HarmonyMain, bool>
+    public class JokerWinRpc : PlayerCustomRpc<ExtraRolesPlugin, bool>
     {
-        public JokerWinRpc(HarmonyMain plugin) : base(plugin)
+        public JokerWinRpc(ExtraRolesPlugin plugin) : base(plugin)
         {
 
         }
@@ -20,19 +20,21 @@ namespace ExtraRolesMod.Rpc
         {
             foreach (var player in PlayerControl.AllPlayerControls)
             {
-                if (player.isPlayerRole(Role.Joker))
-                    continue;
+                if (player.IsPlayerRole(Role.Joker))
+                {
+                    player.Revive();
+                    player.Data.IsDead = false;
+                    player.Data.IsImpostor = true;
+                }
+                else
+                {
 
-                player.RemoveInfected();
-                player.Die(DeathReason.Exile);
-                player.Data.IsDead = true;
-                player.Data.IsImpostor = false;
+                    player.RemoveInfected();
+                    player.Die(DeathReason.Exile);
+                    player.Data.IsDead = true;
+                    player.Data.IsImpostor = false;
+                }
             }
-
-            var joker = Main.Logic.getRolePlayer(Role.Joker).PlayerControl;
-            joker.Revive();
-            joker.Data.IsDead = false;
-            joker.Data.IsImpostor = true;
         }
 
         public override bool Read(MessageReader reader)

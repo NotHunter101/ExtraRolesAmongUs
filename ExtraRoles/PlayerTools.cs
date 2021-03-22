@@ -19,7 +19,7 @@ namespace ExtraRolesMod
             TaskTypes.RestoreOxy
         };
 
-        public static PlayerControl getPlayerById(byte id)
+        public static PlayerControl GetPlayerById(byte id)
         {
             foreach (var player in PlayerControl.AllPlayerControls)
             {
@@ -37,16 +37,16 @@ namespace ExtraRolesMod
         /// </summary>
         public static float getOfficerCD()
         {
-            var lastAbilityTime = ExtraRoles.Main.Logic.getRolePlayer(Role.Officer).LastAbilityTime;
+            var lastAbilityTime = ExtraRoles.Logic.getRolePlayer(Role.Officer).LastAbilityTime;
             if (lastAbilityTime == null)
             {
-                return ExtraRoles.Main.Config.OfficerCD;
+                return ExtraRoles.Config.OfficerCD;
             }
 
             var now = DateTime.UtcNow;
             var diff = (TimeSpan) (now - lastAbilityTime);
 
-            var killCooldown = ExtraRoles.Main.Config.OfficerCD * 1000.0f;
+            var killCooldown = ExtraRoles.Config.OfficerCD * 1000.0f;
             if (killCooldown - (float) diff.TotalMilliseconds < 0)
                 return 0;
 
@@ -55,12 +55,12 @@ namespace ExtraRolesMod
 
         public static bool canEngineerUseAbility()
         {
-            if (PlayerControl.LocalPlayer.getModdedControl().UsedAbility)
+            if (PlayerControl.LocalPlayer.GetModdedControl().UsedAbility)
             {
                 return false;
             }
 
-            if (!ExtraRoles.Main.Logic.sabotageActive)
+            if (!ExtraRoles.Logic.sabotageActive)
             {
                 return false;
             }

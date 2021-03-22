@@ -1,13 +1,11 @@
 ﻿using ExtraRolesMod.Roles;
 using ExtraRolesMod.Roles.Medic;
-using ExtraRolesMod;
 using HarmonyLib;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using static ExtraRolesMod.ExtraRoles;
 
-namespace ExtraRoles
+
+namespace ExtraRolesMod
 {
 
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.LocalPlayer.CmdReportDeadBody))]
@@ -17,19 +15,19 @@ namespace ExtraRoles
         {
             System.Console.WriteLine("Report Body!");
             byte reporterId = __instance.PlayerId;
-            DeadPlayer killer = killedPlayers.Where(x => x.PlayerId == __0.PlayerId).FirstOrDefault();
+            DeadPlayer killer = ExtraRoles.KilledPlayers.Where(x => x.PlayerId == __0.PlayerId).FirstOrDefault();
             if (killer != null)
             {
                 // If there is a Medic alive and Medic reported and reports are enabled
-                if (PlayerControl.LocalPlayer.isPlayerRole(Role.Medic) && Main.Config.showReport)
+                if (PlayerControl.LocalPlayer.IsPlayerRole(Role.Medic) && ExtraRoles.Config.showReport)
                 {
                     // If the user is the medic
-                    if (PlayerControl.LocalPlayer.isPlayerRole(Role.Medic))
+                    if (PlayerControl.LocalPlayer.IsPlayerRole(Role.Medic))
                     {
                         // Create Body Report
                         BodyReport br = new BodyReport();
-                        br.Killer = PlayerTools.getPlayerById(killer.KillerId);
-                        br.Reporter = br.Killer = PlayerTools.getPlayerById(killer.KillerId);
+                        br.Killer = PlayerTools.GetPlayerById(killer.KillerId);
+                        br.Reporter = br.Killer = PlayerTools.GetPlayerById(killer.KillerId);
                         br.KillAge = (float)(DateTime.UtcNow - killer.KillTime).TotalMilliseconds;
                         br.DeathReason = killer.DeathReason;
                         // Generate message

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using static ExtraRolesMod.ExtraRoles;
+
 
 namespace ExtraRolesMod.Roles.Medic
 {
@@ -15,7 +15,7 @@ namespace ExtraRolesMod.Roles.Medic
         public static string ParseBodyReport(BodyReport br)
         {
             System.Console.WriteLine(br.KillAge);
-            if (br.KillAge > Main.Config.medicKillerColorDuration * 1000)
+            if (br.KillAge > ExtraRoles.Config.medicKillerColorDuration * 1000)
             {
                 return $"Body Report: The corpse is too old to gain information from. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
@@ -24,7 +24,7 @@ namespace ExtraRolesMod.Roles.Medic
                 return $"Body Report (Officer): The cause of death appears to be suicide! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
 
             }
-            else if (br.KillAge < Main.Config.medicKillerNameDuration * 1000)
+            else if (br.KillAge < ExtraRoles.Config.medicKillerNameDuration * 1000)
             {
                 return $"Body Report: The killer appears to be {br.Killer.name}! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }

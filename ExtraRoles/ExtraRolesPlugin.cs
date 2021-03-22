@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net;
 using Reactor;
 using Essentials.Options;
-using static ExtraRolesMod.ExtraRoles;
+
 using Reactor.Unstrip;
 using UnityEngine;
 using System.IO;
@@ -20,18 +20,13 @@ namespace ExtraRolesMod
     [BepInPlugin(Id)]
     [BepInProcess("Among Us.exe")]
     [BepInDependency(ReactorPlugin.Id)]
-    public partial class HarmonyMain : BasePlugin
+    public partial class ExtraRolesPlugin : BasePlugin
     {
-        public const string Id = "gg.reactor.extraroles";
+        public const string Id = "net.extraroles";
 
         public Harmony Harmony { get; } = new Harmony(Id);
 
         //This section uses the https://github.com/DorCoMaNdO/Reactor-Essentials framework
-
-        public static CustomToggleOption showMedic = CustomOption.AddToggle("Show Medic", false);
-        public static CustomToggleOption showOfficer = CustomOption.AddToggle("Show Officer", false);
-        public static CustomToggleOption showEngineer = CustomOption.AddToggle("Show Engineer", false);
-        public static CustomToggleOption showJoker = CustomOption.AddToggle("Show Joker", false);
 
         public static CustomStringOption showShieldedPlayer = CustomOption.AddString("Show Shielded Player",
             new[] {"Self", "Medic", "Self+Medic", "Everyone"});
@@ -71,11 +66,11 @@ namespace ExtraRolesMod
 
         public override void Load()
         {
-            Main.Assets.bundle = AssetBundle.LoadFromFile(Directory.GetCurrentDirectory() + "\\Assets\\bundle");
-            Main.Assets.breakClip = Main.Assets.bundle.LoadAsset<AudioClip>("SB").DontUnload();
-            Main.Assets.repairIco = Main.Assets.bundle.LoadAsset<Sprite>("RE").DontUnload();
-            Main.Assets.shieldIco = Main.Assets.bundle.LoadAsset<Sprite>("SA").DontUnload();
-            Main.Assets.smallShieldIco = Main.Assets.bundle.LoadAsset<Sprite>("RESmall").DontUnload();
+            ExtraRoles.Assets.bundle = AssetBundle.LoadFromFile(Directory.GetCurrentDirectory() + "\\Assets\\bundle");
+            ExtraRoles.Assets.breakClip = ExtraRoles.Assets.bundle.LoadAsset<AudioClip>("SB").DontUnload();
+            ExtraRoles.Assets.repairIco = ExtraRoles.Assets.bundle.LoadAsset<Sprite>("RE").DontUnload();
+            ExtraRoles.Assets.shieldIco = ExtraRoles.Assets.bundle.LoadAsset<Sprite>("SA").DontUnload();
+            ExtraRoles.Assets.smallShieldIco = ExtraRoles.Assets.bundle.LoadAsset<Sprite>("RESmall").DontUnload();
 
             //Disable the https://github.com/DorCoMaNdO/Reactor-Essentials watermark.
             //The code said that you were allowed, as long as you provided credit elsewhere. 

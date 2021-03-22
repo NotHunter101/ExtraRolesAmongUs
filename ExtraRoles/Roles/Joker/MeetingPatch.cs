@@ -2,13 +2,13 @@ using ExtraRolesMod;
 using HarmonyLib;
 using Hazel;
 using System;
-using static ExtraRolesMod.ExtraRoles;
+
 using UnhollowerBaseLib;
 using ExtraRolesMod.Roles;
 using ExtraRolesMod.Rpc;
 using Reactor;
 
-namespace ExtraRoles
+namespace ExtraRolesMod
 {
     [HarmonyPatch(typeof(UnityEngine.Object), nameof(UnityEngine.Object.Destroy),
         new[] {typeof(UnityEngine.Object)})]
@@ -19,18 +19,18 @@ namespace ExtraRoles
             if (ExileController.Instance == null || obj != ExileController.Instance.gameObject)
                 return;
 
-            var Officer = Main.Logic.getRolePlayer(Role.Joker);
+            var Officer = ExtraRoles.Logic.getRolePlayer(Role.Joker);
             if (Officer != null)
                 Officer.LastAbilityTime = DateTime.UtcNow;
             if (ExileController.Instance.exiled == null ||
-                !ExileController.Instance.exiled._object.isPlayerRole(Role.Joker))
+                !ExileController.Instance.exiled._object.IsPlayerRole(Role.Joker))
                 return;
 
             Rpc<JokerWinRpc>.Instance.Send(data: true, immediately: true);
 
             foreach (var player in PlayerControl.AllPlayerControls)
             {
-                if (player.isPlayerRole(Role.Joker))
+                if (player.IsPlayerRole(Role.Joker))
                     continue;
                 player.RemoveInfected();
                 player.Die(DeathReason.Exile);
@@ -38,7 +38,7 @@ namespace ExtraRoles
                 player.Data.IsImpostor = false;
             }
 
-            var joker = Main.Logic.getRolePlayer(Role.Joker).PlayerControl;
+            var joker = ExtraRoles.Logic.getRolePlayer(Role.Joker).PlayerControl;
             joker.Revive();
             joker.Data.IsDead = false;
             joker.Data.IsImpostor = true;
@@ -58,13 +58,13 @@ namespace ExtraRoles
                 case StringNames.ExileTextPN:
                 case StringNames.ExileTextSN:
                 {
-                    if (ExileController.Instance.exiled.Object.isPlayerRole(Role.Medic))
+                    if (ExileController.Instance.exiled.Object.IsPlayerRole(Role.Medic))
                         __result = ExileController.Instance.exiled.PlayerName + " was The Medic.";
-                    else if (ExileController.Instance.exiled.Object.isPlayerRole(Role.Engineer))
+                    else if (ExileController.Instance.exiled.Object.IsPlayerRole(Role.Engineer))
                         __result = ExileController.Instance.exiled.PlayerName + " was The Engineer.";
-                    else if (ExileController.Instance.exiled.Object.isPlayerRole(Role.Officer))
+                    else if (ExileController.Instance.exiled.Object.IsPlayerRole(Role.Officer))
                         __result = ExileController.Instance.exiled.PlayerName + " was The Officer.";
-                    else if (ExileController.Instance.exiled.Object.isPlayerRole(Role.Joker))
+                    else if (ExileController.Instance.exiled.Object.IsPlayerRole(Role.Joker))
                         __result = ExileController.Instance.exiled.PlayerName + " was The Joker.";
                     else
                         __result = ExileController.Instance.exiled.PlayerName + " was not The Impostor.";
@@ -73,7 +73,7 @@ namespace ExtraRoles
                 case StringNames.ImpostorsRemainP:
                 case StringNames.ImpostorsRemainS:
                 {
-                    if (ExileController.Instance.exiled.Object.isPlayerRole(Role.Joker))
+                    if (ExileController.Instance.exiled.Object.IsPlayerRole(Role.Joker))
                         __result = "";
                     break;
                 }

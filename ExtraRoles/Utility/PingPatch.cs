@@ -1,5 +1,5 @@
 ﻿using HarmonyLib;
-using static ExtraRolesMod.ExtraRoles;
+
 
 namespace ExtraRolesMod.Utility
 {
@@ -10,7 +10,7 @@ namespace ExtraRolesMod.Utility
         public static void Postfix(PingTracker __instance)
         {
             __instance.text.Text += "\nextraroles.net";
-            __instance.text.Text += "\nExtraRoles " + versionString;
+            __instance.text.Text += "\nExtraRoles " + ExtraRoles.Version;
         }
     }
 }

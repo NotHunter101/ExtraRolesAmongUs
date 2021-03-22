@@ -1,13 +1,6 @@
-﻿using ExtraRolesMod.Medic;
-using ExtraRolesMod.Officer;
-using ExtraRolesMod.Rpc;
-using ExtraRolesMod;
-using HarmonyLib;
-using Hazel;
-using Reactor;
-using System;
+﻿using HarmonyLib;
 using UnityEngine;
-using static ExtraRolesMod.ExtraRoles;
+
 
 namespace ExtraRolesMod.Roles.Engineer
 {
@@ -17,20 +10,20 @@ namespace ExtraRolesMod.Roles.Engineer
     {
         static void Postfix(MapBehaviour __instance)
         {
-            if (!PlayerControl.LocalPlayer.isPlayerRole(Role.Engineer))
+            if (!PlayerControl.LocalPlayer.IsPlayerRole(Role.Engineer))
                 return;
             if (!__instance.IsOpen || !__instance.infectedOverlay.gameObject.active)
                 return;
             __instance.ColorControl.baseColor =
-                !Main.Logic.sabotageActive ? Color.gray : Main.Palette.engineerColor;
+                !ExtraRoles.Logic.sabotageActive ? Color.gray : Colors.engineerColor;
 
-            var perc = Main.Logic.getRolePlayer(Role.Engineer).UsedAbility ? 1f : 0f;
+            var perc = ExtraRoles.Logic.getRolePlayer(Role.Engineer).UsedAbility ? 1f : 0f;
 
             foreach (var room in __instance.infectedOverlay.rooms)
             {
                 if (room.special == null)
                     continue;
-                room.special.material.SetFloat("_Desat", !Main.Logic.sabotageActive ? 1f : 0f);
+                room.special.material.SetFloat("_Desat", !ExtraRoles.Logic.sabotageActive ? 1f : 0f);
 
                 room.special.enabled = true;
                 room.special.gameObject.SetActive(true);

@@ -1,30 +1,57 @@
 ﻿using ExtraRolesMod;
+using ExtraRolesMod.Officer;
+using ExtraRolesMod.Roles;
 using Hazel;
 using Reactor;
-using static ExtraRolesMod.ExtraRoles;
+
 
 namespace ExtraRolesMod.Rpc
 {
     [RegisterCustomRpc]
-    public class OfficerKillRpc : PlayerCustomRpc<HarmonyMain, OfficerKillRpc.OfficerKillData>
+    public class OfficerKillRpc : PlayerCustomRpc<ExtraRolesPlugin, OfficerKillRpc.OfficerKillData>
     {
-        public OfficerKillRpc(HarmonyMain plugin) : base(plugin)
+        public OfficerKillRpc(ExtraRolesPlugin plugin) : base(plugin)
         {
 
         }
 
-        // Handle this rpc localy first then send it to other clients
         public override RpcLocalHandling LocalHandling => RpcLocalHandling.Before;
 
         public override void Handle(PlayerControl innerNetObject, OfficerKillData data)
         {
-            var attacker = PlayerTools.getPlayerById(data.Attacker);
+            var attacker = PlayerTools.GetPlayerById(data.Attacker);
+            var target = PlayerTools.GetPlayerById(data.Target);
+            
+            var isTargetJoker = target.IsPlayerRole(Role.Joker);
+            var isTargetImpostor = target.Data.IsImpostor;
+            var officerKillSetting = ExtraRoles.Config.officerKillBehaviour;
+            if (target.IsPlayerImmortal())
+            {
+                if (ExtraRoles.Config.officerShouldDieToShieldedPlayers)
+                {
+                    // suicide packet
+                    attacker.MurderPlayer(attacker);
+                }
 
-            var target = PlayerTools.getPlayerById(data.Target);
+            }
+            else if (officerKillSetting == OfficerKillBehaviour.OfficerSurvives // don't care who it is, kill them
+                || isTargetImpostor // impostors always die
+                || (officerKillSetting != OfficerKillBehaviour.Impostor && isTargetJoker)) // joker can die and target is joker
+            {
+                // kill target
+                attacker.MurderPlayer(target);
+            }
+            else // officer dies
+            {
+                if (officerKillSetting == OfficerKillBehaviour.CrewDie)
+                {
+                    // kill target too
+                    attacker.MurderPlayer(target);
+                }
+                // kill officer
+                attacker.MurderPlayer(attacker);
+            }
 
-            attacker.MurderPlayer(target);
-            if (target.isPlayerImmortal())
-                BreakShield(false);
         }
 
         public override OfficerKillData Read(MessageReader reader)

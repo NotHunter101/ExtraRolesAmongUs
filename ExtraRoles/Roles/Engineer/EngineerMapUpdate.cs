@@ -1,13 +1,5 @@
-﻿using ExtraRolesMod.Medic;
-using ExtraRolesMod.Officer;
-using ExtraRolesMod.Rpc;
-using ExtraRolesMod;
-using HarmonyLib;
-using Hazel;
-using Reactor;
-using System;
-using UnityEngine;
-using static ExtraRolesMod.ExtraRoles;
+﻿using HarmonyLib;
+
 
 namespace ExtraRolesMod.Roles.Engineer
 {
@@ -16,12 +8,12 @@ namespace ExtraRolesMod.Roles.Engineer
     {
         static void Postfix(MapBehaviour __instance)
         {
-            if (!PlayerControl.LocalPlayer.isPlayerRole(Role.Engineer))
+            if (!PlayerControl.LocalPlayer.IsPlayerRole(Role.Engineer))
                 return;
             if (!__instance.IsOpen)
                 return;
 
-            __instance.ColorControl.baseColor = Main.Palette.engineerColor;
+            __instance.ColorControl.baseColor = Colors.engineerColor;
             foreach (var room in __instance.infectedOverlay.rooms)
             {
                 if (room.door == null)

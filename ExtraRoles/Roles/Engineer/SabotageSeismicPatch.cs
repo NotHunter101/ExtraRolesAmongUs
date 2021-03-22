@@ -1,13 +1,4 @@
-﻿using ExtraRolesMod.Medic;
-using ExtraRolesMod.Officer;
-using ExtraRolesMod.Rpc;
-using ExtraRolesMod;
-using HarmonyLib;
-using Hazel;
-using Reactor;
-using System;
-using UnityEngine;
-using static ExtraRolesMod.ExtraRoles;
+﻿using HarmonyLib;
 
 namespace ExtraRolesMod.Roles.Engineer
 {
@@ -17,13 +8,13 @@ namespace ExtraRolesMod.Roles.Engineer
     {
         static bool Prefix(MapRoom __instance)
         {
-            if (!PlayerControl.LocalPlayer.isPlayerRole(Role.Engineer))
+            if (!PlayerControl.LocalPlayer.IsPlayerRole(Role.Engineer))
                 return true;
 
             if (!PlayerTools.canEngineerUseAbility())
                 return false;
 
-            PlayerControl.LocalPlayer.getModdedControl().UsedAbility = true;
+            PlayerControl.LocalPlayer.GetModdedControl().UsedAbility = true;
             ShipStatus.Instance.RpcRepairSystem(SystemTypes.Laboratory, 16);
 
             return false;

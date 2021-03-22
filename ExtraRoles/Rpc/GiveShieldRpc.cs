@@ -1,16 +1,15 @@
-﻿using ExtraRolesMod.Medic;
-using ExtraRolesMod;
+﻿using ExtraRolesMod.Roles;
+using ExtraRolesMod.Roles.Medic;
 using Hazel;
 using Reactor;
-using static ExtraRolesMod.ExtraRoles;
 
 namespace ExtraRolesMod.Rpc
 {
 
     [RegisterCustomRpc]
-    public class GiveShieldRpc : PlayerCustomRpc<HarmonyMain, byte>
+    public class GiveShieldRpc : PlayerCustomRpc<ExtraRolesPlugin, byte>
     {
-        public GiveShieldRpc(HarmonyMain plugin) : base(plugin)
+        public GiveShieldRpc(ExtraRolesPlugin plugin) : base(plugin)
         {
 
         }
@@ -20,9 +19,19 @@ namespace ExtraRolesMod.Rpc
 
         public override void Handle(PlayerControl innerNetObject, byte protectedId)
         {
-            foreach (var player in PlayerControl.AllPlayerControls)
-                if (player.PlayerId == protectedId)
-                    player.getModdedControl().Immortal = ShieldState.Intact;
+            var shieldedPlayer = PlayerTools.GetPlayerById(protectedId);
+            shieldedPlayer.GetModdedControl().Immortal = true;
+
+            var showShielded = ExtraRoles.Config.showProtected;
+            bool flag = showShielded == ShieldOptions.Everyone;
+            flag |= showShielded == ShieldOptions.Self && shieldedPlayer.AmOwner;
+            flag |= showShielded == ShieldOptions.SelfAndMedic && (shieldedPlayer.AmOwner || PlayerControl.LocalPlayer.IsPlayerRole(Role.Medic));
+            flag |= showShielded == ShieldOptions.Medic && shieldedPlayer.IsPlayerRole(Role.Medic);
+
+            if (flag)
+            {
+                shieldedPlayer.gameObject.AddComponent<PlayerShield>();
+            }
         }
 
         public override byte Read(MessageReader reader)
