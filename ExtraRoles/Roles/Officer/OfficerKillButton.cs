@@ -21,7 +21,7 @@ namespace ExtraRolesMod.Roles.Officer
 
         public static void AddOfficerKillButton()
         {
-            Button = new CooldownButton(sprite: null, new Vector2(7.967f, 0f), ExtraRoles.Config.OfficerCD, 0f, 10f);
+            Button = new CooldownButton(sprite: null, new Vector2(6.5f, 0f), ExtraRoles.Config.OfficerCD, 0f, 10f);
             Button.OnUpdate += OfficerKillButton_OnUpdate;
             Button.OnClick += OfficerKillButton_OnClick;
         }

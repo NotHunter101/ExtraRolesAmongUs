@@ -6,9 +6,8 @@ namespace ExtraRolesMod
 {
     public enum ShieldOptions
     {
-        Self = 0,
+        SelfAndMedic = 0,
         Medic = 1,
-        SelfAndMedic = 2,
-        Everyone = 3,
+        Everyone = 2,
     }
 }

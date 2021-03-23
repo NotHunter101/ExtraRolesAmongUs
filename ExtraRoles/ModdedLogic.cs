@@ -1,6 +1,7 @@
 ﻿using ExtraRolesMod.Roles;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ExtraRolesMod
@@ -28,6 +29,16 @@ namespace ExtraRolesMod
         }
 
         public List<ModPlayerControl> AllModPlayerControl = new List<ModPlayerControl>();
-        public bool sabotageActive { get; set; }
+        public PlayerTask CurrentSabotage
+        {
+            get
+            {
+                foreach (var task in PlayerControl.LocalPlayer.myTasks)
+                    if (PlayerTools.sabotageTasks.Contains(task.TaskType))
+                        return task;
+                return null;
+            }
+
+        }
     }
 }

@@ -38,7 +38,7 @@ namespace ExtraRolesMod
                 return false;
             }
 
-            if (!ExtraRoles.Logic.sabotageActive)
+            if (ExtraRoles.Logic.CurrentSabotage == null)
             {
                 return false;
             }

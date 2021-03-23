@@ -21,7 +21,6 @@ namespace ExtraRolesMod
                 return;
 
             ExtraRoles.Logic.ClearJokerTasks();
-            UpdateIsSabotageActive();
             UpdatePlayerNameColors();
         }
 
@@ -65,13 +64,5 @@ namespace ExtraRolesMod
             }
         }
 
-        private static void UpdateIsSabotageActive()
-        {
-            var sabotageActive = false;
-            foreach (var task in PlayerControl.LocalPlayer.myTasks)
-                if (PlayerTools.sabotageTasks.Contains(task.TaskType))
-                    sabotageActive = true;
-            ExtraRoles.Logic.sabotageActive = sabotageActive;
-        }
     }
 }
