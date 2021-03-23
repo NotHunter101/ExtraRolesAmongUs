@@ -7,7 +7,7 @@ namespace ExtraRolesMod.Roles.Engineer
     {
         static bool Prefix(MapRoom __instance)
         {
-            return !PlayerControl.LocalPlayer.IsPlayerRole(Role.Engineer);
+            return !PlayerControl.LocalPlayer.HasRole(Role.Engineer);
         }
     }
 }

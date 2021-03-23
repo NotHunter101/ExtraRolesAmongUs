@@ -25,8 +25,8 @@ namespace ExtraRolesMod.Rpc
             var showShielded = ExtraRoles.Config.showProtected;
             bool flag = showShielded == ShieldOptions.Everyone;
             flag |= showShielded == ShieldOptions.Self && shieldedPlayer.AmOwner;
-            flag |= showShielded == ShieldOptions.SelfAndMedic && (shieldedPlayer.AmOwner || PlayerControl.LocalPlayer.IsPlayerRole(Role.Medic));
-            flag |= showShielded == ShieldOptions.Medic && shieldedPlayer.IsPlayerRole(Role.Medic);
+            flag |= showShielded == ShieldOptions.SelfAndMedic && (shieldedPlayer.AmOwner || PlayerControl.LocalPlayer.HasRole(Role.Medic));
+            flag |= showShielded == ShieldOptions.Medic && shieldedPlayer.HasRole(Role.Medic);
 
             if (flag)
             {

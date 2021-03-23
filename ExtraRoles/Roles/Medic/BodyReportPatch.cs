@@ -19,10 +19,10 @@ namespace ExtraRolesMod
             if (killer != null)
             {
                 // If there is a Medic alive and Medic reported and reports are enabled
-                if (PlayerControl.LocalPlayer.IsPlayerRole(Role.Medic) && ExtraRoles.Config.showReport)
+                if (PlayerControl.LocalPlayer.HasRole(Role.Medic) && ExtraRoles.Config.showReport)
                 {
                     // If the user is the medic
-                    if (PlayerControl.LocalPlayer.IsPlayerRole(Role.Medic))
+                    if (PlayerControl.LocalPlayer.HasRole(Role.Medic))
                     {
                         // Create Body Report
                         BodyReport br = new BodyReport();

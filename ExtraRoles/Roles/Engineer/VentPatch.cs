@@ -16,7 +16,7 @@ namespace ExtraRolesMod
             var vent = __instance;
             var player = pc.Object;
             float num = float.MaxValue;
-            couldUse = (pc.IsImpostor || player.IsPlayerRole(Role.Engineer)) && !pc.IsDead && (player.CanMove || player.inVent);
+            couldUse = (pc.IsImpostor || player.HasRole(Role.Engineer)) && !pc.IsDead && (player.CanMove || player.inVent);
             canUse = couldUse;
             if (canUse)
             {

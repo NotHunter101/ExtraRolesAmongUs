@@ -8,7 +8,7 @@ namespace ExtraRolesMod.Roles.Engineer
     {
         static void Postfix(MapBehaviour __instance)
         {
-            if (!PlayerControl.LocalPlayer.IsPlayerRole(Role.Engineer))
+            if (!PlayerControl.LocalPlayer.HasRole(Role.Engineer))
                 return;
             if (!__instance.IsOpen)
                 return;

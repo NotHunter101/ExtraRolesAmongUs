@@ -31,29 +31,7 @@ namespace ExtraRolesMod
 
             return null;
         }
-
-        /// <summary>
-        /// Returns the cooldown of the officer in seconds. Zero means the officer can kill again.
-        /// </summary>
-        public static float getOfficerCD()
-        {
-            var lastAbilityTime = ExtraRoles.Logic.GetRolePlayer(Role.Officer).LastAbilityTime;
-            if (lastAbilityTime == null)
-            {
-                return ExtraRoles.Config.OfficerCD;
-            }
-
-            var now = DateTime.UtcNow;
-            var diff = (TimeSpan) (now - lastAbilityTime);
-
-            var killCooldown = ExtraRoles.Config.OfficerCD * 1000.0f;
-            if (killCooldown - (float) diff.TotalMilliseconds < 0)
-                return 0;
-
-            return (killCooldown - (float) diff.TotalMilliseconds) / 1000.0f;
-        }
-
-        public static bool canEngineerUseAbility()
+        public static bool CanEngineerUseAbility()
         {
             if (PlayerControl.LocalPlayer.GetModdedControl().UsedAbility)
             {

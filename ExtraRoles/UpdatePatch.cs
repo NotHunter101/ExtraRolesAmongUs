@@ -48,7 +48,7 @@ namespace ExtraRolesMod
                 var role = ExtraRoles.Logic.GetRolePlayer(roleName);
                 if (role == null)
                     continue;
-                if (PlayerControl.LocalPlayer.IsPlayerRole(roleName) || PlayerControl.LocalPlayer.Data.IsDead)
+                if (PlayerControl.LocalPlayer.HasRole(roleName) || PlayerControl.LocalPlayer.Data.IsDead)
                     role.PlayerControl.nameText.Color = roleColor;
             }
             //Color of name plates in the voting hub should be the same as in-game

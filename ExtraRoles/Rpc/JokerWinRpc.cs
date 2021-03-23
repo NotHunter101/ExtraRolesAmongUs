@@ -20,7 +20,7 @@ namespace ExtraRolesMod.Rpc
         {
             foreach (var player in PlayerControl.AllPlayerControls)
             {
-                if (player.IsPlayerRole(Role.Joker))
+                if (player.HasRole(Role.Joker))
                 {
                     player.Revive();
                     player.Data.IsDead = false;

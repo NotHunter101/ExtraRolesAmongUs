@@ -8,7 +8,7 @@ namespace ExtraRolesMod
 {
     public static class Extensions
     {
-        public static bool IsPlayerRole(this PlayerControl plr, Role roleName)
+        public static bool HasRole(this PlayerControl plr, Role roleName)
         {
             return plr.GetModdedControl() != null && plr.GetModdedControl().Role == roleName;
         }

@@ -10,7 +10,7 @@ namespace ExtraRolesMod
     {
         static bool Prefix(IntroCutscene.CoBegin__d __instance)
         {
-            if (!PlayerControl.LocalPlayer.IsPlayerRole(Role.Joker))
+            if (!PlayerControl.LocalPlayer.HasRole(Role.Joker))
                 return true;
 
             var jokerTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
@@ -21,7 +21,7 @@ namespace ExtraRolesMod
 
         static void Postfix(IntroCutscene.CoBegin__d __instance)
         {
-            if (PlayerControl.LocalPlayer.IsPlayerRole(Role.Medic))
+            if (PlayerControl.LocalPlayer.HasRole(Role.Medic))
             {
                 __instance.__this.Title.Text = "Medic";
                 __instance.__this.Title.Color = Colors.medicColor;
@@ -30,7 +30,7 @@ namespace ExtraRolesMod
                 return;
             }
 
-            if (PlayerControl.LocalPlayer.IsPlayerRole(Role.Officer))
+            if (PlayerControl.LocalPlayer.HasRole(Role.Officer))
             {
                 __instance.__this.Title.Text = "Officer";
                 __instance.__this.Title.Color = Colors.officerColor;
@@ -39,7 +39,7 @@ namespace ExtraRolesMod
                 return;
             }
 
-            if (PlayerControl.LocalPlayer.IsPlayerRole(Role.Engineer))
+            if (PlayerControl.LocalPlayer.HasRole(Role.Engineer))
             {
                 __instance.__this.Title.Text = "Engineer";
                 __instance.__this.Title.Color = Colors.engineerColor;
@@ -48,7 +48,7 @@ namespace ExtraRolesMod
                 return;
             }
 
-            if (PlayerControl.LocalPlayer.IsPlayerRole(Role.Joker))
+            if (PlayerControl.LocalPlayer.HasRole(Role.Joker))
             {
                 __instance.__this.Title.Text = "Joker";
                 __instance.__this.Title.Color = Colors.jokerColor;

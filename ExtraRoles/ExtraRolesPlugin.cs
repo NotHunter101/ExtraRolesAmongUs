@@ -1,25 +1,18 @@
 ﻿using BepInEx;
-using BepInEx.Configuration;
 using BepInEx.IL2CPP;
-using HarmonyLib;
-using System;
-using System.Linq;
-using System.Net;
-using Reactor;
+using Essentials;
 using Essentials.Options;
-
-using Reactor.Unstrip;
-using UnityEngine;
-using System.IO;
+using HarmonyLib;
+using Reactor;
 using Reactor.Extensions;
-using System.Collections.Generic;
-using System.Net.Sockets;
+using System.IO;
+using UnityEngine;
 
 namespace ExtraRolesMod
 {
     [BepInPlugin(Id)]
     [BepInProcess("Among Us.exe")]
-    [BepInDependency(ReactorPlugin.Id)]
+    [BepInDependency(EssentialsPlugin.Id)]
     public partial class ExtraRolesPlugin : BasePlugin
     {
         public const string Id = "net.extraroles";

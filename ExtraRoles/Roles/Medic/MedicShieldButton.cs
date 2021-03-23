@@ -24,18 +24,17 @@ namespace ExtraRolesMod.Roles.Medic
             Button = new CooldownButton(ExtraRoles.Assets.shieldIco, new Vector2(7.967f, 0f), 10f, 0f, 1f);
             Button.OnUpdate += MedicShieldButton_OnUpdate;
             Button.OnClick += MedicShieldButton_OnClick;
-            Button.Visible = false;
         }
 
 
         private static void MedicShieldButton_OnUpdate(object sender, EventArgs e)
         {
             Button.Visible = !PlayerControl.LocalPlayer.Data.IsDead;
-            Button.Visible &= PlayerControl.LocalPlayer.IsPlayerRole(Role.Medic);
+            Button.Visible &= PlayerControl.LocalPlayer.HasRole(Role.Medic);
+            Button.Visible &= !PlayerControl.LocalPlayer.GetModdedControl().UsedAbility;
             if (!Button.Visible)
                 return;
 
-            Button.Clickable = !PlayerControl.LocalPlayer.GetModdedControl().UsedAbility;
             Button.Clickable &= PlayerControl.LocalPlayer.FindClosestPlayer();
 
             lastQ = Input.GetKeyUp(KeyCode.Q);

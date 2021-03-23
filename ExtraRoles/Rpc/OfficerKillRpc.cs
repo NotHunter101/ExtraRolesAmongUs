@@ -22,7 +22,7 @@ namespace ExtraRolesMod.Rpc
             var attacker = PlayerTools.GetPlayerById(data.Attacker);
             var target = PlayerTools.GetPlayerById(data.Target);
             
-            var isTargetJoker = target.IsPlayerRole(Role.Joker);
+            var isTargetJoker = target.HasRole(Role.Joker);
             var isTargetImpostor = target.Data.IsImpostor;
             var officerKillSetting = ExtraRoles.Config.officerKillBehaviour;
             if (target.IsPlayerImmortal())

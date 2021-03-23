@@ -42,7 +42,6 @@ namespace ExtraRolesMod.Rpc
                     PlayerControl = plr,
                     Role = Role.Crewmate,
                     UsedAbility = false,
-                    LastAbilityTime = null,
                     Immortal = false
                 });
             }

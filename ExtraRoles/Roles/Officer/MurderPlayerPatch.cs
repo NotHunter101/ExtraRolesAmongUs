@@ -42,7 +42,7 @@ namespace ExtraRolesMod.Roles.Officer
 
         public static void Postfix(PlayerControl __instance, PlayerControl __0)
         {
-            if (__instance.IsPlayerRole(Role.Officer))
+            if (__instance.HasRole(Role.Officer))
             {
                 __instance.Data.IsImpostor = false;
             }
@@ -54,7 +54,7 @@ namespace ExtraRolesMod.Roles.Officer
                 DeathReason = DeathReason.Kill
             };
 
-            if (__instance.IsPlayerRole(Role.Officer))
+            if (__instance.HasRole(Role.Officer))
             {
                 __instance.Data.IsImpostor = false;
             }
