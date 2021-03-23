@@ -31,19 +31,7 @@ namespace ExtraRoles2.Classes
             if (PlayerControl.LocalPlayer.GetModdedPlayer() == null) return;
             
             Player moddedPlayer = PlayerControl.LocalPlayer.GetModdedPlayer();
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-            {
-                if (player.GetModdedPlayer() == null)
-                    continue;
-                if (player.AmOwner || moddedPlayer.Owner.Data.IsDead)
-                {
-                    if (player.Data.IsImpostor && player.GetModdedPlayer().Role == null)
-                        moddedPlayer.SetNameColor(player, Palette.ImpostorRed);
-                    else if (player.GetModdedPlayer().Role != null)
-                        moddedPlayer.SetNameColor(player, player.GetModdedPlayer().Role.Color);
-                }
-            }
-            moddedPlayer.Role?.Update();
+            moddedPlayer.Update();
         }
     }
 }

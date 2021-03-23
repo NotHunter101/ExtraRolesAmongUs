@@ -35,6 +35,10 @@ namespace ExtraRoles2.Classes
                     SwitchSystem switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
                     switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
                     break;
+                case CustomRPC.SetProtected:
+                    byte protectedId = reader.ReadByte();
+                    GameData.Instance.GetPlayerById(protectedId).Object.GetModdedPlayer().Immortal = true;
+                    break;
             }
         }
     }

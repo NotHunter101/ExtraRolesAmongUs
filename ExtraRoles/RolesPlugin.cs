@@ -18,6 +18,7 @@ namespace ExtraRoles2
     {
         SetRoles = 0,
         FixLights = 1,
+        SetProtected = 2,
     }
     
     [BepInPlugin(Id)]

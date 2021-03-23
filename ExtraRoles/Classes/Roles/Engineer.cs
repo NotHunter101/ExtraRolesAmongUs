@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Hazel;
+using Il2CppSystem;
 using Reactor.Extensions;
 using UnityEngine;
 
@@ -22,9 +23,8 @@ namespace ExtraRoles2.Classes.Roles
         
         public override void Update()
         {
-            if (SabotageButton == null)
-                return;
-            
+            if (SabotageButton == null) return;
+
             var bottomLeft = Camera.main.ScreenToWorldPoint(new Vector2(0, 0));
             bottomLeft.x += 0.75f; bottomLeft.y += 0.75f;
             
