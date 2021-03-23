@@ -58,6 +58,9 @@ namespace ExtraRolesMod
             CustomOption.AddNumber("Time Where Medic Reports Will Have Color Type", 15, 0, 120, 2.5f);
 
         public static CustomNumberOption
+            minimumCrewmateCount = CustomOption.AddNumber("Minimum Crewmate Count", 0, 0, 6, 1);
+
+        public static CustomNumberOption
             medicSpawnChance = CustomOption.AddNumber("Medic Spawn Chance", 100, 0, 100, 5);
 
         public static CustomNumberOption officerSpawnChance =

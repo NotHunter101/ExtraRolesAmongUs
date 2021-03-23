@@ -30,26 +30,27 @@ namespace ExtraRolesMod
                 (Role.Engineer, HarmonyMain.engineerSpawnChance.GetValue()),
                 (Role.Joker, HarmonyMain.jokerSpawnChance.GetValue()),
             };
-
+          
             var crewmates = PlayerControl.AllPlayerControls
                 .ToArray()
                 .Where(x => !x.Data.IsImpostor)
                 .ToList();
 
-            foreach (var (roleName, spawnChance) in roles)
+            while (roles.Count > 0 && crewmates.Count > HarmonyMain.minimumCrewmateCount.GetValue())
             {
-                var shouldSpawn = crewmates.Count > 0 && rng.Next(0, 100) <= spawnChance;
-                if (!shouldSpawn)
-                    continue;
-                
-                var randomCrewmateIndex = rng.Next(0, crewmates.Count);
-                crewmates[randomCrewmateIndex].getModdedControl().Role = roleName;
-                var playerIdForRole = crewmates[randomCrewmateIndex].PlayerId;
-                crewmates.RemoveAt(randomCrewmateIndex);
+                // Randomize order of role setting
+                var roleIndex = rng.Next(0, roles.Count);
+                var (roleName, spawnChance, rpc) = roles[roleIndex];
+                var shouldSpawn = rng.Next(0, 100) <= spawnChance;
 
-                System.Console.WriteLine($"Spawning {roleName} with PlayerID = {playerIdForRole}");
-
-                Rpc<SetRoleRpc>.Instance.Send(data: (PlayerId: playerIdForRole, Role: roleName), immediately: true);
+                if (shouldSpawn)
+                {
+                    var randomCrewmateIndex = rng.Next(0, crewmates.Count);
+                    var playerIdForRole = crewmates[randomCrewmateIndex].PlayerId;
+                    crewmates.RemoveAt(randomCrewmateIndex);
+                    Rpc<SetRoleRpc>.Instance.Send(data: (PlayerId: playerIdForRole, Role: roleName), immediately: true);
+                }
+                roles.RemoveAt(roleIndex);
             }
 
             localPlayers.Clear();
