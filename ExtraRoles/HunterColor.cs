@@ -14,8 +14,8 @@ namespace ExtraRolesMod
 
         private Color[] colors =
         {
-            Color.red, new Color(255f / 255f, 94f / 255f, 19f / 255f), Color.yellow, Color.green, Color.blue,
-            new Color(120f / 255f, 7f / 255f, 188f / 255f)
+            Color.red, new Color32(255, 94, 19, 255), Color.yellow, Color.green, Color.blue,
+            new Color32(120, 7, 188, 255)
         };
 
         public HunterColor(IntPtr value) : base(value)
