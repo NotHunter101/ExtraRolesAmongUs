@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Version>1.4.0</Version>
+        <Mappings>NuclearPowered/Mappings:0.2.0</Mappings>
+        <Authors>Hunter101</Authors>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GamePlatform)' == 'Steam'">
+        <GameVersion>2021.3.5s</GameVersion>
+        <DefineConstants>$(DefineConstants);STEAM</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GamePlatform)' == 'Itch'">
+        <GameVersion>2021.3.5i</GameVersion>
+        <DefineConstants>$(DefineConstants);ITCH</DefineConstants>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Deobfuscate Include="$(AmongUs)\BepInEx\plugins\Reactor-$(GameVersion).dll" />
+
+        <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.2.9" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Patches\Engineer_Patches" />
+      <Folder Include="Patches\Medic_Patches" />
+      <Folder Include="Patches\Officer_Patches" />
+    </ItemGroup>
+
+    <Target Name="Copy" AfterTargets="Reobfuscate">
+        <Copy SourceFiles="$(OutputPath)reobfuscated/$(AssemblyName)-$(GameVersion).dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" Condition="'$(Configuration)' == 'Debug'" />
+    </Target>
+</Project>
