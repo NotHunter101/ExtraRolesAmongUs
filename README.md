@@ -29,7 +29,7 @@ The type of information they get is based on a timer that can be configured insi
 | Show Medic | This is the game setting that toggles whether the Medic's name is lit up green for everybody in the game, or just themselves | Toggle | Off |
 | Show Shielded Player | When The Medic shields somebody, their visor will change to the color cyan. If this setting is set to 1, everybody can see the color change. If not, only the shielded player can see | Options | Self |
 | Murder Attempt Indicator For Shielded Player | If this setting is enabled, the shielded player will hear a *ting* noise when somebody tries (and fails) to murder them | Toggle | On |
-| Show Medic Reports | When the medic reports the body and if this function is desactived, it will not show the Medic who reported it | Options | Off |
+| Show Medic Reports | When the medic reports the body and if this function is deactivated, it will not show the Medic who reported it | Options | Off |
 | Time Where Medic Reports Will Have Name | The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's name | Number | 5 |
 | Time Where Medic Reports Will Have Color Type | The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's color type. "color type" means either "lighter" or "darker", and a full list of colors and their types are included at the bottom of the page | Number | 20 |
 | Medic Spawn Chance | The percentage chance that anybody in the game will become The Medic | Number | 100% |
@@ -121,7 +121,7 @@ If this setting is enabled, The Engineer's name will be lit up orange for everyo
   
 ## Show Joker
 *Default: false*<br/>
-If this setting is enabled, The Jokers's name will be lit up grey for everyone. If it isn't, it will only be lit for themselves.
+If this setting is enabled, The Jokers' name will be lit up grey for everyone. If it isn't, it will only be lit for themselves.
   
 ## Officer Kill Behaviour
 *Default: Impostor*<br/>
