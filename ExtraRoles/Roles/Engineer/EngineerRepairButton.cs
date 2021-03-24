@@ -14,7 +14,7 @@ namespace ExtraRolesMod.Roles.Engineer
 
         public static void AddEngineerButton()
         {
-            Button = new GameplayButton(ExtraRoles.Assets.repairIco, new Vector2(6.5f, 0f));
+            Button = new GameplayButton(ExtraRoles.Assets.repairIco, new HudPosition(GameplayButton.OffsetX, 0, HudAlignment.BottomRight));
             Button.OnClick += EngineerButton_OnClick;
             Button.OnUpdate += Button_OnUpdate;
         }

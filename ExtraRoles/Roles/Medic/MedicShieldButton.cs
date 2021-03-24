@@ -21,7 +21,7 @@ namespace ExtraRolesMod.Roles.Medic
 
         public static void AddMedicShieldButton()
     {
-            Button = new GameplayButton(ExtraRoles.Assets.shieldIco, new Vector2(6.5f, 0f));
+            Button = new GameplayButton(ExtraRoles.Assets.shieldIco, new HudPosition(GameplayButton.OffsetX, 0, HudAlignment.BottomRight));
             Button.OnUpdate += MedicShieldButton_OnUpdate;
             Button.OnClick += MedicShieldButton_OnClick;
         }
