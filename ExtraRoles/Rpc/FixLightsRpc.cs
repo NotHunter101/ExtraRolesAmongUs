@@ -19,7 +19,6 @@ namespace ExtraRolesMod.Rpc
         {
             var switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
             switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
-            System.Console.WriteLine("Fixed lights");
         }
 
         public override bool Read(MessageReader reader)

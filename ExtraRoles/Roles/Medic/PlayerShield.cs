@@ -23,7 +23,6 @@ namespace ExtraRolesMod.Roles.Medic
             if (glow != null)
                 Coroutines.Stop(glow);
             
-            System.Console.WriteLine("Shield got destroyed");
             strength = 0f;
             SetShieldColor(Palette.VisorColor);
         }

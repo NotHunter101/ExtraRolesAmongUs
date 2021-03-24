@@ -14,7 +14,6 @@ namespace ExtraRolesMod.Roles.Medic
 
         public static string ParseBodyReport(BodyReport br)
         {
-            System.Console.WriteLine(br.KillAge);
             if (br.KillAge > ExtraRoles.Config.medicKillerColorDuration * 1000)
             {
                 return $"Body Report: The corpse is too old to gain information from. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
