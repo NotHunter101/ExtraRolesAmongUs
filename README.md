@@ -26,7 +26,6 @@ The type of information they get is based on a timer that can be configured insi
 ## Game Options:
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
-| Show Medic | This is the game setting that toggles whether the Medic's name is lit up green for everybody in the game, or just themselves | Toggle | Off |
 | Show Shielded Player | When The Medic shields somebody, their visor will change to the color cyan. If this setting is set to 1, everybody can see the color change. If not, only the shielded player can see | Options | Self |
 | Murder Attempt Indicator For Shielded Player | If this setting is enabled, the shielded player will hear a *ting* noise when somebody tries (and fails) to murder them | Toggle | On |
 | Show Medic Reports | When the medic reports the body and if this function is deactivated, it will not show the Medic who reported it | Options | Off |
@@ -43,12 +42,18 @@ Their goal is to locate the Impostor and deliver vigilante justice, but if they 
 ### Game Options
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
-| Show Officer | If this setting is enabled, The Officer's name will be lit up blue for everyone. If it isn't, it will only be lit for themselves | Toggle | Off |
 | Officer Kill Cooldown | This is the kill cooldown length for The Officer. The first cooldown on the first round will be equal to ten no matter what, just like the Impostor | Number | 30 |
-| Officer Kill Behaviour | This settings control what will happen when The Officer attempts to kill someone in the game | Options | Impostor |
-| Officer Spawn Chance | The percentage chance that anybody in the game will become The Officer | Number | 100% |
+| Officer Kill Behaviour | This settings control what will happen when The Officer attempts to kill someone in the game | Options | Crew Die |
+| Officer Spawn Chance | The percentage chance that anybody in the game will become The Officer | Number | 100% |Impostor: The Officer can only kill the impostor. If The Officer 
 -----------------------
-  
+
+#### Officer Kill Behaviour
+- Impostor: The Officer can only kill the impostor. If The Officer attacks a Crewmate or The Joker The Officer will die.
+- Joker: The Officer can kill either Impostor(s) or the Joker. If The Officer attacks a Crewmate The Officer will die.
+- Crew Die: The Officer can kill both The Joker And Impostors without consequences. If The Officer attacks a Crewmate both the officer and the Crewmate die.
+- Anyone: The Officer can kill anyone without consequences.
+
+
 ## Engineer
 ### **Team: Crewmates**
 The Engineer can repair one emergency per game from anywhere on the entire map.
@@ -57,7 +62,6 @@ The other ability of The Engineer is that they are able to use the vents that we
 ### Game Options
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
-| Show Engineer | If this setting is enabled, The Engineer's name will be lit up orange for everyone. If it isn't, it will only be lit for themselves | Toggle | Off |
 | Engineer Spawn Chance | The percentage chance that anybody in the game will become The Officer | Number | 100% |
 -----------------------
 
@@ -70,7 +74,6 @@ The Joker also has no tasks.
 ### Game Options
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
-| Show Joker | If this setting is enabled, The Joker's name will be lit up grey for everyone. If it isn't, it will only be lit for themselves | Toggle | Off |
 | Joker Spawn Chance | The percentage chance that anybody in the game will become The Joker | Number | 100% |
 -----------------------
 
@@ -92,73 +95,6 @@ The Joker also has no tasks.
 Not working? You might want to install the dependency [vc_redist](https://aka.ms/vs/16/release/vc_redist.x86.exe).
 
 For an easier understanding on how to use the mod, watch this video: https://youtu.be/gtuqYsdir_k
-
-# Game Options
-
-## Show Medic
-*Default: false*<br/>
-This is the game setting that toggles whether the Medic's name is lit up green for everybody in the game, or just themselves.
-  
-## Show Shielded Player
-*Default: true*<br/>
-When The Medic shield's somebody, their visor will change to the color cyan. If this setting is set to 1, everybody can see the color change. If not, only the shielded player can see.
-  
-## Murder Attempt Indicator For Shielded Player
-*Default: true*<br/>
-If this setting is enabled, the shielded player will hear a *ting* noise when somebody tries (and fails) to murder them.
-  
-## Show Officer
-*Default: false*<br/>
-If this setting is enabled, The Officer's name will be lit up blue for everyone. If it isn't, it will only be lit for themselves.
-  
-## Officer Kill Cooldown
-*Default: 30*<br/>
-This is the kill cooldown length for The Officer. The first cooldown on the first round will be equal to ten no matter what, just like the Impostor.
-  
-## Show Engineer
-*Default: false*<br/>
-If this setting is enabled, The Engineer's name will be lit up orange for everyone. If it isn't, it will only be lit for themselves.
-  
-## Show Joker
-*Default: false*<br/>
-If this setting is enabled, The Jokers' name will be lit up grey for everyone. If it isn't, it will only be lit for themselves.
-  
-## Officer Kill Behaviour
-*Default: Impostor*<br/>
-This settings control what will happen when The Officer attempts to kill someone in the game.
-- Impostor: The Officer can only kill the impostor. If The Officer attacks a Crewmate or The Joker The Officer will die.
-- Joker: The Officer can kill either Impostor(s) or the Joker. If The Officer attacks a Crewmate The Officer will die.
-- Crew Die: The Officer can kill both The Joker And Impostors without consequences. If The Officer attacks a Crewmate both the officer and the Crewmate die.
-- Anyone: The Officer can kill anyone without consequences.
-
-## Officer Dies When Attacking Shielded Players
-*Default: true*
-If this setting is enabled, The Officer will die when he attempts to attack a shielded player.
-  
-## Time Where Medic Reports Will Have Name
-*Default: 5*<br/>
-The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's name.
-
-## Time Where Medic Reports Will Have Color Type
-*Default: 20*<br/>
-The amount of time (in seconds) that The Medic will have to report the body since death to get the killer's color type.
-"color type" means either "lighter" or "darker", and a full list of colors and their types are included at the bottom of the page.
-  
-## Medic Spawn Chance
-*Default: 100*<br/>
-The percentage chance that anybody in the game will become The Medic.
-  
-## Officer Spawn Chance
-*Default: 100*<br/>
-The percentage chance that anybody in the game will become The Officer.
-  
-## Engineer Spawn Chance
-*Default: 100*<br/>
-The percentage chance that anybody in the game will become The Engineer.
-  
-## Joker Spawn Chance
-*Default: 100*<br/>
-The percentage chance that anybody in the game will become The Joker.
 
 # Color Types
 - Red is darker.
