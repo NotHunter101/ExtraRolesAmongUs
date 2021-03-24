@@ -18,7 +18,7 @@ namespace ExtraRoles2.Patches
             for (int i = 0; i < allPlayers.Count; i++)
             {
                 GameData.PlayerInfo playerInfo = allPlayers[i];
-                if (!playerInfo.Disconnected && playerInfo.PlayerId != __instance.PlayerId && !playerInfo.IsDead && !playerInfo.Object.GetModdedPlayer().Immortal && (!playerInfo.IsImpostor || !__instance.Data.IsImpostor))
+                if (!playerInfo.Disconnected && playerInfo.PlayerId != __instance.PlayerId && !playerInfo.IsDead && (!playerInfo.IsImpostor || !__instance.Data.IsImpostor))
                 {
                     PlayerControl @object = playerInfo.Object;
                     if (@object)

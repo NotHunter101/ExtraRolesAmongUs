@@ -25,7 +25,6 @@
     <ItemGroup>
       <Folder Include="Patches\Engineer_Patches" />
       <Folder Include="Patches\Medic_Patches" />
-      <Folder Include="Patches\Officer_Patches" />
     </ItemGroup>
 
     <Target Name="Copy" AfterTargets="Reobfuscate">
