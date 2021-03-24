@@ -22,11 +22,11 @@ namespace ExtraRoles2.Classes.Roles
         public override void Update()
         {
             if (ShieldButton == null) return;
+
+            var killPosition = HudManager.Instance.UseButton.transform.position;
+            killPosition.x -= 1.25f;
             
-            var bottomLeft = Camera.main.ScreenToWorldPoint(new Vector2(0, 0));
-            bottomLeft.x += 0.75f; bottomLeft.y += 0.75f;
-            
-            ShieldButton.Position = bottomLeft;
+            ShieldButton.Position = killPosition;
             ShieldButton.IsActive = HudManager.Instance.UseButton.isActiveAndEnabled;
             ShieldButton.CurrentTarget = Owner.Owner.FindClosestTarget();
             ShieldButton.Update();

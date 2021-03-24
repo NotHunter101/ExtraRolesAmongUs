@@ -22,10 +22,10 @@ namespace ExtraRoles2.Classes.Roles
         {
             if (KillButton == null) return;
             
-            var bottomLeft = Camera.main.ScreenToWorldPoint(new Vector2(0, 0));
-            bottomLeft.x += 0.75f; bottomLeft.y += 0.75f;
+            var killPosition = HudManager.Instance.UseButton.transform.position;
+            killPosition.x -= 1.25f;
             
-            KillButton.Position = bottomLeft;
+            KillButton.Position = killPosition;
             KillButton.IsActive = HudManager.Instance.UseButton.isActiveAndEnabled;
             KillButton.CurrentTarget = Owner.Owner.FindClosestTarget();
             KillButton.Update();
@@ -38,8 +38,7 @@ namespace ExtraRoles2.Classes.Roles
             if (killButtonManager != KillButton.ButtonManager) return;
             if (killButtonManager.isCoolingDown) return;
             if (!killButtonManager.isActiveAndEnabled) return;
-
-
+            
             if (KillButton.CurrentTarget.Data.IsImpostor)
                 Owner.Owner.MurderPlayer(KillButton.CurrentTarget);
             else

@@ -58,12 +58,16 @@ namespace ExtraRoles2.Classes
 
         public void SetOutline(Color color)
         {
+            if (!AmongUsClient.Instance.IsGameStarted) return;
+            
             Owner.GetComponent<SpriteRenderer>().material.SetFloat("_Outline", 1f);
             Owner.GetComponent<SpriteRenderer>().material.SetColor("_OutlineColor", color);
         }
         
         public void ClearOutline()
         {
+            if (!AmongUsClient.Instance.IsGameStarted) return;
+            
             Owner.GetComponent<SpriteRenderer>().material.SetFloat("_Outline", 0f);
             Owner.GetComponent<SpriteRenderer>().material.SetColor("_OutlineColor", new Color(0f, 0f, 0f, 0f));
         }

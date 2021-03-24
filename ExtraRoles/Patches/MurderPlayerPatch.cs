@@ -21,7 +21,7 @@ namespace ExtraRoles2.Patches.Officer_Patches
 				return false;
 			}
 			GameData.PlayerInfo data = __0.Data;
-			if (data == null || data.IsDead || __0.GetModdedPlayer().Immortal) return false;
+			if (data == null || data.IsDead) return false;
 			if (__instance.AmOwner)
 			{
 				StatsManager instance = StatsManager.Instance;
@@ -30,7 +30,7 @@ namespace ExtraRoles2.Patches.Officer_Patches
 				SoundManager.Instance.PlaySound(__instance.KillSfx, false, 0.8f);
 			}
 			__instance.SetKillTimer(PlayerControl.GameOptions.KillCooldown);
-			DestroyableSingleton<Telemetry>.Instance.WriteMurder();
+			DestroyableSingleton<Telemetry>.Instance.WriteMurder(); 
 			__0.gameObject.layer = LayerMask.NameToLayer("Ghost");
 			if (__0.AmOwner)
 			{

@@ -22,11 +22,6 @@
         <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.2.9" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Patches\Engineer_Patches" />
-      <Folder Include="Patches\Medic_Patches" />
-    </ItemGroup>
-
     <Target Name="Copy" AfterTargets="Reobfuscate">
         <Copy SourceFiles="$(OutputPath)reobfuscated/$(AssemblyName)-$(GameVersion).dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" Condition="'$(Configuration)' == 'Debug'" />
     </Target>

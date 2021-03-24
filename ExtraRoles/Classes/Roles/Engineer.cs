@@ -25,10 +25,10 @@ namespace ExtraRoles2.Classes.Roles
         {
             if (SabotageButton == null) return;
 
-            var bottomLeft = Camera.main.ScreenToWorldPoint(new Vector2(0, 0));
-            bottomLeft.x += 0.75f; bottomLeft.y += 0.75f;
+            var killPosition = HudManager.Instance.UseButton.transform.position;
+            killPosition.x -= 1.25f;
             
-            SabotageButton.Position = bottomLeft;
+            SabotageButton.Position = killPosition;
             SabotageButton.IsActive = HudManager.Instance.UseButton.isActiveAndEnabled;
             SabotageButton.IsLit = Owner.Owner.myTasks.ToArray().Any(PlayerTask.TaskIsEmergency);
             SabotageButton.Update();
