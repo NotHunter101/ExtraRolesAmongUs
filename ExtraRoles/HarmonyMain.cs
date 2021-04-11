@@ -75,6 +75,7 @@ namespace ExtraRolesMod
             }
 
             ServerManager.DefaultRegions = defaultRegions.ToArray();
+            CustomOption.ShamelessPlug = false;
             Harmony.PatchAll();
         }
     }

@@ -4,10 +4,10 @@ using static ExtraRolesMod.ExtraRoles;
 
 namespace ExtraRolesMod
 {
-    [HarmonyPatch(typeof(IntroCutscene.CoBegin__d), nameof(IntroCutscene.CoBegin__d.MoveNext))]
+    [HarmonyPatch(typeof(IntroCutscene._CoBegin_d__11), nameof(IntroCutscene._CoBegin_d__11.MoveNext))]
     class IntroCutscenePath
     {
-        static bool Prefix(IntroCutscene.CoBegin__d __instance)
+        static bool Prefix(IntroCutscene._CoBegin_d__11 __instance)
         {
             if (PlayerControl.LocalPlayer == JokerSettings.Joker)
             {
@@ -19,7 +19,7 @@ namespace ExtraRolesMod
             return true;
         }
 
-        static void Postfix(IntroCutscene.CoBegin__d __instance)
+        static void Postfix(IntroCutscene._CoBegin_d__11 __instance)
         {
             OfficerSettings.lastKilled = DateTime.UtcNow;
             //change the name and titles accordingly

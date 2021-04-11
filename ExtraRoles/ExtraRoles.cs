@@ -66,7 +66,7 @@ namespace ExtraRolesMod
                     {10, "lighter"},
                     {11, "lighter"},
                 };
-                var typeOfColor = colors[br.Killer.Data.ColorId];
+                var typeOfColor = colors[(byte)br.Killer.Data.ColorId];
                 return $"Body Report: The killer appears to be a {typeOfColor} color. (Killed {Math.Round(br.KillAge / 1000)}s ago)";
             }
         }

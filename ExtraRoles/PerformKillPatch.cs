@@ -168,19 +168,13 @@ namespace ExtraRolesMod
             }
         }
 
-        [HarmonyPatch(typeof(MapRoom), nameof(MapRoom.Method_0))]
+        [HarmonyPatch(typeof(MapRoom), nameof(MapRoom.ABFMAEIBDAG))]
         class SabotageButtonDeactivatePatch
         {
             static bool Prefix(MapRoom __instance)
             {
-                if (EngineerSettings.Engineer != null)
-                {
-                    if (EngineerSettings.Engineer != null && EngineerSettings.Engineer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
-                    {
-                        return false;
-                    }
-                }
-                return true;
+                if (EngineerSettings.Engineer == null) return true;
+                return !EngineerSettings.Engineer.AmOwner;
             }
         }
 

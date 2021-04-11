@@ -2,9 +2,9 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <Version>1.3.1</Version>
-        <GameVersion>2021.3.5s</GameVersion>
-        <Mappings>NuclearPowered/Mappings:0.2.0</Mappings>
-        <EssentialsVersion>Essentials-2021.3.5s</EssentialsVersion>
+        <GameVersion>2021.3.31.3s</GameVersion>
+        <Mappings>NuclearPowered/Mappings:0.3.0</Mappings>
+        <EssentialsVersion>Essentials-2021.3.31.3s</EssentialsVersion>
 
         <Description>A Reactor mod that adds four new roles to the game.</Description>
         <Authors>NotHunter101</Authors>
@@ -15,15 +15,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.2.9">
+      <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.3.0">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Essentials">
-          <HintPath>$(AmongUs)\BepInEx\plugins\$(EssentialsVersion).dll</HintPath>
+      <Reference Include="Essentials, Version=0.2.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Among Us Modded\BepInEx\plugins\Essentials-2021.3.31.3s.dll</HintPath>
       </Reference>
     </ItemGroup>
 

@@ -8,16 +8,6 @@ using InnerNet;
 
 namespace ExtraRolesMod
 {
-    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.Method_5))]
-    class GameOptionsData_ToHudString
-    {
-        static void Postfix()
-        {
-            HudManager.Instance.GameSettings.scale = 0.5f;
-        }
-    }
-
-
     //This is a class that sends a ping to my public api so people can see a player counter. Go to http://computable.us:5001/api/playercount to view the people currently playing.
     //No sensitive information is logged, viewed, or used in any way.
     [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.Update))]
