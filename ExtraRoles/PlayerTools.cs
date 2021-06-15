@@ -75,29 +75,25 @@ namespace ExtraRolesMod
 
         public static PlayerControl FindClosestPlayer(this PlayerControl player)
         {
-            PlayerControl result = null;
-            float num = GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)];
             if (!ShipStatus.Instance)
             {
                 return null;
             }
+
+            PlayerControl result = null;
+            float num = GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)];
             Vector2 truePosition = player.GetTruePosition();
-            List<GameData.PlayerInfo> allPlayers = GameData.Instance.AllPlayers.ToArray().ToList();
-            for (int i = 0; i < allPlayers.Count; i++)
+            foreach (GameData.PlayerInfo playerInfo in GameData.Instance.AllPlayers)
             {
-                GameData.PlayerInfo playerInfo = allPlayers[i];
-                if (!playerInfo.Disconnected && playerInfo.PlayerId != player.PlayerId && !playerInfo.IsDead)
+                PlayerControl control = playerInfo.Object;
+                if (!layerInfo.Disconnected && playerInfo.PlayerId != player.PlayerId && !playerInfo.IsDead && !control.inVent) // Add InVent Check
                 {
-                    PlayerControl @object = playerInfo.Object;
-                    if (@object)
+                    Vector2 vector = control.GetTruePosition() - truePosition;
+                    float magnitude = vector.magnitude;
+                    if (magnitude <= num && !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude, Constants.ShipAndObjectsMask))
                     {
-                        Vector2 vector = @object.GetTruePosition() - truePosition;
-                        float magnitude = vector.magnitude;
-                        if (magnitude <= num && !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude, Constants.ShipAndObjectsMask))
-                        {
-                            result = @object;
-                            num = magnitude;
-                        }
+                        result = control;
+                        num = magnitude;
                     }
                 }
             }
